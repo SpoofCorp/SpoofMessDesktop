@@ -1,4 +1,5 @@
 ﻿using CommonObjects.DTO;
+using CommonObjects.Requests.Messages;
 using Microsoft.AspNetCore.SignalR.Client;
 using SpoofMess.Models;
 using SpoofMess.Services;
@@ -41,11 +42,16 @@ class MessageService : IMessageService, IAsyncDisposable
             SentAt = DateTime.UtcNow,
             Text = message.Text,
             UserId = message.UserId,
+            User = new()
+            {
+                Name = message.UserName,
+                Id = message.UserId
+            }
         };
         OnMessageReceived.Invoke(messageModel);
     }
 
-    public async Task SendMessage(MessageDTO message)
+    public async Task SendMessage(CreateMessageRequest message)
     {
         await _connection.InvokeAsync("SendMessage", message);
     }

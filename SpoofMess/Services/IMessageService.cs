@@ -1,4 +1,4 @@
-﻿using CommonObjects.DTO;
+﻿using CommonObjects.Requests.Messages;
 using SpoofMess.Models;
 
 namespace SpoofMess.Services;
@@ -6,5 +6,5 @@ namespace SpoofMess.Services;
 public interface IMessageService
 {
     public event Action<MessageModel> OnMessageReceived;
-    public Task SendMessage(MessageDTO message);
+    public Task SendMessage(CreateMessageRequest message);
 }
