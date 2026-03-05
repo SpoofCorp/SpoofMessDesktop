@@ -1,5 +1,4 @@
 ﻿using CommonObjects.DTO;
-using CommonObjects.Requests.Messages;
 using CommonObjects.Results;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -80,6 +79,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 chat.Messages.Add(message);
                 message.Chat = chat;
             }
+        }
+    }
+
+    private async Task LoadUser(Guid userId, MessageModel message)
+    {
+        if(Users.TryGetValue(userId, out User? user))
+            message.User = user;
+        else
+        {
+
         }
     }
 

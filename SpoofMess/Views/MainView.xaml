@@ -15,7 +15,10 @@
         </Grid.ColumnDefinitions>
         <uc:SideMenu x:Name="SideMenu" IsOpen="Collapsed" Panel.ZIndex="10" Grid.ColumnSpan="3">
             <StackPanel>
-                <uc:FunctionButton Text="Settings" Icon="⚙️"/>
+                <uc:FunctionButton Text="Профиль" Icon="👤"/>
+                <uc:FunctionButton Text="Новая группа" Icon="👥"/>
+                <uc:FunctionButton Text="Настройки" Icon="⚙️"/>
+                <uc:FunctionButton Text="Настройки" Icon="⚙️"/>
             </StackPanel>
         </uc:SideMenu>
         <DockPanel>
