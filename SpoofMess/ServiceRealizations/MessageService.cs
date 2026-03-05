@@ -45,7 +45,8 @@ class MessageService : IMessageService, IAsyncDisposable
             User = new()
             {
                 Name = message.UserName,
-                Id = message.UserId
+                Id = message.UserId,
+                AvatarId = message.UserAvatarId
             }
         };
         OnMessageReceived.Invoke(messageModel);
