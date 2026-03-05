@@ -20,6 +20,12 @@
     <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#3DDADADA"/>
     <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA"/>
 
+    <SolidColorBrush x:Key="Medium1" Color="#E5E5E5"/>
+    <SolidColorBrush x:Key="Medium2" Color="#E0E0E0"/>
+    <SolidColorBrush x:Key="Medium3" Color="#D5D5D5"/>
+    <SolidColorBrush x:Key="Medium4" Color="#D0D0D0"/>
+
+
     <sys:Double x:Key="Width1">200</sys:Double>
     <sys:Double x:Key="MinButtonWith">30</sys:Double>
     <sys:Double x:Key="MinButtonHeight">30</sys:Double>
