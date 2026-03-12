@@ -1,10 +1,13 @@
 ﻿using CommonObjects.DTO;
+using CommonObjects.Requests.Attachments;
 using CommonObjects.Results;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SpoofMess.Models;
+using SpoofMess.ServiceRealizations.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
+using SpoofMess.Services.Models;
 using SpoofMess.Setters;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -19,6 +22,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IMessageApiService _messageApiService;
     private readonly IMessageService _messageService;
     private readonly INotificationService _notificationService;
+    private readonly IFileApiService _fileApiService;
+    private readonly IAttachmentService _attachmentService;
+    private readonly IFingerprintService _fingerprintService;
 
     public ObservableCollection<Chat> Chats { get; set; } = [];
     private ConcurrentDictionary<Guid, User> Users { get; set; } = [];
@@ -30,14 +36,20 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IMessageService messageService,
         IChatUserApiService chatUserService,
         IMessageApiService messageApiService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IFileApiService fileApiService,
+        IAttachmentService attachmentService,
+        IFingerprintService fingerprintService)
     {
         _chatApiService = chatApiService;
         _messageService = messageService;
         _chatUserApiService = chatUserService;
         _notificationService = notificationService;
+        _attachmentService = attachmentService;
         _messageApiService = messageApiService;
         _messageService.OnMessageReceived += OnMessageReceived;
+        _fileApiService = fileApiService;
+        _fingerprintService = fingerprintService;
         //It's so bad...
         LoadSkippedData();
     }
@@ -69,7 +81,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 message = messageDTO.Set();
                 chat = Chats.FirstOrDefault(x => x.Id == message.ChatId);
-                if(chat is null)
+                if (chat is null)
                 {
                     result = await _chatApiService.GetChat(message.ChatId);
                     if (!result.Success)
@@ -84,7 +96,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private async Task LoadUser(Guid userId, MessageModel message)
     {
-        if(Users.TryGetValue(userId, out User? user))
+        if (Users.TryGetValue(userId, out User? user))
             message.User = user;
         else
         {
@@ -124,19 +136,42 @@ public partial class MainViewModel : ObservableObject, IDisposable
         Chat currentChat = SelectedChat;
         MessageModel request = SelectedChat.CurrentMessage;
         request.ChatId = SelectedChat.Id;
-        SelectedChat.CurrentMessage = new()
+        currentChat.CurrentMessage = new()
         {
             ChatId = SelectedChat.Id,
             Text = string.Empty
         };
-        await _messageService.SendMessage(request.Set());
+        List<Attachment> attachments = [];
+        await Parallel.ForEachAsync(request.Attachments, async (file, cancelationToken) =>
+        {
+            Result<byte[]> result = await _attachmentService.SendAttachment(file);
+            if (!result.Success)
+                for (int i = 0; i < 5; i++)
+                {
+                    result = await _attachmentService.SendAttachment(file);
+                    if (result.Success)
+                    {
+                        attachments.Add(new(result.Body!, file.Name!, file.Size));
+                    }
+                }
+            else
+                attachments.Add(new(result.Body!, file.Name!, file.Size));
+        });
+        await _messageService.SendMessage(request.Set(attachments));
     }
     [RelayCommand]
     private void Attach()
     {
+        if (SelectedChat is null) return;
 
+        _attachmentService.Attach(SelectedChat.CurrentMessage);
     }
 
+    [RelayCommand]
+    private void Unattach(FileObject fileObject)
+    {
+
+    }
     public void Dispose()
     {
         token.Cancel();
