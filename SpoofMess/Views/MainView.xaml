@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpoofMess.Views"
         xmlns:uc="clr-namespace:SpoofMess.ViewElements"
+        xmlns:filevm="clr-namespace:SpoofMess.ViewModels.FileViewModels"
         mc:Ignorable="d"
         Title="MainView" Height="450" Width="800">
     <Grid>
@@ -72,40 +73,100 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition/>
-                                <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <Border Grid.Column="0" Grid.RowSpan="2" CornerRadius="30" Width="30" Height="30" BorderThickness="1" BorderBrush="Gray">
+                            <Border Grid.Column="0" VerticalAlignment="Top" Grid.RowSpan="2" CornerRadius="30" Width="30" Height="30" BorderThickness="1" BorderBrush="Gray">
                                 <Image/>
                             </Border>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding User.Name}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding User.Name}"/>
-                            <ItemsControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Attachments}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="500" HorizontalAlignment="Left">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition Height="auto"/>
-                                                <RowDefinition Height="auto"/>
-                                            </Grid.RowDefinitions>
-                                            <Image Grid.ColumnSpan="2"/>
-                                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}"/>
-                                            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Size}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Text}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="2" Foreground="Gray" Text="{Binding SentAt, StringFormat={}{0:HH:mm}}"/>
+                            <Border Padding="10 5" Grid.Column="1" CornerRadius="10" Background="#E5E5E5" Margin="0 2">
+                                <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="500" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding User.Name}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Attachments.Count}"/>
+                                    <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding Attachments}">
+                                        <ItemsControl.ItemContainerStyle>
+                                            <Style TargetType="ContentPresenter">
+                                                <Setter Property="Margin" Value="0 2" />
+                                            </Style>
+                                        </ItemsControl.ItemContainerStyle>
+                                        <ItemsControl.Resources>
+                                            <DataTemplate DataType="{x:Type filevm:ImageViewModel}">
+                                                <Image MaxWidth="300" Source="{Binding File.Path}"/>
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type filevm:MusicViewModel}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="auto"/>
+                                                        <RowDefinition Height="auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Button Grid.RowSpan="2" Command="{Binding PlayResumeCommand}">
+                                                        <Button.Style>
+                                                            <Style BasedOn="{StaticResource CircleButton}" TargetType="{x:Type Button}">
+                                                                <Setter Property="Content">
+                                                                    <Setter.Value>
+                                                                        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="10.5 10 10 10">
+                                                                            <Path Fill="#AA000000" Data="M 0,0 H 7 V 20 H 0 Z M 13,0 H 20 V 20 H 13 Z" />
+                                                                        </Viewbox>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsPlayeed}" Value="False">
+                                                                        <Setter Property="Content">
+                                                                            <Setter.Value>
+                                                                                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="12 10 7 10">
+                                                                                    <Path Fill="#AA000000" Data="M 0,0 L 20,10 L 0,20 Z" />
+                                                                                </Viewbox>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                        <Button.Background>
+                                                            <ImageBrush Opacity="0.6"/>
+                                                        </Button.Background>
+                                                    </Button>
+                                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding File.Name}"/>
+                                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding File.PrettySize}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type filevm:FileViewModel}">
+                                                <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="500" HorizontalAlignment="Left">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition Width="auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition Height="auto"/>
+                                                        <RowDefinition Height="auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding File.Name}"/>
+                                                    <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding File.PrettySize}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.Resources>
+                                    </ItemsControl>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Text}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Foreground="Gray" Text="{Binding SentAt, StringFormat={}{0:dd:HH:mm}}"/>
+                                </Grid>
+                            </Border>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -131,9 +192,9 @@
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <Image Grid.ColumnSpan="2"/>
-                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}"/>
-                            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Size}"/>
-                            <Button Style="{StaticResource FunctionButton}" Content="❌" Command="{Binding DataContext.UnattachCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding}" Grid.Column="1"/>
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding File.Name}"/>
+                            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding File.Size}"/>
+                            <Button Style="{StaticResource FunctionButton}" Content="❌" Command="{Binding DataContext.UnattachCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Grid.Column="1"/>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -144,7 +205,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.Template>
                     <ControlTemplate TargetType="ItemsControl">
-                        <ScrollViewer>
+                        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
                             <ItemsPresenter/>
                         </ScrollViewer>
                     </ControlTemplate>

@@ -6,11 +6,17 @@
         xmlns:local="clr-namespace:SpoofMess.Views"
         xmlns:uc="clr-namespace:SpoofMess.ViewElements"
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
+        xmlns:views="clr-namespace:SpoofMess.Views"
         mc:Ignorable="d"
         Title="EntryWindow" Height="450" Width="800">
-    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
-        <uc:InputTextBox Holder="Логин" Text="{Binding Model.Login}"/>
-        <uc:InputTextBox Holder="Пароль" Text="{Binding Model.Password}"/>
-        <Button Content="Вход" Command="{Binding EntryCommand}" Style="{DynamicResource RightFunctionButton}" IsDefault="True"/>
-    </StackPanel>
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:RegistrationViewModel}">
+            <views:RegistrationView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:AuthorizationViewModel}">
+            <views:AuthorizationView />
+        </DataTemplate>
+    </Window.Resources>
+    <ContentPresenter Content="{Binding ViewModel}"/>
 </Window>
