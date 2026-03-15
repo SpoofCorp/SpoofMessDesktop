@@ -18,12 +18,12 @@ public static class MessageSetter
                 Login = message.SenderLogin,
                 Name = message.SenderName,
                 AvatarId = message.UserAvatarId
-            },
+            },/*
             Attachments = [..message.Attachments.Select(x => new FileObject() {
                 Name = x.OriginalFileName,
                 Size = x.Size,
                 Token = x.Token
-            })]
+            })]*/
         };
     public static CreateMessageRequest Set(this MessageModel message, List<Attachment> attachments) =>
         new()

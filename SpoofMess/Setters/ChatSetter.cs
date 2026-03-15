@@ -10,8 +10,7 @@ public static class ChatSetter
         {
             Id = chat.Id,
             Name = chat.Name,
-            UniqueName = chat.UniqueName,
-            Messages = []
+            UniqueName = chat.UniqueName
         };
     public static Chat Set(this ChatUserDTO chat) =>
         new()
