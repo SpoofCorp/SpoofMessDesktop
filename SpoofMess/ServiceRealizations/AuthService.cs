@@ -19,7 +19,7 @@ public class AuthService(
 {
     private UserAuthorizeResponse? SessionData;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
-
+    private DateTime ValidTo;
     protected override string BaseUrl => "https://localhost:7217/api/v1/Entrance";
 
     public async Task<string?> GetAccess()
@@ -32,6 +32,7 @@ public class AuthService(
         await _semaphore.WaitAsync();
         try
         {
+            if (TokenIsNotExpired()) return SessionData.AccessToken;
             Result<UserAuthorizeResponse> result = await PostAsync<UpdateTokenRequest, UserAuthorizeResponse>(
                 "/UpdateToken", 
                 new UpdateTokenRequest() { 
@@ -45,11 +46,19 @@ public class AuthService(
         {
             throw new ApplicationException("", ex);
         }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     public void SetTokens(UserAuthorizeResponse response)
     {
         SessionData = response;
+
+        JwtSecurityTokenHandler jwt = new();
+        JwtSecurityToken token = jwt.ReadJwtToken(SessionData.AccessToken);
+        ValidTo = token.ValidTo;
     }
 
     protected bool TokenIsNotExpired()
@@ -57,9 +66,6 @@ public class AuthService(
         if (SessionData is null)
             return false;
 
-        JwtSecurityTokenHandler jwt = new();
-        var token = jwt.ReadJwtToken(SessionData.AccessToken);
-
-        return token.ValidTo >= DateTime.UtcNow.AddSeconds(15);
+        return ValidTo >= DateTime.UtcNow.AddSeconds(15);
     }
 }

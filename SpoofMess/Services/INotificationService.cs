@@ -1,4 +1,4 @@
-﻿using SpoofMess.Models;
+﻿using SpoofMess.Models.API;
 
 namespace SpoofMess.Services;
 

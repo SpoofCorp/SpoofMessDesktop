@@ -143,7 +143,7 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
     {
         return await PostStreamAsync(
                 requestUrl,
-                new StringContent(
+                content: new StringContent(
                     _serializer.Serialize(obj),
                     Encoding.UTF8,
                     "application/json"
@@ -161,11 +161,18 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
                     content,
                     token ?? _cts.Token
                 );
+            if( response.IsSuccessStatusCode )
             return Result<Stream>.Parse(
-                    await response.Content.ReadAsStringAsync(token ?? _cts.Token),
-                    null,
+                    "",
+                    await response.Content.ReadAsStreamAsync(token ?? _cts.Token),
                     (int)response.StatusCode
                 );
+            else
+                return Result<Stream>.Parse(
+                        await response.Content.ReadAsStringAsync(token ?? _cts.Token),
+                        null,
+                        (int)response.StatusCode
+                    );
         }
         catch
         {
@@ -179,8 +186,8 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
         if (response.IsSuccessStatusCode)
             return Result<T>.Parse(
                  "",
-                 _serializer.Deserialize<T>(
-                        await response.Content.ReadAsStringAsync(token ?? _cts.Token)
+                 await _serializer.Deserialize<T>(
+                        await response.Content.ReadAsStreamAsync(token ?? _cts.Token)
                      ),
                  (int)response.StatusCode
              );

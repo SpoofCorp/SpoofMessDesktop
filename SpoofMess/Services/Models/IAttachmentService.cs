@@ -1,5 +1,7 @@
-﻿using CommonObjects.Results;
+﻿using CommonObjects.Requests.Attachments;
+using CommonObjects.Results;
 using SpoofMess.Models;
+using SpoofMess.ViewModels.FileViewModels;
 
 namespace SpoofMess.Services.Models;
 
@@ -11,6 +13,7 @@ public interface IAttachmentService
         FileObject file,
         MessageModel message);
 
-    public Task UploadAttachments(MessageModel message);
+    public Task UploadAttachments(MessageModel message, List<Attachment> attachments);
     public Task<Result<byte[]>> SendAttachment(FileObject file);
+    public FileViewModel GetViewModel(FileObject file);
 }

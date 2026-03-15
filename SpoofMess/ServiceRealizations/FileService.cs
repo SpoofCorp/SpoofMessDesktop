@@ -1,6 +1,8 @@
-﻿using CommonObjects.Results;
+﻿using CommonObjects.Requests.Attachments;
+using CommonObjects.Results;
 using Microsoft.Win32;
 using SpoofFileInfo;
+using SpoofMess.Enums;
 using SpoofMess.Models;
 using SpoofMess.Services;
 using System.IO;
@@ -10,6 +12,7 @@ namespace SpoofMess.ServiceRealizations;
 
 public class FileService(IFileClassifier fileClassifier) : IFileService
 {
+    private static readonly string[] Units = { "B", "KB", "MB", "GB", "TB", "PB" };
     private readonly IFileClassifier _fileClassifier = fileClassifier;
 
     private readonly static string _imageFilter = "Все изображения|*.jpg;*.jpeg;*.png;*.webp;*.heic;*.heif;*.bmp;*.gif;*.tiff;*.tif|JPEG файлы (*.jpg, *.jpeg)|*.jpg;*.jpeg|PNG файлы (*.png)|*.png|WebP файлы (*.webp)|*.webp|HEIC/HEIF файлы (*.heic, *.heif)|*.heic;*.heif|GIF файлы (*.gif)|*.gif|";
@@ -65,10 +68,24 @@ public class FileService(IFileClassifier fileClassifier) : IFileService
     }
     public async Task Save(Stream input, FileObject file)
     {
+        string directory = file.Path ?? Guid.NewGuid().ToString();
+        if(!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+        string path = Path.Combine(directory, file.Name ?? "Undefined");
+        file.Path = path;
+        if (File.Exists(path))
+            return;
         await using var fileStream = new FileStream(
-            file.Path ??= Guid.CreateVersion7().ToString(),
+            path,
             FileMode.CreateNew);
         await input.CopyToAsync(fileStream);
+    }
+
+    public FileCategory GetCategory(Attachment attachment)
+    {
+        if (Enum.TryParse(attachment.Category, true, out FileCategory category))
+            return category;
+        return FileCategory.File;
     }
 
     public Result<FileObject> GetFileInfo()
@@ -83,9 +100,22 @@ public class FileService(IFileClassifier fileClassifier) : IFileService
         return Result<FileObject>.OkResult(new()
         {
             ExtensionId = extension2.Id,
-            Name = Path.GetFileNameWithoutExtension(path),
+            Name = Path.GetFileName(path),
             Path = path,
             Size = extension2.Size
         });
+    }
+
+    public string ToPrettySize(long bytes)
+    {
+        double size = bytes;
+        int unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < Units.Length - 1)
+        {
+            size /= 1024;
+            unitIndex++;
+        }
+        return $"{size:0.##} {Units[unitIndex]}";
     }
 }
