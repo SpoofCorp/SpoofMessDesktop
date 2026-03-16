@@ -18,8 +18,7 @@
             <StackPanel>
                 <uc:FunctionButton Text="Профиль" Icon="👤"/>
                 <uc:FunctionButton Text="Новая группа" Icon="👥"/>
-                <uc:FunctionButton Text="Настройки" Icon="⚙️"/>
-                <uc:FunctionButton Text="Настройки" Icon="⚙️"/>
+                <uc:FunctionButton Text="Настройки" Icon="⚙️" Command="{Binding Sh}"/>
             </StackPanel>
         </uc:SideMenu>
         <DockPanel>
@@ -37,30 +36,30 @@
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition/>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
 
-                            <Border Grid.Column="0" Grid.RowSpan="2" CornerRadius="40" Width="40" Height="40" BorderThickness="1" BorderBrush="Gray">
+                            <Border VerticalAlignment="Top" Grid.Column="0" Grid.RowSpan="2" CornerRadius="40" Width="40" Height="40" BorderThickness="1" BorderBrush="Gray">
                                 <Image/>
                             </Border>
-                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}"/>
-                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding LastMessage.Text}"/>
+                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontSize="16" FontWeight="DemiBold"/>
+                            <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding LastMessage.Text}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="50"/>
                             <TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding LastMessage.SentAt, StringFormat={}{0:HH:mm}}"/>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.Template>
                     <ControlTemplate TargetType="ListBox">
-                        <ScrollViewer>
-                            <ItemsPresenter/>
+                        <ScrollViewer Background="#F5F7FA" HorizontalScrollBarVisibility="Disabled">
+                            <ItemsPresenter />
                         </ScrollViewer>
                     </ControlTemplate>
                 </ListBox.Template>
             </ListBox>
         </DockPanel>
-        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="5"/>
-        <Grid Grid.Column="2">
+        <GridSplitter Grid.Column="1" Background="#F5F7FA" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="5"/>
+        <Grid Background="#C2C8CA" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="auto"/>
@@ -82,7 +81,7 @@
                             <Border Grid.Column="0" VerticalAlignment="Top" Grid.RowSpan="2" CornerRadius="30" Width="30" Height="30" BorderThickness="1" BorderBrush="Gray">
                                 <Image/>
                             </Border>
-                            <Border Padding="10 5" Grid.Column="1" CornerRadius="10" Background="#E5E5E5" Margin="0 2">
+                            <Border Padding="10 5" Grid.Column="1" CornerRadius="10" Background="#F5F7FA" Margin="0 2">
                                 <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="500" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
@@ -94,7 +93,6 @@
                                         <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding User.Name}"/>
-                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Attachments.Count}"/>
                                     <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding Attachments}">
                                         <ItemsControl.ItemContainerStyle>
                                             <Style TargetType="ContentPresenter">
@@ -167,8 +165,8 @@
                                             </DataTemplate>
                                         </ItemsControl.Resources>
                                     </ItemsControl>
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Text}"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Foreground="Gray" Text="{Binding SentAt, StringFormat={}{0:dd:HH:mm}}"/>
+                                    <TextBox IsReadOnly="True" BorderThickness="0" Background="Transparent" Height="auto" FontSize="14" Grid.Row="2" Grid.Column="0" Text="{Binding Text}" TextWrapping="WrapWithOverflow"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Foreground="Gray" Text="{Binding SentAt, StringFormat={}{0:HH:mm}}"/>
                                 </Grid>
                             </Border>
                         </Grid>
@@ -220,10 +218,10 @@
                     </ControlTemplate>
                 </ItemsControl.Template>
             </ItemsControl>
-            <DockPanel Grid.Row="2">
-                <Button DockPanel.Dock="Right" Style="{StaticResource FunctionButton}" IsDefault="True" Content="✉️" Command="{Binding SendCommand}"/>
-                <Button DockPanel.Dock="Right" Style="{StaticResource FunctionButton}" Content="📎" Command="{Binding AttachCommand}"/>
-                <uc:InputTextBox Holder="Здесь писать" Text="{Binding SelectedChat.CurrentMessage.Text}"/>
+            <DockPanel Grid.Row="2" Background="#F5F7FA">
+                <Button DockPanel.Dock="Right" VerticalAlignment="Bottom" Style="{StaticResource FunctionButton}" IsDefault="True" Content="✉️" Command="{Binding SendCommand}"/>
+                <Button DockPanel.Dock="Right" VerticalAlignment="Bottom" Style="{StaticResource FunctionButton}" Content="📎" Command="{Binding AttachCommand}"/>
+                <uc:InputTextBox MaxHeight="200" TextWrapping="Wrap" Holder="Здесь писать" Text="{Binding SelectedChat.CurrentMessage.Text}" AcceptsReturn="True"/>
             </DockPanel>
         </Grid>
 

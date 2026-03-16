@@ -8,20 +8,19 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <uc:InputTextBox Holder="Логин" Grid.ColumnSpan="2" Text="{Binding UserInfo.Login}"/>
-        <uc:InputTextBox Holder="Имя" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding UserInfo.Name}"/>
-        <uc:InputTextBox Holder="Пароль" Grid.ColumnSpan="2" Grid.Row="2" Text="{Binding UserInfo.Password}"/>
-        <Button Content="Зарегистрироваться" Command="{Binding RegistrationCommand}" Grid.Column="1" Grid.Row="3" Style="{DynamicResource RightFunctionButton}" IsDefault="True"/>
-        <uc:QuestionTextButton Margin="0 0 5 0" Prefix="Уже есть аккаунт?" Grid.Column="0" Grid.Row="3" CommandText="Вход" Command="{Binding ChangeViewCommand}"/>
+        <TextBlock Text="Регистрация" Style="{StaticResource HeaderText}"/>
+        <uc:InputTextBox Holder="Логин" Grid.Row="1" Text="{Binding UserInfo.Login}"/>
+        <uc:InputTextBox Holder="Имя" Grid.Row="2" Text="{Binding UserInfo.Name}"/>
+        <uc:InputTextBox Holder="Пароль" Grid.Row="3" Text="{Binding UserInfo.Password}"/>
+        <Button Content="Зарегистрироваться" Command="{Binding RegistrationCommand}" Grid.Row="4" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+        <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="Уже есть аккаунт?" Grid.Row="5" CommandText="Вход" Command="{Binding ChangeViewCommand}"/>
     </Grid>
 </UserControl>

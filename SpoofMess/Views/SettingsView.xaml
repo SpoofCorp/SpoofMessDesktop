@@ -8,9 +8,6 @@
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
         mc:Ignorable="d"
         Title="SettingsView" Height="450" Width="400">
-    <Window.DataContext>
-        <vm:SettingsViewModel/>
-    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -27,8 +24,8 @@
                 <Image/>
             </Border>
             <StackPanel Margin="10 0" Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="UserName"/>
-                <TextBlock Text="Login"/>
+                <TextBlock Text="{Binding UserInfo.Name}"/>
+                <TextBlock Text="{Binding UserInfo.Login}"/>
             </StackPanel>
             <Button Content="QR" Grid.Column="2"/>
         </Grid>

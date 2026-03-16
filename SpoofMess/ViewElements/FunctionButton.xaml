@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SpoofMess.ViewElements"
              mc:Ignorable="d" 
              x:Name="FunctionalButtonView">
-    <Button HorizontalContentAlignment="{Binding ElementName=FunctionalButtonView, Path=Alignment}" Padding="0" Command="{Binding ElementName=FunctionalButtonView, Path=Command}">
+    <Button Style="{StaticResource BaseFunctionButton}" HorizontalContentAlignment="{Binding ElementName=FunctionalButtonView, Path=Alignment}" Padding="0" Command="{Binding ElementName=FunctionalButtonView, Path=Command}">
         <Button.Content>
             <DockPanel>
                 <TextBlock Text="{Binding ElementName=FunctionalButtonView, Path=Icon}" DockPanel.Dock="Left"/>

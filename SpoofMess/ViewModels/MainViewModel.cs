@@ -4,12 +4,11 @@ using CommonObjects.Results;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SpoofMess.Models;
+using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.Setters;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows;
 
 namespace SpoofMess.ViewModels;
@@ -22,6 +21,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IAttachmentService _attachmentService;
     private readonly IChatUserService _chatUserService;
     private readonly IChatService _chatService;
+    private readonly INavigationService _navigationService;
+
     [ObservableProperty]
     private Chat? _selectedChat;
     public ObservableCollection<Chat> Chats { get; set; }
@@ -31,12 +32,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IMessageService messageService,
         IAttachmentService attachmentService,
         IChatUserService chatUserService,
+        INavigationService navigationService,
         IChatService chatService)
     {
         _notificationApiService = notificationApiService;
         _chatUserService = chatUserService;
         _attachmentService = attachmentService;
         _messageService = messageService;
+        _navigationService = navigationService;
         _notificationApiService.OnMessageReceived += OnMessageReceived;
         //It's so bad...
         LoadSkippedData();
@@ -106,6 +109,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void Unattach(FileObject fileObject)
     {
 
+    }
+
+    [RelayCommand]
+    private void ShowSettings()
+    {
+        
     }
 
     public void Dispose()

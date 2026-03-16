@@ -22,10 +22,13 @@
     <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#3DDADADA"/>
     <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA"/>
 
+    <SolidColorBrush x:Key="Primary" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="Medium1" Color="#E5E5E5"/>
     <SolidColorBrush x:Key="Medium2" Color="#E0E0E0"/>
     <SolidColorBrush x:Key="Medium3" Color="#D5D5D5"/>
     <SolidColorBrush x:Key="Medium4" Color="#D0D0D0"/>
+    
+    <Thickness x:Key="MarginVertical">0 5</Thickness>
 
 
     <sys:Double x:Key="Width1">200</sys:Double>
@@ -204,28 +207,69 @@
     <Style BasedOn="{StaticResource BaseTextBoxStyle}" TargetType="{x:Type TextBox}">
         <Setter Property="Margin" Value="{StaticResource Margin1}"/>
     </Style>
+    <Style x:Key="InputBox" BasedOn="{StaticResource BaseTextBoxStyle}" TargetType="{x:Type TextBox}">
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="FontSize" Value="30"/>
+        <Setter Property="Padding" Value="10 2"/>
+        <Setter Property="BorderBrush" Value="#D1D5DB"/>
+        <Setter Property="Background" Value="{StaticResource Primary}"/>
+        <Setter Property="Margin" Value="{StaticResource MarginVertical}"/>
+        <Setter Property="FontFamily" Value="Inter"/>
+    </Style>
 
-    <Style x:Key="RightFunctionButton" BasedOn="{StaticResource BaseButtonStyle}" TargetType="{x:Type Button}">
-        <Setter Property="Margin" Value="{StaticResource Margin1}"/>
-        <Setter Property="HorizontalAlignment" Value="Right"/>
+    <Style x:Key="PlaceHolder" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="30"/>
+        <Setter Property="Padding" Value="10 5"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Margin" Value="{StaticResource MarginVertical}"/>
+        <Setter Property="FontFamily" Value="Inter"/>
     </Style>
     <Style x:Key="FunctionButton" BasedOn="{StaticResource BaseButtonStyle}" TargetType="{x:Type Button}">
         <Setter Property="Margin" Value="{StaticResource Margin1}"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="VerticalContentAlignment" Value="Top"/>
-        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="#D0D2D5"/>
+        <Setter Property="Padding" Value="10 0"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="MinWidth" Value="50"/>
+        <Setter Property="Background" Value="#E5F0FA"/>
+        <Setter Property="Foreground" Value="#262729"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontFamily" Value="Inter"/>
+    </Style>
+
+    <Style x:Key="RightFunctionButton" BasedOn="{StaticResource FunctionButton}" TargetType="{x:Type Button}">
+        <Setter Property="HorizontalAlignment" Value="Right"/>
     </Style>
     <Style x:Key="TextButton" BasedOn="{StaticResource FunctionButton}" TargetType="{x:Type Button}">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Background" Value="Transparent"/>
     </Style>
-    <Style x:Key="PrimaryText" TargetType="{x:Type TextBlock}">
+    <Style x:Key="BaseText" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="18"/>
-        <Setter Property="Padding" Value="1"/>
         <Setter Property="Margin" Value="{StaticResource Margin1}"/>
+        <Setter Property="FontFamily" Value="Inter"/>
+    </Style>
+    <Style x:Key="PrimaryText" BasedOn="{StaticResource BaseText}" TargetType="{x:Type TextBlock}">
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
+    <Style x:Key="HeaderText" BasedOn="{StaticResource BaseText}" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="#262729"/>
+        <Setter Property="FontSize" Value="30"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
 
+    <Style x:Key="BaseFunctionButton" BasedOn="{StaticResource BaseButtonStyle}" TargetType="{x:Type Button}">
+        <Setter Property="Margin" Value="{StaticResource Margin1}"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="FontFamily" Value="Inter"/>
+    </Style>
+    
     <Style x:Key="CircleButton" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
         <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>

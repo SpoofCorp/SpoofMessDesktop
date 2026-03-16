@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SpoofMess.Models;
 
 namespace SpoofMess.ViewModels;
 
-public partial class SettingsViewModel : ObservableObject
+public partial class SettingsViewModel(UserInfo userInfo) : ObservableObject
 {
+    public UserInfo UserInfo { get; set; } = userInfo;
+
     [RelayCommand]
     private void Profile()
     {
