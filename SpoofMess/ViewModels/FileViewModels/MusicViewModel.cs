@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NAudio.Wave;
+using SpoofMess.Models;
 using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.FileViewModels;
@@ -19,26 +20,25 @@ public partial class MusicViewModel : FileViewModel, IDisposable
     }
 
     [RelayCommand]
-    private void PlayResume()
+    private void PlayResume(FileObject file)
     {
         if (_init)
             _audioService.PauseResume();
-        else if (File.Path is not null && System.IO.File.Exists(File.Path))
+        else if (file.Path is not null && System.IO.File.Exists(file.Path))
         {
-            _audioService.Play(File.Path);
+            _audioService.Play(file.Path);
             _init = true;
         }
         IsPlayeed = _audioService.IsPlayeed;
     }
-    public void OutputDevice_PlaybackStopped(object? sender, StoppedEventArgs e)
-    {
-        IsPlayeed = _init = false;
-    }
 
     public void Dispose()
     {
-        if (_audioService is not null && _audioService.OutputDevice_PlaybackStopped is not null)
-            _audioService.OutputDevice_PlaybackStopped -= OutputDevice_PlaybackStopped;
+        _audioService?.OutputDevice_PlaybackStopped -= OutputDevice_PlaybackStopped;
         GC.SuppressFinalize(this);
+    }
+    public void OutputDevice_PlaybackStopped(object? sender, StoppedEventArgs e)
+    {
+        IsPlayeed = _init = false;
     }
 }

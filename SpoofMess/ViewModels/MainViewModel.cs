@@ -8,8 +8,10 @@ using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.Setters;
+using SpoofMess.ViewModels.FileViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace SpoofMess.ViewModels;
 
@@ -22,9 +24,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IChatUserService _chatUserService;
     private readonly IChatService _chatService;
     private readonly INavigationService _navigationService;
-
+    ParallelOptions options = new()
+    {
+        MaxDegreeOfParallelism = 10,
+        TaskScheduler = TaskScheduler.Default
+    };
     [ObservableProperty]
     private Chat? _selectedChat;
+    [ObservableProperty]
+    private object? _additionalView;
     public ObservableCollection<Chat> Chats { get; set; }
 
     public MainViewModel(
@@ -77,24 +85,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             ChatId = SelectedChat.Id,
             Text = string.Empty
         };
-        List<Attachment> attachments = [];
-        await Parallel.ForEachAsync(request.Attachments, async (file, cancelationToken) =>
-        {
-            Result<byte[]> result = await _attachmentService.SendAttachment(file.File);
-            if (!result.Success)
-                for (int i = 0; i < 5; i++)
-                {
-                    result = await _attachmentService.SendAttachment(file.File);
-                    if (result.Success)
-                    {
-                        attachments.Add(new(result.Body!, file.File.Name!, string.Empty, file.File.Size));
-                        break;
-                    }
-                }
-            else
-                attachments.Add(new(result.Body!, file.File.Name!, string.Empty, file.File.Size));
-        });
-        await _notificationApiService.SendMessage(request.Set(attachments));
+        Result<List<Attachment>> attachments = await _attachmentService.SendAttachments(request, token.Token);
+        if (attachments.Success)
+            await _notificationApiService.SendMessage(request.Set(attachments.Body!));
     }
 
     [RelayCommand]
@@ -108,13 +101,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Unattach(FileObject fileObject)
     {
-
+        if (SelectedChat is null) return;
+        _attachmentService.Unattach(fileObject, SelectedChat.CurrentMessage);
     }
 
     [RelayCommand]
     private void ShowSettings()
     {
-        
+        AdditionalView = _navigationService.GetSettingsViewModel();
     }
 
     public void Dispose()
