@@ -10,10 +10,11 @@ public interface IAttachmentService
     public Result Attach(
         MessageModel message);
     public void Unattach(
-        FileObject file,
+        FileObject fileViewModel,
         MessageModel message);
 
     public Task UploadAttachments(MessageModel message, List<Attachment> attachments);
-    public Task<Result<byte[]>> SendAttachment(FileObject file);
     public FileViewModel GetViewModel(FileObject file);
+    public Task<Result<List<Attachment>>> SendAttachments(MessageModel message, CancellationToken token = default);
+    public Task<Result<byte[]>> SendAttachment(FileObject file, CancellationToken token = default);
 }

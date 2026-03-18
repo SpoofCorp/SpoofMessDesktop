@@ -96,14 +96,17 @@ public class FileService(IFileClassifier fileClassifier) : IFileService
         FileExtension2 extension2 = _fileClassifier.GetExtension(path);
         if (extension2 == default)
             return Result<FileObject>.NotFoundResult("Unexpected file format");
-
-        return Result<FileObject>.OkResult(new()
+        FileObject file = new()
         {
             ExtensionId = extension2.Id,
             Name = Path.GetFileName(path),
             Path = path,
-            Size = extension2.Size
-        });
+            Size = extension2.Size,
+        };
+        if(Enum.TryParse(extension2.Type.ToString(), true, out FileCategory category))
+            file.Category = category;
+
+        return Result<FileObject>.OkResult(file);
     }
 
     public string ToPrettySize(long bytes)

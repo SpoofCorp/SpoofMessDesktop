@@ -21,6 +21,8 @@ public class AudioService : IAudioService
             _outputDevice = new();
             _outputDevice.PlaybackStopped += OutputDevice_PlaybackStopped;
         }
+        else
+            _outputDevice.Stop();
 
         _reader?.Dispose();
         _reader = new(path);

@@ -1,4 +1,5 @@
 ﻿using SpoofMess.Models;
+using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
 
 namespace SpoofMess.Services;
@@ -12,4 +13,6 @@ public interface INavigationService
     public ImageViewModel GetImageViewModel(FileObject file);
     public MusicViewModel GetMusicViewModel(FileObject file);
     public FileViewModel GetFileViewModel(FileObject file);
+    public SettingsViewModel GetSettingsViewModel();
+    public ProfileViewModel GetProfileViewModel();
 }

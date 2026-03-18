@@ -32,32 +32,40 @@ public class MessageService(
     public async Task LoadSkippedMesssages(DateTime after)
     {
         Result<List<MessageDTO>> chats = await _messageApiService.GetSkippedMessages(after);
-        if (chats.Success)
+        while (chats.Success && chats.Body?.Count > 0)
         {
-            await Parallel.ForEachAsync(chats.Body!, async (messageDTO, cancelationToken) =>
+            chats = await _messageApiService.GetSkippedMessages(after);
+            if (chats.Success)
             {
-                MessageModel message = messageDTO.Set();
-                Chat? chat = await _chatService.Get(messageDTO.ChatId);
-                if (chat is null)
-                    return;
-                AddMessage(message, chat);
-                Task userTask = Task.Run(async () =>
+                await Parallel.ForEachAsync(chats.Body!, async (messageDTO, cancelationToken) =>
                 {
-                    User? user = await _userService.Get(message.User!.Login);
-                    if (user is null)
+                    MessageModel message = messageDTO.Set();
+                    Chat? chat = await _chatService.Get(messageDTO.ChatId);
+                    if (chat is null)
                         return;
-
-                    App.Current.Dispatcher.Invoke(() =>
+                    AddMessage(message, chat);
+                    Task userTask = Task.Run(async () =>
                     {
-                        message.User = user;
-                    });
-                }, cancelationToken);
-                Task uploadTask = _attachmentService.UploadAttachments(
-                    message,
-                    messageDTO.Attachments);
-                await Task.WhenAll(userTask, uploadTask);
-            });
-            GC.Collect();
+                        User? user = await _userService.Get(message.User!.Login);
+                        if (user is null)
+                            return;
+
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            message.User = user;
+                        });
+                    }, cancelationToken);
+                    Task uploadTask = _attachmentService.UploadAttachments(
+                        message,
+                        messageDTO.Attachments);
+                    await Task.WhenAll(userTask, uploadTask);
+                    if(message.SentAt > after)
+                        after = message.SentAt;
+                });
+                GC.Collect();
+            }
+            if (chats.Body!.Count < 50)
+                break;
         }
     }
 

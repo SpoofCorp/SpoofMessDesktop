@@ -19,8 +19,9 @@ public class NavigationService(
 
     public void ShowEntryView()
     {
-        ShowMainWindow<EntryWindow, EntryViewModel>();
+        SetMainWindow<EntryWindow, EntryViewModel>();
         GetAuthorizationViewModel();
+        _currentMainWindow.Show();
     }
 
     public void ShowMainView() =>
@@ -42,7 +43,7 @@ public class NavigationService(
     private TFileViewModel GetFileViewModel<TFileViewModel>(FileObject file) where TFileViewModel : FileViewModel
     {
         TFileViewModel imageViewModel = GetViewModel<TFileViewModel>();
-        imageViewModel.File = file;
+        imageViewModel.Files.Add(file);
         return imageViewModel;
     }
 
@@ -72,7 +73,18 @@ public class NavigationService(
         view.Show();
         _currentMainWindow = view;
     }
+    private void SetMainWindow<TView, TViewModel>() where TView : Window where TViewModel : class
+    {
+        TView view = GetView<TView, TViewModel>();
+        _currentMainWindow?.Close();
+        _currentMainWindow = view;
+    }
 
     public FileViewModel GetFileViewModel(FileObject file) =>
         GetFileViewModel<FileViewModel>(file);
+
+    public SettingsViewModel GetSettingsViewModel() =>
+        GetViewModel<SettingsViewModel>();
+    public ProfileViewModel GetProfileViewModel() =>
+        GetViewModel<ProfileViewModel>();
 }

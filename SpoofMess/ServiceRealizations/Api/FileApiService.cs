@@ -19,24 +19,24 @@ public class FileApiService(
     {
         throw new NotImplementedException();
     }
-    public async Task<Result<Stream>> Upload(byte[] token)
+    public async Task<Result<Stream>> Upload(byte[] token, CancellationToken ct = default)
     {
-        return await PostStreamAsync("/upload", token);
+        return await PostStreamAsync("/upload", token, ct);
     }
 
 
-    public async Task<Result> ExistsL1L2(FingerprintExistL1L2 l1L2)
+    public async Task<Result> ExistsL1L2(FingerprintExistL1L2 l1L2, CancellationToken token = default)
     {
-        return await PostAsync("/first-check", l1L2);
+        return await PostAsync("/first-check", l1L2, token);
     }
 
-    public async Task<Result<byte[]>> ExistsL3(FingerprintExistL3 l3)
+    public async Task<Result<byte[]>> ExistsL3(FingerprintExistL3 l3, CancellationToken token = default)
     {
-        return await PostAsync<FingerprintExistL3, byte[]>("/full-check", l3);
+        return await PostAsync<FingerprintExistL3, byte[]>("/full-check", l3, token);
     }
 
-    public async Task<Result<byte[]>> Save(MultipartFormDataContent content)
+    public async Task<Result<byte[]>> Save(MultipartFormDataContent content, CancellationToken token = default)
     {
-        return await PostAsync<byte[]>("/save", content);
+        return await PostAsync<byte[]>("/save", content, token);
     }
 }
