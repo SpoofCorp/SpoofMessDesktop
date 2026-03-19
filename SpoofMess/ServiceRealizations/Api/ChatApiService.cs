@@ -1,5 +1,6 @@
 ﻿using AdditionalHelpers.Services;
 using CommonObjects.DTO;
+using CommonObjects.Requests;
 using CommonObjects.Results;
 using SpoofMess.Services.Api;
 using System.Net.Http;
@@ -19,5 +20,12 @@ class ChatApiService(
         if (result.Success)
             return result;
         return Result<ChatDTO>.ErrorResult("");
+    }
+
+    public async Task<Result<ChatDTO>> Create(CreateChatRequest chat, CancellationToken token)
+    {
+        Result<ChatDTO> chatResult = await PostAsync<CreateChatRequest, ChatDTO>("/CreateChat", chat, token);
+
+        return chatResult;
     }
 }

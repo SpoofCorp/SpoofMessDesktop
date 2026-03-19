@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="SpoofMess.Views.CreateGroupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ve="clr-namespace:SpoofMess.ViewElements" 
+             xmlns:local="clr-namespace:SpoofMess.Views"
+             mc:Ignorable="d">
+    <Grid RowDefinitions="auto auto auto auto">
+        <ve:InputTextBox Holder="Name" Grid.Row="0" Text="{Binding Chat.Name}"/>
+        <ve:InputTextBox Holder="Unique name" Grid.Row="1" x:Name="UniqueName" Text="{Binding Chat.UniqueName}"/>
+        <CheckBox Content="Public" Grid.Row="2"  FontSize="25" IsChecked="{Binding Chat.IsPublic}"/>
+        <Button Grid.Row="3" Content="Create" Command="{Binding CreateCommand}" Style="{DynamicResource FunctionButton}"/>
+    </Grid>
+</UserControl>

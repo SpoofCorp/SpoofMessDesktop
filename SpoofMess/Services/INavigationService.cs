@@ -15,4 +15,5 @@ public interface INavigationService
     public FileViewModel GetFileViewModel(FileObject file);
     public SettingsViewModel GetSettingsViewModel();
     public ProfileViewModel GetProfileViewModel();
+    public CreateGroupViewModel GetCreateGroupViewModel();
 }

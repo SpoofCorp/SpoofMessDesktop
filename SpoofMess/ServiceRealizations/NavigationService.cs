@@ -87,4 +87,6 @@ public class NavigationService(
         GetViewModel<SettingsViewModel>();
     public ProfileViewModel GetProfileViewModel() =>
         GetViewModel<ProfileViewModel>();
+    public CreateGroupViewModel GetCreateGroupViewModel() =>
+        GetViewModel<CreateGroupViewModel>();
 }

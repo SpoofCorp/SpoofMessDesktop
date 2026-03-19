@@ -8,10 +8,8 @@ using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.Setters;
-using SpoofMess.ViewModels.FileViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace SpoofMess.ViewModels;
 
@@ -24,11 +22,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IChatUserService _chatUserService;
     private readonly IChatService _chatService;
     private readonly INavigationService _navigationService;
-    ParallelOptions options = new()
-    {
-        MaxDegreeOfParallelism = 10,
-        TaskScheduler = TaskScheduler.Default
-    };
+
     [ObservableProperty]
     private Chat? _selectedChat;
     [ObservableProperty]
@@ -96,6 +90,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (SelectedChat is null) return;
 
         _attachmentService.Attach(SelectedChat.CurrentMessage);
+    }
+
+    [RelayCommand]
+    private void ShowCreateGroup()
+    {
+        AdditionalView = _navigationService.GetCreateGroupViewModel();
     }
 
     [RelayCommand]
