@@ -15,11 +15,11 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <DockPanel Margin="10 0">
-            <ve:FunctionButton Content="" DockPanel.Dock="Right"/>
-            <Button Style="{DynamicResource BaseFunctionButton}" Padding="0 5 0 0" Margin="0" Content="❌" DockPanel.Dock="Right"/>
+            <Button Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right"/>
+            <Button Style="{DynamicResource MinimalButton}" Content="➖" DockPanel.Dock="Right"/>
             <TextBlock Text="Settings" Style="{DynamicResource PrimaryText}" FontWeight="Bold"/>
         </DockPanel>
-        <Grid Height="100" Grid.Row="1" Background="{StaticResource Medium1}">
+        <Grid Height="100" Grid.Row="1" Background="{StaticResource SecondWhite}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
@@ -34,7 +34,7 @@
             </StackPanel>
             <Button Content="QR" Grid.Column="2"/>
         </Grid>
-        <StackPanel Grid.Row="3" Background="{StaticResource Medium1}">
+        <StackPanel Grid.Row="3" Background="{StaticResource SecondWhite}">
             <ve:FunctionButton Text="Профиль" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
             <ve:FunctionButton Text="Уведомления и звуки" Icon="🔔" Alignment="Stretch" Command="{Binding NotificationsCommand}"/>
             <ve:FunctionButton Text="Приватность и безопастность" Icon="🔒" Alignment="Stretch" Command="{Binding PrivacyCommand}"/>

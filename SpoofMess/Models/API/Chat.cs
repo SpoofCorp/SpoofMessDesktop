@@ -18,6 +18,8 @@ public partial class Chat : ObservableObject
     private string? _name;
     [ObservableProperty]
     private string _uniqueName = string.Empty;
+    [ObservableProperty]
+    private bool _isPublic;
 
     public MessageModel? LastMessage => Messages.LastOrDefault();
     public int ChatTypeId { get; set; }

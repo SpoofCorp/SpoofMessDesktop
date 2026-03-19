@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
         xmlns:views="clr-namespace:SpoofMess.Views"
         mc:Ignorable="d"
-        Title="EntryWindow" Height="450" Width="800" Background="{DynamicResource PrimaryBack}">
+        Title="EntryWindow" Height="450" Width="800" Background="{DynamicResource SecondWhite}">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:RegistrationViewModel}">
             <views:RegistrationView />

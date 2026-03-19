@@ -24,6 +24,14 @@
                  Text="{Binding ElementName=InputTextBoxView, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                  TextChanged="InputTextChanged" 
                  x:Name="Input" 
-                 Style="{DynamicResource InputBox}"/>
+                 Style="{DynamicResource InputBox}">
+            <TextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="ApplicationCommands.Cut" Header="Вырезать"/>
+                    <MenuItem Command="ApplicationCommands.Copy" Header="Копировать"/>
+                    <MenuItem Command="ApplicationCommands.Paste" Header="Вставить"/>
+                </ContextMenu>
+            </TextBox.ContextMenu>
+        </TextBox>
     </Grid>
 </UserControl>

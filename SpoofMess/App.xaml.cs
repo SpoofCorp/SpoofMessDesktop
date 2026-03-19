@@ -43,6 +43,7 @@ public partial class App : Application
 
         services.AddScoped<EntryViewModel>();
         services.AddScoped<SettingsViewModel>();
+        services.AddScoped<CreateGroupViewModel>();
         services.AddScoped<ProfileViewModel>();
         services.AddSingleton<IFileClassifier, FileClassifier>();
         services.AddSingleton<IFileService, FileService>();
