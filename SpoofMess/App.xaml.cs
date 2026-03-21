@@ -1,7 +1,8 @@
 ﻿using AdditionalHelpers.ServiceRealizations;
 using AdditionalHelpers.Services;
 using Microsoft.Extensions.DependencyInjection;
-using SpoofFileInfo;
+using SpoofFileParser;
+using SpoofFileParser.FileMetadataParser;
 using SpoofMess.Models;
 using SpoofMess.ServiceRealizations;
 using SpoofMess.ServiceRealizations.Api;
@@ -19,7 +20,9 @@ namespace SpoofMess;
 public partial class App : Application
 {
     private IServiceProvider? _serviceProvider;
-    protected override void OnStartup(StartupEventArgs e)
+
+
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
@@ -45,7 +48,15 @@ public partial class App : Application
         services.AddScoped<SettingsViewModel>();
         services.AddScoped<CreateGroupViewModel>();
         services.AddScoped<ProfileViewModel>();
-        services.AddSingleton<IFileClassifier, FileClassifier>();
+        ParserFactory factory = new([
+            new ImageMetadataParser(new() {
+                    ["jpeg"] = new(0, 2, 2, 2, true, [[0xFF, 0xC0], [0xFF, 0xC1], [0xFF, 0xC2]], 5),
+                    ["jpg"] = new(0, 2, 2, 2, true, [[0xFF, 0xC0], [0xFF, 0xC1], [0xFF, 0xC2]], 5),
+                    ["png"] = new(16, 4, 20, 4, true),
+                    ["bmp"] = new(18, 4, 22, 4, false),
+                    ["gif"] = new(6, 2, 8, 2, false),
+                })]);
+        services.AddSingleton<IFileClassifier>(new FileClassifier(factory));
         services.AddSingleton<IFileService, FileService>();
         services.AddSingleton<IFingerprintService, FingerprintService>();
         services.AddSingleton<IAttachmentService, AttachmentService>();
@@ -72,8 +83,13 @@ public partial class App : Application
         services.AddSingleton<MainView>();
 
         _serviceProvider = services.BuildServiceProvider();
-        INavigationService? navigationService = _serviceProvider.GetService<INavigationService>();
-        navigationService!.ShowEntryView();
+        IAuthService? authService = _serviceProvider.GetRequiredService<IAuthService>();
+        INavigationService? navigationService = _serviceProvider.GetRequiredService<INavigationService>();
+
+        if (await authService.Initialize())
+            navigationService!.ShowMainView();
+        else
+            navigationService!.ShowEntryView();
     }
 
     protected override void OnExit(ExitEventArgs e)

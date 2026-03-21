@@ -1,7 +1,7 @@
 ﻿using CommonObjects.Requests.Attachments;
 using CommonObjects.Results;
 using Microsoft.Win32;
-using SpoofFileInfo;
+using SpoofFileParser;
 using SpoofMess.Enums;
 using SpoofMess.Models;
 using SpoofMess.Services;
@@ -17,16 +17,16 @@ public class FileService(IFileClassifier fileClassifier) : IFileService
 
     private readonly static string _imageFilter = "Все изображения|*.jpg;*.jpeg;*.png;*.webp;*.heic;*.heif;*.bmp;*.gif;*.tiff;*.tif|JPEG файлы (*.jpg, *.jpeg)|*.jpg;*.jpeg|PNG файлы (*.png)|*.png|WebP файлы (*.webp)|*.webp|HEIC/HEIF файлы (*.heic, *.heif)|*.heic;*.heif|GIF файлы (*.gif)|*.gif|";
 
-    public string[]? GetFiles() => 
+    public string[]? GetFiles() =>
         GetMany();
 
-    public string? GetFile() => 
+    public string? GetFile() =>
         GetOnce();
 
     public string[]? GetImages() =>
         GetMany(_imageFilter);
 
-    public string? GetImage() => 
+    public string? GetImage() =>
         GetOnce(_imageFilter);
 
     private static string[]? GetMany(string? filter = null)
@@ -35,9 +35,9 @@ public class FileService(IFileClassifier fileClassifier) : IFileService
         {
             Multiselect = true,
         };
-        if(filter is not null)
+        if (filter is not null)
             fileDialog.Filter = filter;
-        if(fileDialog.ShowDialog() is true)
+        if (fileDialog.ShowDialog() is true)
             return fileDialog.FileNames;
 
         return null;
@@ -69,7 +69,7 @@ public class FileService(IFileClassifier fileClassifier) : IFileService
     public async Task Save(Stream input, FileObject file)
     {
         string directory = file.Path ?? Guid.NewGuid().ToString();
-        if(!Directory.Exists(directory))
+        if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
         string path = Path.Combine(directory, file.Name ?? "Undefined");
         file.Path = path;
@@ -103,7 +103,7 @@ public class FileService(IFileClassifier fileClassifier) : IFileService
             Path = path,
             Size = extension2.Size,
         };
-        if(Enum.TryParse(extension2.Type.ToString(), true, out FileCategory category))
+        if (Enum.TryParse(extension2.Type.ToString(), true, out FileCategory category))
             file.Category = category;
 
         return Result<FileObject>.OkResult(file);
@@ -120,5 +120,12 @@ public class FileService(IFileClassifier fileClassifier) : IFileService
             unitIndex++;
         }
         return $"{size:0.##} {Units[unitIndex]}";
+    }
+
+    public Stream? GetObjectFromFile(string filePath)
+    {
+        if (File.Exists(filePath))
+            return File.OpenRead(filePath);
+        return null;
     }
 }

@@ -36,6 +36,9 @@
     <Reference Include="SpoofFileInfo">
       <HintPath>..\..\SpoofFileInfo\SpoofFileInfo\bin\Debug\net10.0\SpoofFileInfo.dll</HintPath>
     </Reference>
+    <Reference Include="SpoofFileParser">
+      <HintPath>..\..\SpoofFileParser\SpoofFileInfo\bin\Debug\net10.0\SpoofFileParser.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

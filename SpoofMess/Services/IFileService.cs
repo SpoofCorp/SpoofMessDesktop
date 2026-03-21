@@ -26,4 +26,6 @@ public interface IFileService
     public MultipartFormDataContent GetStream(string path);
 
     public string ToPrettySize(long bytes);
+
+    public Stream? GetObjectFromFile(string filePath);
 }
