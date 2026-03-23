@@ -1,6 +1,5 @@
 ﻿using CommonObjects.DTO;
 using CommonObjects.Requests.Messages;
-using SpoofMess.Models;
 
 namespace SpoofMess.Services.Api;
 

@@ -10,8 +10,6 @@ using SpoofMess.ViewModels.FileViewModels;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using System.Windows.Forms;
-using static System.Net.WebRequestMethods;
 
 namespace SpoofMess.ServiceRealizations.Models;
 

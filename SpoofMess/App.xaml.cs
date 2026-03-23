@@ -13,6 +13,7 @@ using SpoofMess.Services.Models;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
 using SpoofMess.Views;
+using System.IO;
 using System.Windows;
 
 namespace SpoofMess;
@@ -56,7 +57,6 @@ public partial class App : Application
                     ["bmp"] = new(18, 4, 22, 4, false),
                     ["gif"] = new(6, 2, 8, 2, false),
                 })]);
-        services.AddSingleton<IFileClassifier>(new FileClassifier(factory));
         services.AddSingleton<IFileService, FileService>();
         services.AddSingleton<IFingerprintService, FingerprintService>();
         services.AddSingleton<IAttachmentService, AttachmentService>();
@@ -81,8 +81,13 @@ public partial class App : Application
         services.AddSingleton<RegistrationView>();
         services.AddSingleton<EntryWindow>();
         services.AddSingleton<MainView>();
+        IServiceProvider tempProvider = services.BuildServiceProvider();
+
+        ISerializer? serializer = tempProvider.GetRequiredService<ISerializer>();
+        services.AddSingleton<IFileClassifier>(new FileClassifier(factory, await serializer.Deserialize<ExtensionRoadMap[]>(File.OpenRead("startup\\FileExtensions.json"))));
 
         _serviceProvider = services.BuildServiceProvider();
+
         IAuthService? authService = _serviceProvider.GetRequiredService<IAuthService>();
         INavigationService? navigationService = _serviceProvider.GetRequiredService<INavigationService>();
 

@@ -1,9 +1,7 @@
 ﻿using SpoofMess.Models;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 
 namespace SpoofMess.ViewElements;
 

@@ -1,18 +1,13 @@
 ﻿using CommonObjects.DTO;
 using CommonObjects.Requests.Messages;
 using Microsoft.AspNetCore.SignalR.Client;
-using SpoofMess.Models;
-using SpoofMess.ServiceRealizations.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
-using SpoofMess.Services.Models;
 
 namespace SpoofMess.ServiceRealizations.Api;
 
 class NotificationApiService : INotificationApiService, IAsyncDisposable
 {
-    private readonly IAttachmentService _attachmentService;
-    private readonly IFileService _fileService;
     private readonly IAuthService _authService;
     private readonly HubConnection _connection;
 
@@ -22,14 +17,10 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
 
 
     public NotificationApiService(
-            IAttachmentService attachmentService,
-            IAuthService authService,
-            IFileService fileService
+            IAuthService authService
         )
     {
-        _attachmentService = attachmentService;
         _authService = authService;
-        _fileService = fileService;
         _connection = new HubConnectionBuilder()
             .WithUrl("https://localhost:7146/chat", options =>
             {
