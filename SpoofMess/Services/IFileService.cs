@@ -11,19 +11,21 @@ public interface IFileService
 {
     public string[]? GetFiles();
 
-    public string? GetFile();
+    public Result<FileObject> GetFile();
 
     public string[]? GetImages();
 
-    public string? GetImage();
+    public Result<FileObject> GetImage();
 
     public FileCategory GetCategory(Attachment attachment);
 
-    public Task Save(Stream input, FileObject file);
+    public Task Save(FileObject file);
 
     public Result<FileObject> GetFileInfo();
 
-    public MultipartFormDataContent GetStream(string path);
+    public Result<List<FileObject>> GetFilesInfo();
+
+    public MultipartFormDataContent? GetStream(string? path);
 
     public string ToPrettySize(long bytes);
 
