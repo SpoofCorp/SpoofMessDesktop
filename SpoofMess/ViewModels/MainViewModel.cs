@@ -9,7 +9,6 @@ using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.Setters;
 using System.Collections.ObjectModel;
-using System.Windows;
 
 namespace SpoofMess.ViewModels;
 
@@ -18,6 +17,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly CancellationTokenSource token = new();
     private readonly IMessageService _messageService;
     private readonly INotificationApiService _notificationApiService;
+    private readonly INotificationService _notificationService;
     private readonly IAttachmentService _attachmentService;
     private readonly IChatUserService _chatUserService;
     private readonly IChatService _chatService;
@@ -30,6 +30,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public ObservableCollection<Chat> Chats { get; set; }
 
     public MainViewModel(
+        INotificationService notificationService,
         INotificationApiService notificationApiService,
         IMessageService messageService,
         IAttachmentService attachmentService,
@@ -37,6 +38,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         INavigationService navigationService,
         IChatService chatService)
     {
+        _notificationService = notificationService;
         _notificationApiService = notificationApiService;
         _chatUserService = chatUserService;
         _attachmentService = attachmentService;
@@ -58,7 +60,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
+            _notificationService.ShowToast(new() { Text = ex.Message, Type = Enums.NotificationType.Error });
         }
     }
 
@@ -81,7 +83,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
         };
         Result<List<Attachment>> attachments = await _attachmentService.SendAttachments(request, token.Token);
         if (attachments.Success)
-            await _notificationApiService.SendMessage(request.Set(attachments.Body!));
+            try
+            {
+                await _notificationApiService.SendMessage(request.Set(attachments.Body!));
+            }
+            catch(Exception ex)
+            {
+                _notificationService.ShowToast(new() { Text = ex.Message, Type = Enums.NotificationType.Error });
+            }
     }
 
     [RelayCommand]
