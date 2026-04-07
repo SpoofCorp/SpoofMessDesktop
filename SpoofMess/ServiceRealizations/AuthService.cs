@@ -24,7 +24,7 @@ public class AuthService(
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private DateTime ValidTo;
     protected override string BaseUrl => "https://localhost:7217/api/v1/Entrance";
-    private string BackupPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SessionData.json");
+    private static string BackupPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SpoofMess", "SessionData.json");
     private readonly IFileService _fileService = fileService;
     private readonly UserInfo UserInfo = userInfo;
 
@@ -80,10 +80,10 @@ public class AuthService(
         return result.Success;
     }
 
-    public void SetTokens(UserAuthorizeResponse response)
+    public async Task SetTokens(UserAuthorizeResponse response)
     {
         UserInfo.Authorize = response;
-        File.WriteAllText(BackupPath, _serializer.Serialize(UserInfo));
+        await Save();
 
         JwtSecurityTokenHandler jwt = new();
         JwtSecurityToken token = jwt.ReadJwtToken(UserInfo.Authorize.AccessToken);
@@ -96,5 +96,13 @@ public class AuthService(
             return false;
 
         return ValidTo >= DateTime.UtcNow.AddSeconds(15);
+    }
+
+    public async Task Save()
+    {
+        string path = Path.GetDirectoryName(BackupPath)!;
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+        File.WriteAllText(BackupPath, _serializer.Serialize(UserInfo));
     }
 }

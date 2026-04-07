@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:SpoofMess.Views"
         xmlns:api="clr-namespace:SpoofMess.Models.API"
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
-        mc:Ignorable="d"
-        Title="CentralView" Height="450" Width="800"
+        mc:Ignorable="d" Height="{Binding UserInfo.Height, Mode=TwoWay}" Width="{Binding UserInfo.Width, Mode=TwoWay}"
         d:DataContext="{d:DesignInstance Type=vm:CentralViewModel, IsDesignTimeCreatable=True}">
     <Grid>
         <ContentPresenter Content="{Binding View}" x:Name="View" Width="auto" Height="auto">

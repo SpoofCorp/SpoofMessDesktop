@@ -21,7 +21,7 @@ namespace SpoofMess;
 
 public partial class App : Application
 {
-    private IServiceProvider? _serviceProvider;
+    private IServiceProvider _serviceProvider;
 
 
     protected override async void OnStartup(StartupEventArgs e)
@@ -103,21 +103,24 @@ public partial class App : Application
         services.AddSingleton<CentralView>();
         IServiceProvider tempProvider = services.BuildServiceProvider();
 
-        ISerializer? serializer = tempProvider.GetRequiredService<ISerializer>();
+        ISerializer serializer = tempProvider.GetRequiredService<ISerializer>();
         services.AddSingleton<IFileClassifier>(new FileClassifier(factory, await serializer.Deserialize<ExtensionRoadMap[]>(File.OpenRead("startup\\FileExtensions.json"))));
 
         _serviceProvider = services.BuildServiceProvider();
 
-        IAuthService? authService = _serviceProvider.GetRequiredService<IAuthService>();
-        INavigationService? navigationService = _serviceProvider.GetRequiredService<INavigationService>();
+        IAuthService authService = _serviceProvider.GetRequiredService<IAuthService>();
+        INavigationService navigationService = _serviceProvider.GetRequiredService<INavigationService>();
         if (await authService.Initialize())
             navigationService!.ShowCentralViewWithMain();
         else
             navigationService!.ShowCentralViewWithAuthorization();
     }
 
-    protected override void OnExit(ExitEventArgs e)
+    protected override async void OnExit(ExitEventArgs e)
     {
+        IAuthService authService = _serviceProvider.GetRequiredService<IAuthService>();
+
+        await authService.Save();
         base.OnExit(e);
     }
 }
