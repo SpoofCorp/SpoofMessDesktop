@@ -1,13 +1,9 @@
-﻿using CommonObjects.DTO;
-using CommonObjects.Requests.Attachments;
-using CommonObjects.Results;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
-using SpoofMess.Setters;
 using System.Collections.ObjectModel;
 
 namespace SpoofMess.ViewModels;
@@ -44,9 +40,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _attachmentService = attachmentService;
         _messageService = messageService;
         _navigationService = navigationService;
-        _notificationApiService.OnMessageReceived += OnMessageReceived;
+        _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
+        _notificationApiService.OnMessageEdited += _messageService.EditHandle;
         //It's so bad...
         LoadSkippedData();
+        ServiceRealizations.EventHandler.OnDelete += _messageService.DeleteLocal;
+        ServiceRealizations.EventHandler.OnEdit += _messageService.StartEdit;
         _chatService = chatService;
         Chats = _chatService.Chats;
     }
@@ -64,33 +63,18 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private async void OnMessageReceived(MessageDTO obj)
-    {
-        await _messageService.UploadMessage(obj);
-    }
 
     [RelayCommand]
     private async Task Send()
     {
-        if (SelectedChat is null) return;
-        Chat currentChat = SelectedChat;
-        MessageModel request = SelectedChat.CurrentMessage;
-        request.ChatId = SelectedChat.Id;
-        currentChat.CurrentMessage = new()
+        try
         {
-            ChatId = SelectedChat.Id,
-            Text = string.Empty
-        };
-        Result<List<Attachment>> attachments = await _attachmentService.SendAttachments(request, token.Token);
-        if (attachments.Success)
-            try
-            {
-                await _notificationApiService.SendMessage(request.Set(attachments.Body!));
-            }
-            catch(Exception ex)
-            {
-                _notificationService.ShowToast(new() { Text = ex.Message, Type = Enums.NotificationType.Error });
-            }
+            await _messageService.SendMessage(SelectedChat);
+        }
+        catch (Exception ex)
+        {
+            _notificationService.ShowToast(new() { Text = ex.Message, Type = Enums.NotificationType.Error });
+        }
     }
 
     [RelayCommand]
@@ -118,6 +102,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void ShowSettings()
     {
         AdditionalView = _navigationService.GetSettingsViewModel();
+    }
+
+    [RelayCommand]
+    private async Task StopEdit(MessageModel message)
+    {
+        await _messageService.StopEdit(message, SelectedChat);
     }
 
     public void Dispose()
