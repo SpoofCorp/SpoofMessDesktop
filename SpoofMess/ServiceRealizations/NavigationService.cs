@@ -17,6 +17,11 @@ public class NavigationService(
     private CentralViewModel _currentViewModel = null!;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
+    public void OpenWindow()
+    {
+        _currentMainWindow.Show();
+        _currentMainWindow.Activate();
+    }
     public void ShowCentralView()
     {
         _currentMainWindow = _serviceProvider.GetRequiredService<CentralView>();
@@ -43,14 +48,22 @@ public class NavigationService(
     public FileViewModel GetFileViewModel(FileObject file) =>
         GetFileViewModel<FileViewModel>(file);
 
-    public SettingsViewModel GetSettingsViewModel() =>
-        _serviceProvider.GetRequiredService<SettingsViewModel>();
+    public SettingsViewModel GetSettingsViewModel(Action close)
+    {
+        SettingsViewModel viewModel = _serviceProvider.GetRequiredService<SettingsViewModel>();
+        viewModel.SetClose(close);
+        return viewModel;
+    }
 
     public ProfileViewModel GetProfileViewModel() =>
         _serviceProvider.GetRequiredService<ProfileViewModel>();
 
-    public CreateGroupViewModel GetCreateGroupViewModel() =>
-        _serviceProvider.GetRequiredService<CreateGroupViewModel>();
+    public CreateGroupViewModel GetCreateGroupViewModel(Action close)
+    {
+        CreateGroupViewModel viewModel = _serviceProvider.GetRequiredService<CreateGroupViewModel>();
+        viewModel.SetClose(close);
+        return viewModel;
+    }
 
     public MusicViewModel GetMusicViewModel(FileObject file) =>
         GetFileViewModel<MusicViewModel>(file);
@@ -59,7 +72,7 @@ public class NavigationService(
         GetFileViewModel<ImageViewModel>(file);
 
 
-    private TFileViewModel GetFileViewModel<TFileViewModel>(FileObject file) where TFileViewModel : FileViewModel
+    private TFileViewModel GetFileViewModel<TFileViewModel>(FileObject file) where TFileViewModel : ObjectViewModel
     {
         TFileViewModel imageViewModel = _serviceProvider.GetRequiredService<TFileViewModel>();
         imageViewModel.Files.Add(file);
