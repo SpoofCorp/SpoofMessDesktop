@@ -12,19 +12,19 @@
             Style="{StaticResource PlaceHolder}" 
             x:Name="HolderText" 
             IsHitTestVisible="False" 
+            Panel.ZIndex="1"
             Text="{Binding ElementName=InputTextBoxView, Path=Holder}"
             Background="Transparent"/>
         <TextBox
-                BorderBrush="Transparent"
-                Height="auto"
-                 Background="Transparent"
-                 VerticalScrollBarVisibility="Auto" 
-                 TextWrapping="{Binding ElementName=InputTextBoxView, Path=TextWrapping}" 
-                 AcceptsReturn="{Binding ElementName=InputTextBoxView, Path=AcceptsReturn}" 
-                 Text="{Binding ElementName=InputTextBoxView, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                 TextChanged="InputTextChanged" 
-                 x:Name="Input" 
-                 Style="{DynamicResource InputBox}">
+            BorderBrush="Transparent"
+            Height="auto"
+            VerticalScrollBarVisibility="Auto" 
+            TextWrapping="{Binding ElementName=InputTextBoxView, Path=TextWrapping}" 
+            AcceptsReturn="{Binding ElementName=InputTextBoxView, Path=AcceptsReturn}" 
+            Text="{Binding ElementName=InputTextBoxView, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+            TextChanged="InputTextChanged" 
+            x:Name="Input" 
+            Style="{DynamicResource InputBox}">
             <TextBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Command="ApplicationCommands.Cut" Header="Вырезать"/>

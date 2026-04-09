@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SpoofMess.ViewElements"
              mc:Ignorable="d" x:Name="QuestionTextButtonView">
     <StackPanel Orientation="Horizontal">
-        <TextBlock Style="{StaticResource PrimaryText}" Text="{Binding ElementName=QuestionTextButtonView, Path=Prefix}"/>
-        <Button Content="{Binding ElementName=QuestionTextButtonView, Path=CommandText}" Command="{Binding ElementName=QuestionTextButtonView, Path=Command}" Style="{StaticResource TextButton}"/>
+        <TextBlock Style="{StaticResource PrimaryText}" Padding="0 5 5 0" FontSize="{Binding FontSize, ElementName=Button}" Text="{Binding ElementName=QuestionTextButtonView, Path=Prefix}"/>
+        <Button Content="{Binding ElementName=QuestionTextButtonView, Path=CommandText}" x:Name="Button" FontSize="20" Command="{Binding ElementName=QuestionTextButtonView, Path=Command}" Style="{StaticResource TextButton}"/>
     </StackPanel>
 </UserControl>

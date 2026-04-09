@@ -1,0 +1,149 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:api="clr-namespace:SpoofMess.Models.API"
+                    xmlns:vm="clr-namespace:SpoofMess.ViewModels"
+                    xmlns:ve="clr-namespace:SpoofMess.ViewElements"
+                    xmlns:filevm="clr-namespace:SpoofMess.ViewModels.FileViewModels"
+                    xmlns:uc="clr-namespace:SpoofMess.ViewElements">
+    
+    <DataTemplate DataType="{x:Type vm:AuthorizationViewModel}">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Style="{StaticResource CardBorder}"/>
+            <Border CornerRadius="10" Background="White" Padding="10 20">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Авторизация" Style="{StaticResource HeaderText}" Grid.ColumnSpan="2"/>
+                    <uc:InputTextBox Holder="Логин" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
+                    <uc:InputPasswordBox WithShowing="Visible" Holder="Пароль" Grid.Row="2" Text="{Binding UserInfo.Password, Mode=TwoWay}"/>
+                    <Button Content="Вход" Command="{Binding EnterCommand}" Grid.Row="3" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="Впервые в SpoofMess?" Grid.Row="4" CommandText="Регистрация" Command="{Binding ChangeViewCommand}"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:RegistrationViewModel}">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Style="{StaticResource CardBorder}"/>
+            <Border CornerRadius="10" Background="White" Padding="10 20">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Регистрация" Style="{StaticResource HeaderText}"/>
+                    <uc:InputTextBox Holder="Логин" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
+                    <uc:InputTextBox Holder="Имя" Grid.Row="2" Text="{Binding UserInfo.User.Name}"/>
+                    <uc:InputPasswordBox Holder="Пароль" Grid.Row="3" Text="{Binding UserInfo.Password, Mode=TwoWay}"/>
+                    <Button Content="Зарегистрироваться" Command="{Binding RegistrationCommand}" Grid.Row="4" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="Уже есть аккаунт?" Grid.Row="5" CommandText="Вход" Command="{Binding ChangeViewCommand}"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+
+    <DataTemplate DataType="{x:Type filevm:ImageViewModel}">
+        <ItemsControl ItemsSource="{Binding Files}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border  Margin="1" ClipToBounds="True" Background="{DynamicResource SecondWhite}" CornerRadius="4">
+                        <Image >
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding Path}" 
+                                 CacheOption="OnLoad" 
+                                 DecodePixelWidth="300"/>
+                            </Image.Source>
+                        </Image>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ve:ImagePanel MaxWidth="300"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type filevm:MusicViewModel}">
+        <ItemsControl ItemsSource="{Binding Files}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Button Grid.RowSpan="2" Command="{Binding DataContext.PlayResumeCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource CircleButton}" TargetType="{x:Type Button}">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="10.5 10 10 10">
+                                                <Path Fill="#AA000000" Data="M 0,0 H 7 V 20 H 0 Z M 13,0 H 20 V 20 H 13 Z" />
+                                            </Viewbox>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DataContext.IsPlayeed, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" Value="False">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="12 10 7 10">
+                                                        <Path Fill="#AA000000" Data="M 0,0 L 20,10 L 0,20 Z" />
+                                                    </Viewbox>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Button.Background>
+                                <ImageBrush Opacity="0.6"/>
+                            </Button.Background>
+                        </Button>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding PrettySize}"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DataTemplate>
+    
+    
+    <DataTemplate DataType="{x:Type filevm:ObjectViewModel}">
+        <ItemsControl ItemsSource="{Binding Files}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="500" HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}"/>
+                        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding PrettySize}"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DataTemplate>
+</ResourceDictionary>

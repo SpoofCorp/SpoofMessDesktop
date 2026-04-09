@@ -51,10 +51,20 @@
                 </ContentControl.Style>
             </ContentControl>
             <StackPanel Margin="10 0" Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="{Binding UserInfo.Name}"/>
-                <TextBlock Text="{Binding UserInfo.Login}"/>
+                <TextBlock Text="{Binding UserInfo.User.Name}"/>
+                <TextBlock Text="{Binding UserInfo.User.Login}"/>
             </StackPanel>
-            <Button Content="QR" Grid.Column="2"/>
+            <Button Grid.Column="2" Style="{StaticResource MinimalButton}" Width="32" Height="32">
+                <Button.Content>
+                    <Image>
+                        <Image.Source>
+                            <BitmapImage UriSource="/Assets/qr.png" 
+                             CacheOption="OnLoad" 
+                             DecodePixelWidth="64"/>
+                        </Image.Source>
+                    </Image>
+                </Button.Content>
+            </Button>
         </Grid>
         <StackPanel Grid.Row="3" Background="{StaticResource SecondWhite}">
             <ve:FunctionButton Text="Профиль" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
