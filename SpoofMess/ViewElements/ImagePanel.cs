@@ -9,26 +9,51 @@ public class ImagePanel : Panel
 {
     protected override Size MeasureOverride(Size availableSize)
     {
-        double width = Math.Min(availableSize.Width, 300), 
-            height = 0;
+        double width = Math.Min(availableSize.Width, 300),
+            height = 0, currentHeight;
         int index = InternalChildren.Count % 3;
+
         List<UIElement> list = [.. InternalChildren.Cast<UIElement>()];
         if (index != 0)
+        {
             height += GetHeight2(list[..index], width);
+            foreach (UIElement element in list[..index])
+                element.Measure(new(width, height));
+        }
         for (; index < InternalChildren.Count; index += 3)
-            height += GetHeight2(list.Slice(index, 3), width);
-
+        {
+            currentHeight = GetHeight2(list.Slice(index, 3), width);
+            height += currentHeight;
+            foreach (UIElement element in list.Slice(index, 3))
+                element.Measure(new(width, currentHeight));
+        }
         return new Size(width, height);
     }
 
     private static double GetHeight2(List<UIElement> childrens, double width)
     {
-        double height = 1;
+        double height = 0, ratio; 
+        if (childrens.Count == 1)
+        {
+            var element = childrens[0];
+            if (element is FrameworkElement { DataContext: FileObject { Metadata: ImageMetadata m } })
+            {
+                ratio = (double)m.Width / m.Height;
+
+                if (ratio > 1.5) return width / 2;
+                if (ratio < 0.5) return 500;
+
+                return width / ratio;
+            }
+        }
         foreach (UIElement element in childrens)
             if (element is FrameworkElement { DataContext: FileObject { Metadata: ImageMetadata metadata } })
-                height += (double)metadata.Width / metadata.Height;
+            {
+                ratio = metadata.Height > 0 ?  (double)metadata.Width / metadata.Height : 1;
+                height += ratio;
+            }    
 
-        return width / height;
+        return height > 0 ? Math.Min(width / height, 500) : 0;
     }
 
     protected override Size ArrangeOverride(Size finalSize)
@@ -36,15 +61,15 @@ public class ImagePanel : Panel
         int count = InternalChildren.Count;
         if (count == 0)
             return finalSize;
-        int firstItems = count % 3, 
-            rowCount = count / 3, 
+        int firstItems = count % 3,
+            rowCount = count / 3,
             childIndex = 0;
 
         Rect rect;
         List<UIElement> list = [.. InternalChildren.Cast<UIElement>()];
         double height = GetHeight2(list[..firstItems], finalSize.Width),
-            itemWidth, 
-            currentX = 0, 
+            itemWidth,
+            currentX = 0,
             currentY = 0;
         for (int r = 0; r < firstItems; r++)
         {
@@ -74,6 +99,8 @@ public class ImagePanel : Panel
                     currentX += itemWidth;
                     InternalChildren[childIndex++].Arrange(rect);
                 }
+                else
+                    childIndex++;
             }
         }
         return finalSize;
