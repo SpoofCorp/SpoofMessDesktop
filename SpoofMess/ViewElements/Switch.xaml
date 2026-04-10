@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="SpoofMess.ViewElements.Switch"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SpoofMess.ViewElements"
+             mc:Ignorable="d" x:Name="Root">
+    <UserControl.Template>
+        <ControlTemplate TargetType="UserControl">
+            <Button Padding="5 0" HorizontalContentAlignment="Left" Focusable="False" Click="Button_Click" Style="{StaticResource MinimalButton}" Cursor="Hand">
+                <Grid Focusable="False" ColumnDefinitions="auto auto" Background="Transparent">
+
+                    <Border Focusable="False" Width="50" Height="20" x:Name="BackBorder" Style="{StaticResource CardBorder}" Background="{StaticResource ThirdWhite}"/>
+
+                    <Border Focusable="False" x:Name="Boulder" Width="30" Height="30" CornerRadius="15" 
+                            Background="White" BorderThickness="1" BorderBrush="Gray"
+                            HorizontalAlignment="Left" IsHitTestVisible="False">
+                        <Border.RenderTransform>
+                            <TranslateTransform x:Name="BallTransform" X="0"/>
+                        </Border.RenderTransform>
+                    </Border>
+                    <TextBlock Focusable="False" IsHitTestVisible="False" Grid.Column="1" Text="{Binding Path=Text, ElementName=Root}" VerticalAlignment="Center" Style="{StaticResource BaseText}" Margin="5 0 0 0"/>
+                </Grid>
+            </Button>
+            <ControlTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsChecked, ElementName=Root}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="BallTransform" 
+                                                 Storyboard.TargetProperty="X" 
+                                                 To="20" Duration="0:0:0.2"/>
+                                <ColorAnimation Storyboard.TargetName="BackBorder" 
+                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
+                                                To="{StaticResource SecondAccentColor}" Duration="0:0:0.2"/>
+                                <ColorAnimation Storyboard.TargetName="Boulder" 
+                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
+                                                To="{StaticResource ThirdAccentColor}" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="BallTransform" 
+                                                 Storyboard.TargetProperty="X" 
+                                                 To="0" Duration="0:0:0.2"/>
+                                <ColorAnimation Storyboard.TargetName="BackBorder" 
+                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
+                                                To="{StaticResource ThirdWhiteColor}" Duration="0:0:0.2"/>
+                                <ColorAnimation Storyboard.TargetName="Boulder" 
+                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
+                                                To="{StaticResource PrimaryWhiteColor}" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Template>
+</UserControl>
