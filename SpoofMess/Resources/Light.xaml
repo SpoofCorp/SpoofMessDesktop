@@ -48,6 +48,14 @@
     <SolidColorBrush x:Key="SecondWhite" Color="#F5F7FA"/>
     <SolidColorBrush x:Key="PrimaryWhite" Color="#FFFFFF"/>
 
+    <Color x:Key="ThirdWhiteColor">#E2E8F0</Color>
+    <Color x:Key="SecondWhiteColor">#F5F7FA</Color>
+    <Color x:Key="PrimaryWhiteColor">#FFFFFF</Color>
+
+    <Color x:Key="PrimaryAccentColor">#70B2FF</Color>
+    <Color x:Key="SecondAccentColor">#4D9EFF</Color>
+    <Color x:Key="ThirdAccentColor">#338BFF</Color>
+    
     <SolidColorBrush x:Key="PrimaryAccent" Color="#70B2FF"/>
     <SolidColorBrush x:Key="SecondAccent" Color="#4D9EFF"/>
     <SolidColorBrush x:Key="ThirdAccent" Color="#338BFF"/>
@@ -105,7 +113,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
-                    <Border Margin="10" Padding="0 5" Background="{StaticResource ThirdWhite}" CornerRadius="{StaticResource Corner1}">
+                    <Border Margin="10" Background="{StaticResource ThirdWhite}" CornerRadius="{StaticResource Corner1}">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="2"/>
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" Color="#999999" ShadowDepth="0" RenderingBias="Quality"/>
