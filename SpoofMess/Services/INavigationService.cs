@@ -1,6 +1,8 @@
-﻿using SpoofMess.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SpoofMess.Models;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
+using SpoofMess.ViewModels.Settings;
 
 namespace SpoofMess.Services;
 
@@ -16,7 +18,9 @@ public interface INavigationService
     public ImageViewModel GetImageViewModel(FileObject file);
     public MusicViewModel GetMusicViewModel(FileObject file);
     public FileViewModel GetFileViewModel(FileObject file);
-    public SettingsViewModel GetSettingsViewModel(Action close);
+    public SettingsViewModel GetSettingsViewModel(ObservableObject owner, Action close);
     public ProfileViewModel GetProfileViewModel();
-    public CreateGroupViewModel GetCreateGroupViewModel(Action close);
+    public CreateGroupViewModel GetCreateGroupViewModel(ObservableObject owner, Action close);
+    public AdvancedViewModel GetAdvancedViewModel(ObservableObject owner, Action close);
+    public ProfileViewModel GetProfileViewModel(ObservableObject owner, Action close);
 }

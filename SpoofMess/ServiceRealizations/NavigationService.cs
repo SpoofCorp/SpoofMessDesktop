@@ -4,6 +4,7 @@ using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
+using SpoofMess.ViewModels.Settings;
 using SpoofMess.Views;
 using System.Windows;
 
@@ -48,22 +49,21 @@ public class NavigationService(
     public FileViewModel GetFileViewModel(FileObject file) =>
         GetFileViewModel<FileViewModel>(file);
 
-    public SettingsViewModel GetSettingsViewModel(Action close)
-    {
-        SettingsViewModel viewModel = _serviceProvider.GetRequiredService<SettingsViewModel>();
-        viewModel.SetClose(close);
-        return viewModel;
-    }
+    public SettingsViewModel GetSettingsViewModel(ObservableObject owner, Action close) =>
+        GetAdditionalViewModel<SettingsViewModel>(owner, close);
+
+    public ProfileViewModel GetProfileViewModel(ObservableObject owner, Action close) =>
+        GetAdditionalViewModel<ProfileViewModel>(owner, close);
+
+
+    public AdvancedViewModel GetAdvancedViewModel(ObservableObject owner, Action close) =>
+        GetAdditionalViewModel<AdvancedViewModel>(owner, close);
 
     public ProfileViewModel GetProfileViewModel() =>
         _serviceProvider.GetRequiredService<ProfileViewModel>();
 
-    public CreateGroupViewModel GetCreateGroupViewModel(Action close)
-    {
-        CreateGroupViewModel viewModel = _serviceProvider.GetRequiredService<CreateGroupViewModel>();
-        viewModel.SetClose(close);
-        return viewModel;
-    }
+    public CreateGroupViewModel GetCreateGroupViewModel(ObservableObject owner, Action close) =>
+        GetAdditionalViewModel<CreateGroupViewModel>(owner, close);
 
     public MusicViewModel GetMusicViewModel(FileObject file) =>
         GetFileViewModel<MusicViewModel>(file);
@@ -77,6 +77,13 @@ public class NavigationService(
         TFileViewModel imageViewModel = _serviceProvider.GetRequiredService<TFileViewModel>();
         imageViewModel.Files.Add(file);
         return imageViewModel;
+    }
+
+    private TAdditionalViewModel GetAdditionalViewModel<TAdditionalViewModel>(ObservableObject owner, Action close) where TAdditionalViewModel : AdditionalViewModel
+    {
+        TAdditionalViewModel viewModel = _serviceProvider.GetRequiredService<TAdditionalViewModel>();
+        viewModel.Initialize(owner, close);
+        return viewModel;
     }
 
     private void ShowCentralViewWithViewModel<TViewModel>() where TViewModel : ObservableObject
