@@ -16,4 +16,13 @@ public partial class User : ObservableObject
     private string? _name;
     [ObservableProperty]
     private string _login = string.Empty;
+
+    public void Update(User user)
+    {
+        Id = user.Id;
+        Avatar = user.Avatar;
+        Avatars = user.Avatars;
+        Name = user.Name;
+        Login = user.Login;
+    }
 }

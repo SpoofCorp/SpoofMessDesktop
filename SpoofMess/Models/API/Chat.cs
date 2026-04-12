@@ -8,18 +8,21 @@ public partial class Chat : ObservableObject
 {
     public Chat()
     {
-        Messages.CollectionChanged += (sender, e) => 
+        Messages.CollectionChanged += (sender, e) =>
             OnPropertyChanged(nameof(LastMessage));
         CurrentMessage = new() { ChatId = Id };
     }
     [ObservableProperty]
     private MessageModel _currentMessage;
+    public MessageModel? _editedMessage;
     [ObservableProperty]
     private string? _name;
     [ObservableProperty]
     private string _uniqueName = string.Empty;
     [ObservableProperty]
     private bool _isPublic;
+    [ObservableProperty]
+    private FileObject _avatar = new() { Path = "D:\\Storage\\No_Cover.jpg", Category = Enums.FileCategory.Image };
 
     public double Position { get; set; }
 
