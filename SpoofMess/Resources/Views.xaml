@@ -2,10 +2,55 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:api="clr-namespace:SpoofMess.Models.API"
                     xmlns:vm="clr-namespace:SpoofMess.ViewModels"
+                    xmlns:st="clr-namespace:SpoofMess.ViewModels.Settings"
                     xmlns:ve="clr-namespace:SpoofMess.ViewElements"
                     xmlns:filevm="clr-namespace:SpoofMess.ViewModels.FileViewModels"
                     xmlns:uc="clr-namespace:SpoofMess.ViewElements">
-    
+
+
+    <DataTemplate DataType="{x:Type vm:CreateGroupViewModel}">
+        <Border Padding="10 10">
+            <Grid ColumnDefinitions="auto 20 auto" RowDefinitions="auto auto auto auto" MinWidth="200">
+                <ContentControl Grid.RowSpan="2" Width="70" Height="70">
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                                        <Grid>
+                                            <Border x:Name="Mask" 
+                                                    BorderThickness="1" 
+                                                    CornerRadius="70" 
+                                                    Background="White"
+                                                    BorderBrush="Gray" 
+                                                    Width="70" Height="70"/>
+
+                                            <Image Source="{Binding Chat.Avatar.Path}" Stretch="UniformToFill">
+                                                <Image.OpacityMask>
+                                                    <VisualBrush Visual="{Binding ElementName=Mask}"/>
+                                                </Image.OpacityMask>
+                                            </Image>
+                                            <Button x:Name="SetAvatarButton" Visibility="Collapsed" Background="#AA333333" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}" Command="{Binding SetAvatarCommand}"/>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="SetAvatarButton" Property="Visibility" Value="Visible"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+                <ve:InputTextBox Holder="Name" Grid.Column="2" Grid.Row="0" Text="{Binding Chat.Name}"/>
+                <ve:InputTextBox Holder="Unique name" Grid.Column="2" Grid.Row="1" x:Name="UniqueName" Text="{Binding Chat.UniqueName}"/>
+                <ve:Switch Text="Public" Grid.Column="2" Grid.Row="2"  FontSize="25" IsChecked="{Binding Chat.IsPublic}"/>
+                <Button Grid.Column="2" Grid.Row="3" Content="Create" Command="{Binding CreateCommand}" Style="{DynamicResource FunctionButton}"/>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type vm:AuthorizationViewModel}">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border Style="{StaticResource CardBorder}"/>
@@ -18,11 +63,11 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Авторизация" Style="{StaticResource HeaderText}" Grid.ColumnSpan="2"/>
-                    <uc:InputTextBox Holder="Логин" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
-                    <uc:InputPasswordBox WithShowing="Visible" Holder="Пароль" Grid.Row="2" Text="{Binding UserInfo.Password, Mode=TwoWay}"/>
-                    <Button Content="Вход" Command="{Binding EnterCommand}" Grid.Row="3" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
-                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="Впервые в SpoofMess?" Grid.Row="4" CommandText="Регистрация" Command="{Binding ChangeViewCommand}"/>
+                    <TextBlock Text="Log In" Style="{StaticResource HeaderText}" Grid.ColumnSpan="2"/>
+                    <uc:InputTextBox Holder="Login" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
+                    <uc:InputPasswordBox WithShowing="Visible" Holder="Password" Grid.Row="2" Text="{Binding UserInfo.Password}"/>
+                    <Button Content="Log In" Command="{Binding EnterCommand}" Grid.Row="3" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="First time at SpoofMess?" Grid.Row="4" CommandText="Registration" Command="{Binding ChangeViewCommand}"/>
                 </Grid>
             </Border>
         </Grid>
@@ -41,12 +86,12 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Регистрация" Style="{StaticResource HeaderText}"/>
-                    <uc:InputTextBox Holder="Логин" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
-                    <uc:InputTextBox Holder="Имя" Grid.Row="2" Text="{Binding UserInfo.User.Name}"/>
-                    <uc:InputPasswordBox Holder="Пароль" Grid.Row="3" Text="{Binding UserInfo.Password, Mode=TwoWay}"/>
-                    <Button Content="Зарегистрироваться" Command="{Binding RegistrationCommand}" Grid.Row="4" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
-                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="Уже есть аккаунт?" Grid.Row="5" CommandText="Вход" Command="{Binding ChangeViewCommand}"/>
+                    <TextBlock Text="Registration" Style="{StaticResource HeaderText}"/>
+                    <uc:InputTextBox Holder="Login" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
+                    <uc:InputTextBox Holder="Name" Grid.Row="2" Text="{Binding UserInfo.User.Name}"/>
+                    <uc:InputPasswordBox Holder="Password" Grid.Row="3" Text="{Binding UserInfo.Password}"/>
+                    <Button Content="Register" Command="{Binding RegistrationCommand}" Grid.Row="4" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="Already registered?" Grid.Row="5" CommandText="Log In" Command="{Binding ChangeViewCommand}"/>
                 </Grid>
             </Border>
         </Grid>
@@ -57,14 +102,16 @@
         <ItemsControl ItemsSource="{Binding Files}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border  Margin="1" ClipToBounds="True" Background="{DynamicResource SecondWhite}" CornerRadius="4">
-                        <Image >
-                            <Image.Source>
-                                <BitmapImage UriSource="{Binding Path}" 
-                                 CacheOption="OnLoad" 
-                                 DecodePixelWidth="300"/>
-                            </Image.Source>
-                        </Image>
+                    <Border Margin="1" ClipToBounds="True" Background="{DynamicResource SecondWhite}" CornerRadius="4">
+                        <Grid>
+                            <Image>
+                                <Image.Source>
+                                    <BitmapImage UriSource="{Binding Path}" 
+                                                 CacheOption="OnLoad" 
+                                                 DecodePixelWidth="400"/>
+                                </Image.Source>
+                            </Image>
+                        </Grid>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -75,7 +122,7 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type filevm:MusicViewModel}">
         <ItemsControl ItemsSource="{Binding Files}">
             <ItemsControl.ItemTemplate>
@@ -123,8 +170,8 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </DataTemplate>
-    
-    
+
+
     <DataTemplate DataType="{x:Type filevm:ObjectViewModel}">
         <ItemsControl ItemsSource="{Binding Files}">
             <ItemsControl.ItemTemplate>
@@ -145,5 +192,42 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type st:AdvancedViewModel}">
+        <Grid RowDefinitions="auto 30 auto">
+            <Border Padding="15 5 15 0">
+                <DockPanel>
+                    <Button Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                    <TextBlock Text="Advanced" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </Border>
+            <Border Grid.Row="2" Background="{StaticResource SecondWhite}" Padding="0 10">
+                <StackPanel>
+                    <ve:Switch IsChecked="{Binding UserInfo.HideToTray}" Text="Hide to system tray" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding UserInfo.UnselectChat}" Text="Unselect chat on close" Margin="0 5"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type st:ProfileViewModel}">
+        <Grid RowDefinitions="auto 30 auto">
+            <Border Padding="15 5 15 0">
+                <DockPanel>
+                    <Button Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                    <TextBlock Text="Profile" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </Border>
+            <Border Grid.Row="2" Background="{StaticResource SecondWhite}" Padding="0 10" Margin="0 0 0 10">
+                <StackPanel>
+                    <ve:Switch IsChecked="{Binding Edit.SearchMe}" Text="Search for you" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding Edit.ShowMe}" Text="Display your information" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding Edit.ForwardMessage}" Text="Forwarding of your messages" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding Edit.InviteMe}" Text="Invite you to chats" Margin="0 5"/>
+                    <ve:InputTextBox Text="{Binding Edit.EditedName}" Holder="Name" Margin="0 5"/>
+                </StackPanel>
+            </Border>
+        </Grid>
     </DataTemplate>
 </ResourceDictionary>
