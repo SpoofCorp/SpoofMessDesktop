@@ -5,6 +5,8 @@ using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
 
 namespace SpoofMess.ViewModels;
 
@@ -18,12 +20,23 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IChatUserService _chatUserService;
     private readonly IChatService _chatService;
     private readonly INavigationService _navigationService;
+    public ObservableCollection<Chat> Chats { get; set; }
 
+    [NotifyPropertyChangedFor(nameof(AdditionalVisibility))]
+    [ObservableProperty]
+    private AdditionalViewModel? _additionalView;
+
+    [NotifyPropertyChangedFor(nameof(SelectChatVisibility))]
     [ObservableProperty]
     private Chat? _selectedChat;
+    private readonly UserInfo _userInfo;
     [ObservableProperty]
-    private object? _additionalView;
-    public ObservableCollection<Chat> Chats { get; set; }
+    private Visibility _sideMenuVisibility = Visibility.Collapsed; 
+    public Visibility AdditionalVisibility => AdditionalView is null ? Visibility.Collapsed : Visibility.Visible;
+
+    public Visibility SelectChatVisibility => SelectedChat is null ? Visibility.Visible : Visibility.Collapsed;
+
+    public MainViewModel() { }
 
     public MainViewModel(
         INotificationService notificationService,
@@ -32,7 +45,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IAttachmentService attachmentService,
         IChatUserService chatUserService,
         INavigationService navigationService,
-        IChatService chatService)
+        IChatService chatService,
+        UserInfo userInfo)
     {
         _notificationService = notificationService;
         _notificationApiService = notificationApiService;
@@ -42,12 +56,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _navigationService = navigationService;
         _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
         _notificationApiService.OnMessageEdited += _messageService.EditHandle;
-        //It's so bad...
-        LoadSkippedData();
         ServiceRealizations.EventHandler.OnDelete += _messageService.DeleteLocal;
         ServiceRealizations.EventHandler.OnEdit += _messageService.StartEdit;
         _chatService = chatService;
         Chats = _chatService.Chats;
+        _userInfo = userInfo;
+        //It's so bad...
+        LoadSkippedData();
     }
 
     public async void LoadSkippedData()
@@ -61,6 +76,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             _notificationService.ShowToast(new() { Text = ex.Message, Type = Enums.NotificationType.Error });
         }
+    }
+
+    [RelayCommand]
+    private void ShowProfile()
+    {
+        AdditionalView = _navigationService.GetProfileViewModel(this, Close);
     }
 
 
@@ -88,7 +109,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void ShowCreateGroup()
     {
-        AdditionalView = _navigationService.GetCreateGroupViewModel();
+        AdditionalView = _navigationService.GetCreateGroupViewModel(this, Close);
     }
 
     [RelayCommand]
@@ -101,7 +122,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void ShowSettings()
     {
-        AdditionalView = _navigationService.GetSettingsViewModel();
+        AdditionalView = _navigationService.GetSettingsViewModel(this, Close);
     }
 
     [RelayCommand]
@@ -110,9 +131,26 @@ public partial class MainViewModel : ObservableObject, IDisposable
         await _messageService.StopEdit(message, SelectedChat);
     }
 
+    private void Close() =>
+        AdditionalView = null; 
+
     public void Dispose()
     {
         token.Cancel();
         GC.SuppressFinalize(this);
+    }
+
+    public void Close(Window window, CancelEventArgs e)
+    {
+        if (_userInfo.HideToTray)
+        {
+            window.Hide();
+            if(_userInfo.UnselectChat)
+                SelectedChat = null;
+            AdditionalView?.CloseCommand.Execute(null);
+            AdditionalView = null;
+            e.Cancel = true;
+            SideMenuVisibility = Visibility.Collapsed;
+        }
     }
 }
