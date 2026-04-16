@@ -1,5 +1,4 @@
-﻿using SpoofMess.Models.API;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace SpoofMess.Views;
 

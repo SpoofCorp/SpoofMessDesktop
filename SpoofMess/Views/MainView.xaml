@@ -24,7 +24,7 @@
         </ve:SideMenu>
         <DockPanel>
             <DockPanel DockPanel.Dock="Top" Background="{DynamicResource SecondWhite}">
-                <Button Height="40" Width="40" Padding="0 0 0 5" VerticalAlignment="Center" DockPanel.Dock="Left" Content="≡" Style="{StaticResource MinimalCircleButton}" Click="Menu_Click"/>
+                <Button Focusable="False" Height="40" Width="40" Padding="0 0 0 5" VerticalAlignment="Center" DockPanel.Dock="Left" Content="≡" Style="{StaticResource MinimalCircleButton}" Click="Menu_Click"/>
                 <ve:InputTextBox Holder="Search here" DockPanel.Dock="Right"/>
             </DockPanel>
             <ListBox Background="{DynamicResource SecondWhite}" DockPanel.Dock="Bottom" SelectionChanged="ChatsList_SelectionChanged" ItemsSource="{Binding Chats}" x:Name="ChatsList" SelectedItem="{Binding SelectedChat}" MinWidth="100">
@@ -68,7 +68,7 @@
                 </ListBox.Template>
             </ListBox>
         </DockPanel>
-        <GridSplitter Grid.Column="1" Background="Transparent" Panel.ZIndex="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="2"/>
+        <GridSplitter Focusable="False" Grid.Column="1" Background="Transparent" Panel.ZIndex="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="2"/>
         <Border Background="{DynamicResource ThirdWhite}" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.RowDefinitions>
@@ -90,10 +90,39 @@
                             </Image.OpacityMask>
                         </Image>
                     </Grid>
-                    <Button Style="{DynamicResource MinimalButton}" Content="⁝" DockPanel.Dock="Right"/>
+                    <ContentControl Focusable="False" DockPanel.Dock="Right">
+                        <ContentControl.Style>
+                            <Style TargetType="{x:Type ContentControl}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Grid Margin="0 0 5 0">
+                                                <ToggleButton Focusable="False" Style="{StaticResource MinimalToggleButton}" x:Name="Button" Content="⁝"/>
+                                                <Popup IsOpen="{Binding IsChecked, ElementName=Button, Mode=TwoWay}" 
+                                                       PlacementTarget="{Binding ElementName=Button}" 
+                                                       Placement="Left"
+                                                       PlacementRectangle="45 35 0 0"
+                                                       StaysOpen="False"
+                                                       AllowsTransparency="True">
+                                                    <Border Padding="5">
+                                                        <Border Style="{StaticResource CardBorder}">
+                                                            <StackPanel>
+                                                                <ve:FunctionButton Text="Info" Icon="ℹ️"/>
+                                                                <ve:FunctionButton Text="Settings" Icon="⚙️"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
                     <TextBlock Text="{Binding SelectedChat.Name}" DockPanel.Dock="Left" Style="{DynamicResource PrimaryText}" Padding="5 0" FontWeight="DemiBold"/>
                 </DockPanel>
-                <ItemsControl Grid.Row="1" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" x:Name="MessagesList">
+                <ItemsControl Focusable="False" Grid.Row="1" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" x:Name="MessagesList">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
@@ -140,15 +169,15 @@
                                             <RowDefinition Height="auto"/>
                                             <RowDefinition Height="auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding User.Name}"/>
-                                        <ItemsControl ItemsSource="{Binding Attachments}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                                        <TextBlock Focusable="False" Grid.Row="0" Grid.Column="0" Text="{Binding User.Name}"/>
+                                        <ItemsControl Focusable="False" ItemsSource="{Binding Attachments}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                                             <ItemsControl.ItemContainerStyle>
                                                 <Style TargetType="ContentPresenter">
                                                     <Setter Property="Margin" Value="0 2" />
                                                 </Style>
                                             </ItemsControl.ItemContainerStyle>
                                         </ItemsControl>
-                                        <TextBox IsReadOnly="True" BorderThickness="0" Background="Transparent" Height="auto" FontSize="14" Grid.Row="2" Grid.Column="0" Text="{Binding Text}" TextWrapping="WrapWithOverflow"/>
+                                        <TextBox Focusable="False" IsReadOnly="True" BorderThickness="0" Background="Transparent" Height="auto" FontSize="14" Grid.Row="2" Grid.Column="0" Text="{Binding Text}" TextWrapping="WrapWithOverflow"/>
                                         <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Foreground="{DynamicResource SecondBlack}" Text="{Binding SentAt, StringFormat={}{0:HH:mm}}"/>
                                     </Grid>
                                 </Border>
@@ -157,13 +186,13 @@
                     </ItemsControl.ItemTemplate>
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel/>
+                            <StackPanel Focusable="False"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.Template>
                         <ControlTemplate TargetType="ItemsControl">
-                            <ScrollViewer x:Name="MessageScroll" CanContentScroll="False" ScrollChanged="ScrollViewer_ScrollChanged">
-                                <ItemsPresenter />
+                            <ScrollViewer Focusable="False" x:Name="MessageScroll" CanContentScroll="False" ScrollChanged="ScrollViewer_ScrollChanged">
+                                <ItemsPresenter Focusable="False"/>
                             </ScrollViewer>
                         </ControlTemplate>
                     </ItemsControl.Template>

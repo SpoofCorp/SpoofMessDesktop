@@ -1,4 +1,5 @@
 ﻿using SpoofMess.Models;
+using SpoofMess.ViewModels;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,11 +20,13 @@ public partial class MainView : UserControl
 
     private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        AdditionalContainer.Visibility = Visibility.Collapsed;
+        if (sender is Grid { Tag: AdditionalViewModel additionalViewModel})
+            additionalViewModel.CloseCommand.Execute(null);
     }
     private void Menu_Item_Click(object sender, RoutedEventArgs e)
     {
-        AdditionalContainer.Visibility = Visibility.Visible;
+        if (sender is Grid { Tag: AdditionalViewModel additionalViewModel })
+            additionalViewModel.CloseCommand.Execute(null);
         SideMenu.ChangeMenuVisibility();
         e.Handled = true;
     }

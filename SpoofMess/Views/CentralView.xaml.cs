@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using SpoofMess.ViewModels;
+using System.ComponentModel;
 using System.Windows;
 
 namespace SpoofMess.Views;
@@ -11,8 +12,10 @@ public partial class CentralView : Window
 
     private void Window_Closing(object sender, CancelEventArgs e)
     {
-        e.Cancel = true;
-        Hide();
+        if(DataContext is CentralViewModel { View: MainViewModel mainViewModel})
+        {
+            mainViewModel.Close(this, e);
+        }
     }
 
     private void Close_Click(object sender, RoutedEventArgs e)

@@ -6,86 +6,88 @@
         xmlns:local="clr-namespace:SpoofMess.Views"
         xmlns:ve="clr-namespace:SpoofMess.ViewElements"
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
-        mc:Ignorable="d" Height="450" Width="auto" >
+        mc:Ignorable="d" Height="450" Width="420" >
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        <Border Padding="15 5 15 0">
-            <DockPanel>
-                <Button Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
-                <Button Style="{DynamicResource MinimalButton}" Content="➖" DockPanel.Dock="Right"/>
-                <TextBlock Text="Settings" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
-            </DockPanel>
-        </Border>
-        <Border Padding="10 0" Grid.Row="1" Background="{StaticResource SecondWhite}">
-            <Grid Height="100">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="auto"/>
-                </Grid.ColumnDefinitions>
-                <ContentControl>
-                    <ContentControl.Style>
-                        <Style TargetType="{x:Type ContentControl}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ContentControl}">
-                                        <Grid>
-                                            <Border x:Name="Mask" 
-                                        BorderThickness="1" 
-                                        CornerRadius="70" 
-                                        Background="White"
-                                        BorderBrush="Gray" 
-                                        Width="70" Height="70"/>
+        <Grid Visibility="{Binding MainViewVisibility}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Border Padding="15 5 5 0">
+                <DockPanel>
+                    <Button Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
+                    <Button Style="{DynamicResource MinimalButton}" Content="➖" DockPanel.Dock="Right"/>
+                    <TextBlock Text="Settings" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </Border>
+            <Border Padding="10 0" Grid.Row="1" Background="{StaticResource SecondWhite}">
+                <Grid Height="100">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentControl>
+                        <ContentControl.Style>
+                            <Style TargetType="{x:Type ContentControl}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ContentControl}">
+                                            <Grid>
+                                                <Border x:Name="Mask" 
+                                                        BorderThickness="1" 
+                                                        CornerRadius="70" 
+                                                        Background="White"
+                                                        BorderBrush="Gray" 
+                                                        Width="70" Height="70"/>    
 
-                                            <Image Source="{Binding UserInfo.User.Avatar.Path}" 
-                                    Stretch="UniformToFill">
-                                                <Image.OpacityMask>
-                                                    <VisualBrush Visual="{Binding ElementName=Mask}"/>
-                                                </Image.OpacityMask>
-                                            </Image>
-                                            <Button x:Name="SetAvatarButton" Visibility="Collapsed" Background="#AA333333" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}" Command="{Binding SetAvatarCommand}"/>
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="SetAvatarButton" Property="Visibility" Value="Visible"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
-                <StackPanel Margin="10 0" Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding UserInfo.User.Name}"/>
-                    <TextBlock Text="{Binding UserInfo.User.Login}"/>
+                                                <Image Source="{Binding UserInfo.User.Avatar.Path}" Stretch="UniformToFill">
+                                                    <Image.OpacityMask>
+                                                        <VisualBrush Visual="{Binding ElementName=Mask}"/>
+                                                    </Image.OpacityMask>
+                                                </Image>
+                                                <Button x:Name="SetAvatarButton" Visibility="Collapsed" Background="#AA333333" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}" Command="{Binding SetAvatarCommand}"/>
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="SetAvatarButton" Property="Visibility" Value="Visible"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+                    <StackPanel Margin="10 0" Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding UserInfo.User.Name}"/>
+                        <TextBlock Text="{Binding UserInfo.User.Login}"/>
+                    </StackPanel>
+                    <Button Grid.Column="2" Style="{StaticResource MinimalButton}" Width="32" Height="32">
+                        <Button.Content>
+                            <Image>
+                                <Image.Source>
+                                    <BitmapImage UriSource="/Assets/qr.png" 
+                                                 CacheOption="OnLoad" 
+                                                 DecodePixelWidth="64"/>
+                                </Image.Source>
+                            </Image>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+            </Border>
+            <Border Grid.Row="3" Background="{StaticResource SecondWhite}" Padding="0 10">
+                <StackPanel>
+                    <ve:FunctionButton Text="Profile" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
+                    <ve:FunctionButton Text="Notifications and sounds" Icon="🔔" Alignment="Stretch" Command="{Binding NotificationsCommand}"/>
+                    <ve:FunctionButton Text="Privacy and security" Icon="🔒" Alignment="Stretch" Command="{Binding PrivacyCommand}"/>
+                    <ve:FunctionButton Text="Advanced" Icon="🌡️" Alignment="Stretch" Command="{Binding AdvancedCommand}"/>
+                    <ve:FunctionButton Text="Language" Icon="🈵" Alignment="Stretch" Command="{Binding LanguageCommand}"/>
                 </StackPanel>
-                <Button Grid.Column="2" Style="{StaticResource MinimalButton}" Width="32" Height="32">
-                    <Button.Content>
-                        <Image>
-                            <Image.Source>
-                                <BitmapImage UriSource="/Assets/qr.png" 
-                     CacheOption="OnLoad" 
-                     DecodePixelWidth="64"/>
-                            </Image.Source>
-                        </Image>
-                    </Button.Content>
-                </Button>
-            </Grid>
-        </Border>
-        <Border Grid.Row="3" Background="{StaticResource SecondWhite}" Padding="0 10">
-            <StackPanel>
-                <ve:FunctionButton Text="Профиль" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
-                <ve:FunctionButton Text="Уведомления и звуки" Icon="🔔" Alignment="Stretch" Command="{Binding NotificationsCommand}"/>
-                <ve:FunctionButton Text="Приватность и безопастность" Icon="🔒" Alignment="Stretch" Command="{Binding PrivacyCommand}"/>
-                <ve:FunctionButton Text="Расширенные" Icon="🌡️" Alignment="Stretch" Command="{Binding PrivacyCommand}"/>
-                <ve:FunctionButton Text="Язык" Icon="🈵" Alignment="Stretch" Command="{Binding LanguageCommand}"/>
-            </StackPanel>
-        </Border>
+            </Border>
+        </Grid>
+        <ContentPresenter Content="{Binding AdditionalViewModel}"/>
     </Grid>
 </UserControl>
