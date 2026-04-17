@@ -1,0 +1,34 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="SearchHolder">Искать здесь</sys:String>
+    <sys:String x:Key="MessageHolder">Писать здесь</sys:String>
+    <sys:String x:Key="SelectChatHolder">Выберите чат, чтобы начать общение</sys:String>
+    <sys:String x:Key="Settings">Настройки</sys:String>
+    <sys:String x:Key="Profile">Профиль</sys:String>
+    <sys:String x:Key="NewGroup">Новая группа</sys:String>
+    <sys:String x:Key="Language">Язык</sys:String>
+    <sys:String x:Key="PrivacySecurity">Приватность и безопастность</sys:String>
+    <sys:String x:Key="Advanced">Расширенные</sys:String>
+    <sys:String x:Key="NotificationsAndSounds">Уведомления и звуки</sys:String>
+    <sys:String x:Key="SearchMe">Искать вас</sys:String>
+    <sys:String x:Key="ShowMe">Отображать вашу информацию</sys:String>
+    <sys:String x:Key="ForwardMessage">Пересылку ваших сообщений</sys:String>
+    <sys:String x:Key="InviteMe">Приглашать вас в чат</sys:String>
+    <sys:String x:Key="EditedName">Имя</sys:String>
+    <sys:String x:Key="HideToTray">Скрывать в системный трей</sys:String>
+    <sys:String x:Key="UnselectChat">Снимать выбор с чата при закрытии</sys:String>
+
+    <sys:String x:Key="LogIn">Авторизация</sys:String>
+    <sys:String x:Key="Registration">Регистрация</sys:String>
+    <sys:String x:Key="Register">Зарегистрироваться</sys:String>
+    <sys:String x:Key="Login">Логин</sys:String>
+    <sys:String x:Key="Name">Имя</sys:String>
+    <sys:String x:Key="Password">Пароль</sys:String>
+    <sys:String x:Key="LogInQuestion">Впервые в СпуфМесс?</sys:String>
+    <sys:String x:Key="RegistrationQuestion">Уже зарегестрированы?</sys:String>
+    <sys:String x:Key="AppName">СпуфМесс</sys:String>
+    <sys:String x:Key="UniqueName">Уникальное название</sys:String>
+    <sys:String x:Key="Create">Создать</sys:String>
+    <sys:String x:Key="Public">Публичный</sys:String>
+</ResourceDictionary>

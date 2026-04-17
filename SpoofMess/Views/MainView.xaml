@@ -15,17 +15,17 @@
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ve:SideMenu Background="{DynamicResource Primary}" x:Name="SideMenu" IsOpen="{Binding SideMenuVisibility}" Panel.ZIndex="10" Grid.ColumnSpan="3">
+        <ve:SideMenu Background="{DynamicResource PrimaryWhite}" x:Name="SideMenu" IsOpen="{Binding SideMenuVisibility}" Panel.ZIndex="10" Grid.ColumnSpan="3">
             <StackPanel>
-                <ve:FunctionButton Click="Menu_Item_Click" Text="Profile" Alignment="Stretch" Icon="👤" Command="{Binding ShowProfileCommand}"/>
-                <ve:FunctionButton Click="Menu_Item_Click" Text="New group" Alignment="Stretch" Icon="👥" Command="{Binding ShowCreateGroupCommand}"/>
-                <ve:FunctionButton Click="Menu_Item_Click" Text="Settigns" Alignment="Stretch" Icon="⚙️" Command="{Binding ShowSettingsCommand}"/>
+                <ve:FunctionButton Click="Menu_Item_Click" Text="{DynamicResource Profile}" Alignment="Stretch" Icon="👤" Command="{Binding ShowProfileCommand}"/>
+                <ve:FunctionButton Click="Menu_Item_Click" Text="{DynamicResource NewGroup}" Alignment="Stretch" Icon="👥" Command="{Binding ShowCreateGroupCommand}"/>
+                <ve:FunctionButton Click="Menu_Item_Click" Text="{DynamicResource Settings}" Alignment="Stretch" Icon="⚙️" Command="{Binding ShowSettingsCommand}"/>
             </StackPanel>
         </ve:SideMenu>
         <DockPanel>
             <DockPanel DockPanel.Dock="Top" Background="{DynamicResource SecondWhite}">
                 <Button Focusable="False" Height="40" Width="40" Padding="0 0 0 5" VerticalAlignment="Center" DockPanel.Dock="Left" Content="≡" Style="{StaticResource MinimalCircleButton}" Click="Menu_Click"/>
-                <ve:InputTextBox Holder="Search here" DockPanel.Dock="Right"/>
+                <ve:InputTextBox Holder="{DynamicResource SearchHolder}" DockPanel.Dock="Right"/>
             </DockPanel>
             <ListBox Background="{DynamicResource SecondWhite}" DockPanel.Dock="Bottom" SelectionChanged="ChatsList_SelectionChanged" ItemsSource="{Binding Chats}" x:Name="ChatsList" SelectedItem="{Binding SelectedChat}" MinWidth="100">
                 <ListBox.ItemTemplate>
@@ -107,7 +107,7 @@
                                                     <Border Padding="5">
                                                         <Border Style="{StaticResource CardBorder}">
                                                             <StackPanel>
-                                                                <ve:FunctionButton Text="Info" Icon="ℹ️"/>
+                                                                <ve:FunctionButton Text="Info" Icon="ℹ️" Command="{Binding ShowChatInfoCommand}"/>
                                                                 <ve:FunctionButton Text="Settings" Icon="⚙️"/>
                                                             </StackPanel>
                                                         </Border>
@@ -244,12 +244,12 @@
                 <DockPanel Grid.Row="3" Background="{DynamicResource SecondWhite}">
                     <Button DockPanel.Dock="Right" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" IsDefault="True" Content="✉️" Command="{Binding SendCommand}"/>
                     <Button DockPanel.Dock="Right" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" Content="📎" Command="{Binding AttachCommand}"/>
-                    <ve:InputTextBox MaxHeight="200" TextWrapping="Wrap" Holder="Write here" Text="{Binding SelectedChat.CurrentMessage.Text}" AcceptsReturn="True"/>
+                    <ve:InputTextBox MaxHeight="200" TextWrapping="Wrap" Holder="{DynamicResource MessageHolder}" Text="{Binding SelectedChat.CurrentMessage.Text}" AcceptsReturn="True"/>
                 </DockPanel>
                 <Grid Visibility="{Binding SelectChatVisibility}" Grid.RowSpan="4" Background="{StaticResource ThirdWhite}">
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Border Style="{StaticResource CardBorder}" Background="{StaticResource SecondWhite}"/>
-                        <TextBlock Text="Select a chat to start messaging" Padding="5 2" Style="{StaticResource BaseText}"/>
+                        <TextBlock Text="{DynamicResource SelectChatHolder}" Padding="5 2" Style="{StaticResource BaseText}"/>
                     </Grid>
                 </Grid>
             </Grid>

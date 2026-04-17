@@ -7,10 +7,65 @@
                     xmlns:filevm="clr-namespace:SpoofMess.ViewModels.FileViewModels"
                     xmlns:uc="clr-namespace:SpoofMess.ViewElements">
 
+    <DataTemplate DataType="{x:Type vm:ChatInfoViewModel}">
+        <Grid RowDefinitions="auto auto">
+            <Border VerticalAlignment="Top" Padding="15 5 5 0">
+                <Button HorizontalAlignment="Right" Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
+            </Border>
+
+            <Border Margin="0 20 0 0" Grid.RowSpan="2">
+                <Grid RowDefinitions="auto auto auto auto" MinWidth="200">
+
+                    <ContentControl Width="70" Height="70">
+                        <ContentControl.Style>
+                            <Style TargetType="{x:Type ContentControl}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ContentControl}">
+                                            <Grid>
+                                                <Border x:Name="Mask" 
+                                                    BorderThickness="1" 
+                                                    CornerRadius="70" 
+                                                    Background="White"
+                                                    BorderBrush="Gray" 
+                                                    Width="70" Height="70"/>
+
+                                                <Image Source="{Binding Chat.Avatar.Path}" Stretch="UniformToFill">
+                                                    <Image.OpacityMask>
+                                                        <VisualBrush Visual="{Binding ElementName=Mask}"/>
+                                                    </Image.OpacityMask>
+                                                </Image>
+                                                <Button Cursor="Hand" x:Name="SetAvatarButton" Visibility="Collapsed" Background="#AA333333" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}" Command="{Binding SetAvatarCommand}"/>
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="SetAvatarButton" Property="Visibility" Value="Visible"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+                    <TextBlock TextAlignment="Center" Style="{StaticResource PrimaryText}" Text="{Binding Chat.Name}" Grid.Row="1"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="2">
+                        <ve:IconButton Icon="🔕" Text="Mute"/>
+                        <ve:IconButton Icon="⚙️" Text="Settings"/>
+                        <ve:IconButton Icon="♿🚪" Text="Leave"/>
+                        <ve:IconButton Icon="…" Text="More"/>
+                    </StackPanel>
+                    <ItemsControl Focusable="False" ItemsSource="{Binding Chat.Users}">
+                        
+                    </ItemsControl>
+                </Grid>
+            </Border>
+        </Grid>
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:CreateGroupViewModel}">
         <Border Padding="10 10">
-            <Grid ColumnDefinitions="auto 20 auto" RowDefinitions="auto auto auto auto" MinWidth="200">
+            <Grid ColumnDefinitions="auto 20 *" RowDefinitions="auto auto auto auto" Width="300">
                 <ContentControl Grid.RowSpan="2" Width="70" Height="70">
                     <ContentControl.Style>
                         <Style TargetType="{x:Type ContentControl}">
@@ -43,10 +98,10 @@
                         </Style>
                     </ContentControl.Style>
                 </ContentControl>
-                <ve:InputTextBox Holder="Name" Grid.Column="2" Grid.Row="0" Text="{Binding Chat.Name}"/>
-                <ve:InputTextBox Holder="Unique name" Grid.Column="2" Grid.Row="1" x:Name="UniqueName" Text="{Binding Chat.UniqueName}"/>
-                <ve:Switch Text="Public" Grid.Column="2" Grid.Row="2"  FontSize="25" IsChecked="{Binding Chat.IsPublic}"/>
-                <Button Grid.Column="2" Grid.Row="3" Content="Create" Command="{Binding CreateCommand}" Style="{DynamicResource FunctionButton}"/>
+                <ve:InputTextBox Holder="{DynamicResource Name}" Grid.Column="2" Grid.Row="0" Text="{Binding Chat.Name}"/>
+                <ve:InputTextBox Holder="{DynamicResource UniqueName}" Grid.Column="2" Grid.Row="1" x:Name="UniqueName" Text="{Binding Chat.UniqueName}"/>
+                <ve:Switch Text="{DynamicResource Public}" Grid.Column="2" Grid.Row="2"  FontSize="25" IsChecked="{Binding Chat.IsPublic}"/>
+                <Button Grid.Column="2" Grid.Row="3" Content="{DynamicResource Create}" Command="{Binding CreateCommand}" Style="{DynamicResource FunctionButton}"/>
             </Grid>
         </Border>
     </DataTemplate>
@@ -63,11 +118,11 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Log In" Style="{StaticResource HeaderText}" Grid.ColumnSpan="2"/>
-                    <uc:InputTextBox Holder="Login" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
-                    <uc:InputPasswordBox WithShowing="Visible" Holder="Password" Grid.Row="2" Text="{Binding UserInfo.Password}"/>
-                    <Button Content="Log In" Command="{Binding EnterCommand}" Grid.Row="3" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
-                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="First time at SpoofMess?" Grid.Row="4" CommandText="Registration" Command="{Binding ChangeViewCommand}"/>
+                    <TextBlock Text="{DynamicResource LogIn}" Style="{StaticResource HeaderText}" Grid.ColumnSpan="2"/>
+                    <uc:InputTextBox Holder="{DynamicResource Login}" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
+                    <uc:InputPasswordBox WithShowing="Visible" Holder="{DynamicResource Password}" Grid.Row="2" Text="{Binding UserInfo.Password}"/>
+                    <Button Content="{DynamicResource LogIn}" Command="{Binding EnterCommand}" Grid.Row="3" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="{DynamicResource LogInQuestion}" Grid.Row="4" CommandText="{DynamicResource Registration}" Command="{Binding ChangeViewCommand}"/>
                 </Grid>
             </Border>
         </Grid>
@@ -86,12 +141,12 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Registration" Style="{StaticResource HeaderText}"/>
-                    <uc:InputTextBox Holder="Login" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
-                    <uc:InputTextBox Holder="Name" Grid.Row="2" Text="{Binding UserInfo.User.Name}"/>
-                    <uc:InputPasswordBox Holder="Password" Grid.Row="3" Text="{Binding UserInfo.Password}"/>
-                    <Button Content="Register" Command="{Binding RegistrationCommand}" Grid.Row="4" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
-                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="Already registered?" Grid.Row="5" CommandText="Log In" Command="{Binding ChangeViewCommand}"/>
+                    <TextBlock Text="{DynamicResource Registration}" Style="{StaticResource HeaderText}"/>
+                    <uc:InputTextBox Holder="{DynamicResource Login}" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
+                    <uc:InputTextBox Holder="{DynamicResource Name}" Grid.Row="2" Text="{Binding UserInfo.User.Name}"/>
+                    <uc:InputPasswordBox Holder="{DynamicResource Password}" Grid.Row="3" Text="{Binding UserInfo.Password}"/>
+                    <Button Content="{DynamicResource Register}" Command="{Binding RegistrationCommand}" Grid.Row="4" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="{DynamicResource RegistrationQuestion}" Grid.Row="5" CommandText="{DynamicResource LogIn}" Command="{Binding ChangeViewCommand}"/>
                 </Grid>
             </Border>
         </Grid>
@@ -99,7 +154,7 @@
 
 
     <DataTemplate DataType="{x:Type filevm:ImageViewModel}">
-        <ItemsControl ItemsSource="{Binding Files}">
+        <ItemsControl Focusable="False" ItemsSource="{Binding Files}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border Margin="1" ClipToBounds="True" Background="{DynamicResource SecondWhite}" CornerRadius="4">
@@ -173,7 +228,7 @@
 
 
     <DataTemplate DataType="{x:Type filevm:ObjectViewModel}">
-        <ItemsControl ItemsSource="{Binding Files}">
+        <ItemsControl Focusable="False" ItemsSource="{Binding Files}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="500" HorizontalAlignment="Left">
@@ -186,8 +241,8 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}"/>
-                        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding PrettySize}"/>
+                        <TextBlock Focusable="False" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}"/>
+                        <TextBlock Focusable="False" Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding PrettySize}"/>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -199,13 +254,13 @@
             <Border Padding="15 5 15 0">
                 <DockPanel>
                     <Button Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
-                    <TextBlock Text="Advanced" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{DynamicResource Advanced}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
             </Border>
             <Border Grid.Row="2" Background="{StaticResource SecondWhite}" Padding="0 10">
                 <StackPanel>
-                    <ve:Switch IsChecked="{Binding UserInfo.HideToTray}" Text="Hide to system tray" Margin="0 5"/>
-                    <ve:Switch IsChecked="{Binding UserInfo.UnselectChat}" Text="Unselect chat on close" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding UserInfo.HideToTray}" Text="{DynamicResource HideToTray}" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding UserInfo.UnselectChat}" Text="{DynamicResource UnselectChat}" Margin="0 5"/>
                 </StackPanel>
             </Border>
         </Grid>
@@ -216,16 +271,36 @@
             <Border Padding="15 5 15 0">
                 <DockPanel>
                     <Button Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
-                    <TextBlock Text="Profile" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{DynamicResource Profile}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
             </Border>
             <Border Grid.Row="2" Background="{StaticResource SecondWhite}" Padding="0 10" Margin="0 0 0 10">
                 <StackPanel>
-                    <ve:Switch IsChecked="{Binding Edit.SearchMe}" Text="Search for you" Margin="0 5"/>
-                    <ve:Switch IsChecked="{Binding Edit.ShowMe}" Text="Display your information" Margin="0 5"/>
-                    <ve:Switch IsChecked="{Binding Edit.ForwardMessage}" Text="Forwarding of your messages" Margin="0 5"/>
-                    <ve:Switch IsChecked="{Binding Edit.InviteMe}" Text="Invite you to chats" Margin="0 5"/>
-                    <ve:InputTextBox Text="{Binding Edit.EditedName}" Holder="Name" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding Edit.SearchMe}" Text="{DynamicResource SearchMe}" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding Edit.ShowMe}" Text="{DynamicResource ShowMe}" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding Edit.ForwardMessage}" Text="{DynamicResource ForwardMessage}" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding Edit.InviteMe}" Text="{DynamicResource InviteMe}" Margin="0 5"/>
+                    <ve:InputTextBox Text="{Binding Edit.EditedName}" Holder="{DynamicResource Name}" Margin="0 5"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+
+    <DataTemplate DataType="{x:Type st:LanguageViewModel}">
+        <Grid RowDefinitions="auto 30 auto">
+            <Border Padding="15 5 15 0">
+                <DockPanel>
+                    <Button Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                    <TextBlock Text="{DynamicResource Language}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </Border>
+            <Border Grid.Row="2" Background="{StaticResource SecondWhite}" Padding="0 10" Margin="0 0 0 10">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Language}"/>
+                    <ComboBox SelectedItem="{Binding Language}" ItemsSource="{Binding Languages}">
+
+                    </ComboBox>
                 </StackPanel>
             </Border>
         </Grid>
