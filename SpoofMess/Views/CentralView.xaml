@@ -8,16 +8,18 @@
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:uc="clr-namespace:SpoofMess.ViewElements"
-        Title="SpoofMess"
+        Title="{DynamicResource AppName}"
         Closing="Window_Closing"
         mc:Ignorable="d" Height="{Binding UserInfo.Height, Mode=TwoWay}" Width="{Binding UserInfo.Width, Mode=TwoWay}">
     <Grid>
-        <tb:TaskbarIcon IconSource="/Assets/SM.ico"
+        <tb:TaskbarIcon Cursor="Hand"
+                        IconSource="/Assets/SM.ico"
                         ToolTipText="SpoofMess"
                         DoubleClickCommand="{Binding OpenCommand}">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu Style="{DynamicResource BaseContextMenu}">
-                    <MenuItem Header="Close" 
+                    <MenuItem Cursor="Hand" 
+                              Header="Close" 
                               Style="{DynamicResource MinimalMenuItem}"
                               Click="Close_Click"/>
                 </ContextMenu>
