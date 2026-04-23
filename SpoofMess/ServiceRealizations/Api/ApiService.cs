@@ -2,6 +2,7 @@
 using CommonObjects.Results;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 
 namespace SpoofMess.ServiceRealizations.Api;
@@ -13,27 +14,17 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
     private readonly CancellationTokenSource _cts = new();
     protected abstract string BaseUrl { get; }
 
-    protected virtual async Task<HttpResponseMessage> DeleteAsync(string requestUrl)
-    {
-        throw new NotImplementedException();
-    }
 
-    protected virtual async Task<HttpResponseMessage> DeleteAsync<T>(string requestUrl, T obj) where T : class
-    {
-        throw new NotImplementedException();
-    }
-
-
-    protected virtual async Task<Result> GetAsync(string requestUrl, CancellationToken? token = null)
+    protected virtual async Task<Result> DeleteAsync(string requestUrl, CancellationToken token = default)
     {
         try
         {
-            HttpResponseMessage response = await _client.GetAsync(
+            HttpResponseMessage response = await _client.DeleteAsync(
                     GetUrl(requestUrl),
-                    token ?? _cts.Token
+                    token == default ? _cts.Token : token
                 );
             return Result.Parse(
-                await response.Content.ReadAsStringAsync(token ?? _cts.Token),
+                await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
                 (int)response.StatusCode
             );
         }
@@ -43,13 +34,33 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
         }
     }
 
-    protected virtual async Task<Result<TResult>> GetAsync<TResult>(string requestUrl, CancellationToken? token = null)
+
+    protected virtual async Task<Result> GetAsync(string requestUrl,  CancellationToken token = default)
     {
         try
         {
             HttpResponseMessage response = await _client.GetAsync(
                     GetUrl(requestUrl),
-                    token ?? _cts.Token
+                    token == default ? _cts.Token : token
+                );
+            return Result.Parse(
+                await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
+                (int)response.StatusCode
+            );
+        }
+        catch
+        {
+            return Result.ErrorResult("");
+        }
+    }
+
+    protected virtual async Task<Result<TResult>> GetAsync<TResult>(string requestUrl,  CancellationToken token = default)
+    {
+        try
+        {
+            HttpResponseMessage response = await _client.GetAsync(
+                    GetUrl(requestUrl),
+                    token == default ? _cts.Token : token
                 );
             return await Parse<TResult>(response, token);
         }
@@ -59,7 +70,7 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
         }
     }
 
-    protected virtual async Task<Result> PostAsync<T>(string requestUrl, T obj, CancellationToken? token = null)
+    protected virtual async Task<Result> PostAsync<T>(string requestUrl, T obj,  CancellationToken token = default)
     {
         return await PostAsync(
                 requestUrl: requestUrl,
@@ -68,10 +79,10 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
                     Encoding.UTF8,
                     "application/json"
                     ),
-                token: token ?? _cts.Token
+                token: token == default ? _cts.Token : token
             );
     }
-    protected virtual async Task<Result<TResult>> PostAsync<T, TResult>(string requestUrl, T obj, CancellationToken? token = null)
+    protected virtual async Task<Result<TResult>> PostAsync<T, TResult>(string requestUrl, T obj,  CancellationToken token = default)
     {
         try
         {
@@ -82,7 +93,7 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
                             Encoding.UTF8,
                             "application/json"
                         ),
-                    token ?? _cts.Token
+                    token == default ? _cts.Token : token
                 );
             return await Parse<TResult>(response, token);
         }
@@ -93,17 +104,17 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
     }
 
 
-    protected virtual async Task<Result> PostAsync(string requestUrl, HttpContent content, CancellationToken? token = null)
+    protected virtual async Task<Result> PostAsync(string requestUrl, HttpContent content,  CancellationToken token = default)
     {
         try
         {
             HttpResponseMessage response = await _client.PostAsync(
                     GetUrl(requestUrl),
                     content,
-                    token ?? _cts.Token
+                    token == default ? _cts.Token : token
                 );
             return Result.Parse(
-                        await response.Content.ReadAsStringAsync(token ?? _cts.Token),
+                        await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
                         (int)response.StatusCode
                     );
         }
@@ -112,14 +123,14 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
             return Result.ErrorResult("");
         }
     }
-    protected virtual async Task<Result<TResult>> PostAsync<TResult>(string requestUrl, HttpContent content, CancellationToken? token = null)
+    protected virtual async Task<Result<TResult>> PostAsync<TResult>(string requestUrl, HttpContent content,  CancellationToken token = default)
     {
         try
         {
             HttpResponseMessage response = await _client.PostAsync(
                     GetUrl(requestUrl),
                     content,
-                    token ?? _cts.Token
+                    token == default ? _cts.Token : token
                 );
             return await Parse<TResult>(response, token);
         }
@@ -128,18 +139,33 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
             return Result<TResult>.ErrorResult("");
         }
     }
-
-    protected virtual async Task<HttpResponseMessage> PatchAsync(string requestUrl, CancellationToken? token = null)
+    protected virtual async Task<Result> PatchAsync<T>(string requestUrl, T obj, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            HttpResponseMessage response = await _client.PatchAsJsonAsync(
+                    GetUrl(requestUrl),
+                    obj,
+                    token == default ? _cts.Token : token
+                ); 
+            return Result.Parse(
+                        await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
+                        (int)response.StatusCode
+                    );
+        }
+        catch
+        {
+            return Result.ErrorResult("");
+        }
     }
+
     public void Dispose()
     {
         _cts.Cancel();
         _client.Dispose();
         GC.SuppressFinalize(this);
     }
-    protected virtual async Task<Result<Stream>> PostStreamAsync<T>(string requestUrl, T obj, CancellationToken? token = null)
+    protected virtual async Task<Result<Stream>> PostStreamAsync<T>(string requestUrl, T obj,  CancellationToken token = default)
     {
         return await PostStreamAsync(
                 requestUrl,
@@ -148,11 +174,11 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
                     Encoding.UTF8,
                     "application/json"
                     ),
-                token ?? _cts.Token
+                token == default ? _cts.Token : token
             );
     }
 
-    protected virtual async Task<Result<Stream>> PostStreamAsync(string requestUrl, HttpContent content, CancellationToken? token = null)
+    protected virtual async Task<Result<Stream>> PostStreamAsync(string requestUrl, HttpContent content,  CancellationToken token = default)
     {
         try
         {
@@ -163,17 +189,17 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
             HttpResponseMessage response = await _client.SendAsync(
                     request,
                     HttpCompletionOption.ResponseHeadersRead,
-                    token ?? _cts.Token
+                    token == default ? _cts.Token : token
                 );
             if (response.IsSuccessStatusCode)
                 return Result<Stream>.Parse(
                         "",
-                        await response.Content.ReadAsStreamAsync(token ?? _cts.Token),
+                        await response.Content.ReadAsStreamAsync(token == default ? _cts.Token : token),
                         (int)response.StatusCode
                     );
             else
                 return Result<Stream>.Parse(
-                        await response.Content.ReadAsStringAsync(token ?? _cts.Token),
+                        await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
                         default,
                         (int)response.StatusCode
                     );
@@ -185,19 +211,19 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
 
     }
 
-    private async Task<Result<T>> Parse<T>(HttpResponseMessage response, CancellationToken? token = null)
+    private async Task<Result<T>> Parse<T>(HttpResponseMessage response,  CancellationToken token = default)
     {
         if (response.IsSuccessStatusCode)
             return Result<T>.Parse(
                  "",
                  await _serializer.Deserialize<T>(
-                        await response.Content.ReadAsStreamAsync(token ?? _cts.Token)
+                        await response.Content.ReadAsStreamAsync(token == default ? _cts.Token : token)
                      ),
                  (int)response.StatusCode
              );
         else
             return Result<T>.Parse(
-                await response.Content.ReadAsStringAsync(token ?? _cts.Token),
+                await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
                 default,
                 (int)response.StatusCode
             );
