@@ -1,10 +1,10 @@
-﻿using CommonObjects.Results;
+﻿using CommonObjects.DTO;
+using CommonObjects.Results;
 using SpoofFileParser;
 using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.IO;
 
 namespace SpoofMess.ServiceRealizations;
@@ -32,7 +32,10 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
         {
             try
             {
-                var streamResult = await _fileApiService.Upload(file.Token);
+                Result<FileMetadata> result = await _fileApiService.GetToken(Guid.Parse(file.Id));
+                if (!result.Success)
+                    return;
+                var streamResult = await _fileApiService.Upload(result.Body.Token);
                 if (streamResult.Success)
                 {
                     await Download(file, progress, streamResult.Body!);
