@@ -10,6 +10,9 @@ public interface IFileApiService
     public Task<Result> ExistsL1L2(FingerprintExistL1L2 l1L2, CancellationToken token = default);
 
     public Task<Result<byte[]>> ExistsL3(FingerprintExistL3 l3, CancellationToken token = default);
+
     public Task<Result<byte[]>> Save(MultipartFormDataContent content, CancellationToken token = default);
+
     public Task<Result<Stream>> Upload(byte[] token, CancellationToken ct = default);
+    public Task<Result<CommonObjects.DTO.FileMetadata>> GetToken(Guid fileId, CancellationToken token = default);
 }

@@ -39,4 +39,11 @@ public class FileApiService(
     {
         return await PostAsync<byte[]>("/save", content, token);
     }
+
+
+    public async Task<Result<CommonObjects.DTO.FileMetadata>> GetToken(Guid fileId, CancellationToken token = default)
+    {
+        return await GetAsync<CommonObjects.DTO.FileMetadata>($"/get?fileId={fileId}", token);
+    }
+
 }
