@@ -1,6 +1,5 @@
 ﻿using CommonObjects.DTO;
 using CommonObjects.Requests.Attachments;
-using CommonObjects.Requests.Messages;
 using CommonObjects.Responses;
 using CommonObjects.Results;
 using SpoofMess.Models;
@@ -103,7 +102,7 @@ public class MessageService(
     public async Task SendMessage(Chat? chat, CancellationToken token = default)
     {
         if (chat is null) return;
-        if(chat._editedMessage is not null)
+        if (chat._editedMessage is not null)
         {
             await Edit(chat, token);
             return;
@@ -127,7 +126,7 @@ public class MessageService(
         edit.ChatId = chat.Id;
         chat.CurrentMessage = chat._editedMessage;
 
-        Result<List<Attachment>> attachments = await _attachmentService.SendAttachments(edit, token);
+        Result<List<CommonObjects.Responses.EditAttachment>> attachments = await _attachmentService.SendAttachments(edit, token);
         if (attachments.Success)
             await _notificationApiService.EditMessage(edit.SetEdit(attachments.Body!));
     }
@@ -173,6 +172,8 @@ public class MessageService(
                 messageDTO.OriginalAvatarName);
             if (user is null)
                 return;
+            user.Name = messageDTO.SenderName;
+            user.Login = messageDTO.SenderLogin;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
