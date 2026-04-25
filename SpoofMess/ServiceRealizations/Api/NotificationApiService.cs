@@ -1,6 +1,9 @@
 ﻿using CommonObjects.DTO;
+using CommonObjects.Requests.Changes;
 using CommonObjects.Requests.Messages;
+using CommonObjects.Responses;
 using Microsoft.AspNetCore.SignalR.Client;
+using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 
@@ -12,6 +15,9 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
     private readonly HubConnection _connection;
 
     public event Action<MessageDTO> OnMessageReceived = null!;
+    public event Action<EditMessageResponse> OnMessageEdited = null!;
+    public event Action<UpdateUserInfo> OnUserUpdated = null!;
+    public event Action<ChangeChatSettingsRequest> OnChatUpdated = null!;
 
     private readonly CancellationTokenSource _cts = new();
 
@@ -39,11 +45,24 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
         {
             OnMessageReceived?.Invoke(message);
         });
+        _connection.On<EditMessageResponse>("edited-message", (message) =>
+        {
+            OnMessageEdited?.Invoke(message);
+        });
+        _connection.On<UpdateUserInfo>("user-updated", (userInfo) =>
+        {
+            OnUserUpdated?.Invoke(userInfo);
+        });
+        _connection.On("chat-updated", OnChatUpdated);
     }
 
     public async Task SendMessage(CreateMessageRequest message)
     {
         await _connection.InvokeAsync("SendMessage", message);
+    }
+    public async Task EditMessage(EditMessageRequest message)
+    {
+        await _connection.InvokeAsync("EditMessage", message);
     }
 
     public async ValueTask DisposeAsync()
@@ -52,4 +71,16 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
         await _connection.DisposeAsync();
     }
 
+    public async Task<bool> DeleteMessage(MessageModel message)
+    {
+        try
+        {
+            await _connection.InvokeAsync("DeleteMessage", message);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }
