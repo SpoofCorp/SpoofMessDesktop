@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommonObjects.DTO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 
 namespace SpoofMess.Models;
@@ -24,5 +25,19 @@ public partial class User : ObservableObject
         Avatars = user.Avatars;
         Name = user.Name;
         Login = user.Login;
+    }
+    public void Update(UpdateUserInfo userInfo)
+    {
+        if(userInfo.FileId is not null)
+        {
+            Avatar = new()
+            {
+                Category = Enums.FileCategory.Image,
+                Name = userInfo.OriginalFileName,
+                Id = userInfo.FileId
+            };
+        }
+        Name = userInfo.Name;
+        Login = userInfo.Login;
     }
 }
