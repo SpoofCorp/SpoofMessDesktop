@@ -18,8 +18,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly INotificationService _notificationService;
     private readonly IAttachmentService _attachmentService;
     private readonly IChatUserService _chatUserService;
+    private readonly IUserService _userService;
     private readonly IChatService _chatService;
     private readonly INavigationService _navigationService;
+
     public ObservableCollection<Chat> Chats { get; set; }
 
     [NotifyPropertyChangedFor(nameof(AdditionalVisibility))]
@@ -30,8 +32,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private Chat? _selectedChat;
     private readonly UserInfo _userInfo;
+
     [ObservableProperty]
-    private Visibility _sideMenuVisibility = Visibility.Collapsed; 
+    private Visibility _sideMenuVisibility = Visibility.Collapsed;
+
     public Visibility AdditionalVisibility => AdditionalView is null ? Visibility.Collapsed : Visibility.Visible;
 
     public Visibility SelectChatVisibility => SelectedChat is null ? Visibility.Visible : Visibility.Collapsed;
@@ -46,6 +50,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IChatUserService chatUserService,
         INavigationService navigationService,
         IChatService chatService,
+        IUserService userService,
         UserInfo userInfo)
     {
         _notificationService = notificationService;
@@ -54,13 +59,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _attachmentService = attachmentService;
         _messageService = messageService;
         _navigationService = navigationService;
+        _chatService = chatService;
+        _userInfo = userInfo;
+        _userService = userService;
         _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
         _notificationApiService.OnMessageEdited += _messageService.EditHandle;
+        _notificationApiService.OnChatUpdated += _chatService.Update;
         ServiceRealizations.EventHandler.OnDelete += _messageService.DeleteLocal;
         ServiceRealizations.EventHandler.OnEdit += _messageService.StartEdit;
-        _chatService = chatService;
+        _notificationApiService.OnUserUpdated += _userService.OnUserUpdated;
         Chats = _chatService.Chats;
-        _userInfo = userInfo;
         //It's so bad...
         LoadSkippedData();
     }
@@ -131,12 +139,25 @@ public partial class MainViewModel : ObservableObject, IDisposable
         await _messageService.StopEdit(message, SelectedChat);
     }
 
+    [RelayCommand]
+    private void ShowChatInfo()
+    {
+        if (SelectedChat is not null)
+            AdditionalView = _navigationService.GetChatInfoViewModel(this, Close, SelectedChat);
+    }
+
     private void Close() =>
-        AdditionalView = null; 
+        AdditionalView = null;
 
     public void Dispose()
     {
         token.Cancel();
+        _notificationApiService.OnMessageReceived -= _messageService.UploadMessage;
+        _notificationApiService.OnMessageEdited -= _messageService.EditHandle;
+        _notificationApiService.OnChatUpdated -= _chatService.Update;
+        ServiceRealizations.EventHandler.OnDelete -= _messageService.DeleteLocal;
+        ServiceRealizations.EventHandler.OnEdit -= _messageService.StartEdit;
+        _notificationApiService.OnUserUpdated -= _userService.OnUserUpdated;
         GC.SuppressFinalize(this);
     }
 
@@ -145,7 +166,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (_userInfo.HideToTray)
         {
             window.Hide();
-            if(_userInfo.UnselectChat)
+            if (_userInfo.UnselectChat)
                 SelectedChat = null;
             AdditionalView?.CloseCommand.Execute(null);
             AdditionalView = null;
