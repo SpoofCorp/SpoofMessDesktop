@@ -1,4 +1,5 @@
 ﻿using CommonObjects.DTO;
+using CommonObjects.Requests.Changes;
 using CommonObjects.Results;
 using SpoofMess.Models;
 using SpoofMess.Services.Api;
@@ -45,5 +46,15 @@ public class ChatService(IChatApiService chatApiService) : IChatService
             });
         if(result.Success)
             Chats.Add(result.Body!.Set());
+    }
+
+    public async void Update(ChangeChatSettingsRequest request)
+    {
+        Chat? chat = await Get(request.Id);
+        if (chat is null)
+            return;
+        chat.IsPublic = request.IsPublic ?? chat.IsPublic;
+        chat.UniqueName = request.UniqueName ?? chat.UniqueName;
+        chat.Name = request.ChatName ?? chat.Name;
     }
 }

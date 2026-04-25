@@ -1,4 +1,5 @@
 ﻿using CommonObjects.DTO;
+using CommonObjects.Requests.Changes;
 using SpoofMess.Models;
 using System.Collections.ObjectModel;
 
@@ -10,4 +11,5 @@ public interface IChatService
     public Task<Chat?> Get(Guid id);
     public void AddChats(List<ChatUserDTO> chats);
     public Task CreateChat(Chat chat);
+    public void Update(ChangeChatSettingsRequest request);
 }
