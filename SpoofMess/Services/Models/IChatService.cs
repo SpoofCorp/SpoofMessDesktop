@@ -9,7 +9,7 @@ public interface IChatService
 {
     public ObservableCollection<Chat> Chats { get; set; }
     public Task<Chat?> Get(Guid id);
-    public void AddChats(List<ChatUserDTO> chats);
+    public Task AddChats(List<ChatUserDTO> chats);
     public Task CreateChat(Chat chat);
     public void Update(ChangeChatSettingsRequest request);
 }

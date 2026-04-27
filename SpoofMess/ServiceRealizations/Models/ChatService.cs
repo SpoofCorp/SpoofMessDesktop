@@ -1,19 +1,26 @@
-﻿using CommonObjects.DTO;
+﻿using AdditionalHelpers.Services;
+using CommonObjects.DTO;
 using CommonObjects.Requests.Changes;
 using CommonObjects.Results;
+using SpoofFileParser.FileMetadata;
 using SpoofMess.Models;
+using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.Setters;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
-public class ChatService(IChatApiService chatApiService) : IChatService
+public class ChatService(IChatApiService chatApiService, IFileService fileService, UserInfo userInfo, ISerializer serializer) : IChatService
 {
     public ObservableCollection<Chat> Chats { get; set; } = [];
 
+    private readonly UserInfo _userInfo = userInfo;
     private readonly IChatApiService _chatApiService = chatApiService;
+    private readonly ISerializer _serializer = serializer;
+    private readonly IFileService _fileService = fileService;
 
     public async Task<Chat?> Get(Guid id)
     {
@@ -29,10 +36,30 @@ public class ChatService(IChatApiService chatApiService) : IChatService
         return chat;
     }
 
-    public void AddChats(List<ChatUserDTO> chats)
+    public async Task AddChats(List<ChatUserDTO> chats)
     {
+        Chat newChat;
         foreach (ChatUserDTO chat in chats)
-            Chats.Add(chat.Set());
+        {
+            newChat = chat.Set();
+            Chats.Add(newChat);
+            if(chat.ChatAvatarToken is not null)
+            {
+                FileObject file = new()
+                {
+                    Id = chat.ChatAvatarId,
+                    Token = chat.ChatAvatarToken,
+                    Category = Enums.FileCategory.Image,
+                    Name = chat.OriginalFileName,
+                    Path = Path.Combine(_userInfo.SessionSettings.Directory, chat.OriginalFileName),
+                    Metadata = _serializer.Deserialize<IFileMetadata>(chat.Metadata ?? "")
+                };
+                file.Size = file.Metadata.Size;
+                file.PrettySize = _fileService.ToPrettySize(file.Metadata.Size);
+                await _fileService.Save(file);
+                newChat.Avatar = file;
+            }
+        }
     }
 
     public async Task CreateChat(Chat chat)
