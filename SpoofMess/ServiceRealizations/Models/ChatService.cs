@@ -10,6 +10,7 @@ using SpoofMess.Services.Models;
 using SpoofMess.Setters;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
@@ -24,7 +25,11 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
 
     public async Task<Chat?> Get(Guid id)
     {
-        Chat? chat = Chats.FirstOrDefault(c => c.Id == id);
+        Chat? chat;
+        lock (Chats)
+        {
+            chat = Chats.FirstOrDefault(c => c.Id == id);
+        }
         if (chat is not null)
             return chat;
 
@@ -42,8 +47,8 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
         foreach (ChatUserDTO chat in chats)
         {
             newChat = chat.Set();
-            Chats.Add(newChat);
-            if(chat.ChatAvatarToken is not null)
+            Add(newChat);
+            if (chat.ChatAvatarToken is not null)
             {
                 FileObject file = new()
                 {
@@ -62,16 +67,38 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
         }
     }
 
+    private void Add(Chat newChat)
+    {
+        Chat? olderChat = null;
+        DateTime timeNewChat = newChat.LastMessage is null ? newChat.CreatedAt : newChat.LastMessage.SentAt;
+        foreach (Chat chat in Chats)
+        {
+            if (chat.LastMessage is null ? chat.CreatedAt <= timeNewChat : chat.LastMessage.SentAt <= timeNewChat)
+            {
+                olderChat = chat;
+                break;
+            }
+        }
+
+        lock (Chats)
+        {
+            if (olderChat is null)
+                Chats.Add(newChat);
+            else
+                Chats.Insert(Chats.IndexOf(olderChat), newChat);
+        }
+    }
+
     public async Task CreateChat(Chat chat)
     {
-        Result<ChatDTO> result = await _chatApiService.Create(new() 
-            { 
-                ChatName = chat.Name ?? string.Empty,
-                UniqueName = chat.UniqueName,
-                ChatTypeId = chat.ChatTypeId,
-                IsPublic = chat.IsPublic
-            });
-        if(result.Success)
+        Result<ChatDTO> result = await _chatApiService.Create(new()
+        {
+            ChatName = chat.Name ?? string.Empty,
+            UniqueName = chat.UniqueName,
+            ChatTypeId = chat.ChatTypeId,
+            IsPublic = chat.IsPublic
+        });
+        if (result.Success)
             Chats.Add(result.Body!.Set());
     }
 
@@ -83,5 +110,26 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
         chat.IsPublic = request.IsPublic ?? chat.IsPublic;
         chat.UniqueName = request.UniqueName ?? chat.UniqueName;
         chat.Name = request.ChatName ?? chat.Name;
+    }
+
+    public async void OnMessageAdded(MessageModel message)
+    {
+        Chat? currentChat = await Get(message.ChatId);
+        if (currentChat is null)
+            return;
+        DateTime timeCurrentChat = currentChat.LastMessage is null ? currentChat.CreatedAt : currentChat.LastMessage.SentAt;
+        Chat? olderChat = Chats.FirstOrDefault(x => x.LastMessage is null ? x.CreatedAt <= timeCurrentChat : x.LastMessage.SentAt <= timeCurrentChat);
+        if (olderChat is null)
+            return;
+        else
+        {
+            lock (Chats)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Chats.Move(Chats.IndexOf(currentChat), Chats.IndexOf(olderChat));
+                });
+            }
+        }
     }
 }
