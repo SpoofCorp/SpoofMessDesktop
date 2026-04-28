@@ -157,6 +157,7 @@ public class MessageService(
                 else
                     chat.Messages.Insert(chat.Messages.IndexOf(prefixMessage), message);
             });
+            EventHandler.NotifyAdd(message);
         }
     }
 
