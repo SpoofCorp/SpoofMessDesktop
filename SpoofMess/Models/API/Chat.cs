@@ -14,21 +14,33 @@ public partial class Chat : ObservableObject
     }
     [ObservableProperty]
     private MessageModel _currentMessage;
+
     public MessageModel? _editedMessage;
+
     [ObservableProperty]
     private string? _name;
+
     [ObservableProperty]
     private string _uniqueName = string.Empty;
+
     [ObservableProperty]
     private bool _isPublic;
+
     [ObservableProperty]
     private FileObject _avatar = new() { Path = "D:\\Storage\\No_Cover.jpg", Category = Enums.FileCategory.Image };
 
     public double Position { get; set; }
 
     public MessageModel? LastMessage => Messages.LastOrDefault();
+
     public int ChatTypeId { get; set; }
     public Guid Id { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
     public ObservableCollection<MessageModel> Messages { get; } = [];
+
     public ObservableCollection<PermissionResult> Rules { get; set; } = [];
+
+    public ObservableCollection<User> Users { get; set; } = [];
 }

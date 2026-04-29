@@ -3,15 +3,15 @@ using SpoofMess.Enums;
 
 namespace SpoofMess.Models.API;
 
-public partial class Notification : ObservableObject
+public partial class Notification(string? text, NotificationType type) : ObservableObject
 {
     public string? Text
     {
         get => field ?? "Undefined";
         set => field = value;
-    }
+    } = text;
 
-    public NotificationType Type { get; set; }
+    public NotificationType Type { get; set; } = type;
 
     [ObservableProperty]
     private double _opacity = 1;

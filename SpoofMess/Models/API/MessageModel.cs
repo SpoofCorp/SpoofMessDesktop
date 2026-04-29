@@ -12,15 +12,27 @@ public partial class MessageModel : ObservableObject, IDisposable
     public Guid UserId { get; set; }
     public Guid ChatId { get; set; }
 
+    public DateTime SentAt
+    {
+        get => field;
+        set
+        {
+            field = value.ToLocalTime();
+            OnPropertyChanged(nameof(SentAt));
+        }
+    }
+
     [NotifyPropertyChangedFor(nameof(PreviewText))]
     [ObservableProperty]
     private string? _text;
-    [ObservableProperty]
-    private DateTime _sentAt;
+
     [ObservableProperty]
     private User? user;
     [ObservableProperty]
     private Chat? chat;
+
+    public Visibility CanChange => User?.Login == App.UserInfo.User.Login ? Visibility.Visible : Visibility.Collapsed;
+
     public string PreviewText
     {
         get
@@ -40,12 +52,12 @@ public partial class MessageModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Delete()
     {
-        ServiceRealizations.EventHandler.OnDelete(this);
+        ServiceRealizations.EventHandler.NotifyDelete(this);
     }
     [RelayCommand]
     private void Edit()
     {
-        ServiceRealizations.EventHandler.OnEdit(this);
+        ServiceRealizations.EventHandler.NotifyEdit(this);
     }
     [RelayCommand]
     private void Copy()
