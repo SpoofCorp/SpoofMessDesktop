@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
@@ -10,121 +11,61 @@ using System.Windows;
 
 namespace SpoofMess.ViewModels;
 
-public partial class MainViewModel : ObservableObject, IDisposable
+public partial class MainViewModel : ObservableObject, IDisposable, IInitializable
 {
     private readonly CancellationTokenSource token = new();
-    private readonly IMessageService _messageService;
+    private readonly UserInfo _userInfo;
     private readonly INotificationApiService _notificationApiService;
     private readonly INotificationService _notificationService;
-    private readonly IAttachmentService _attachmentService;
-    private readonly IChatUserService _chatUserService;
     private readonly IUserService _userService;
     private readonly IChatService _chatService;
     private readonly INavigationService _navigationService;
 
+    public ChatsViewModel ChatsViewModel { get; set; }
+
+    public MessagesViewModel MessagesViewModel { get; set; }
+
     public ObservableCollection<Chat> Chats { get; set; }
+
 
     [NotifyPropertyChangedFor(nameof(AdditionalVisibility))]
     [ObservableProperty]
     private AdditionalViewModel? _additionalView;
-
-    [NotifyPropertyChangedFor(nameof(SelectChatVisibility))]
-    [ObservableProperty]
-    private Chat? _selectedChat;
-    private readonly UserInfo _userInfo;
 
     [ObservableProperty]
     private Visibility _sideMenuVisibility = Visibility.Collapsed;
 
     public Visibility AdditionalVisibility => AdditionalView is null ? Visibility.Collapsed : Visibility.Visible;
 
-    public Visibility SelectChatVisibility => SelectedChat is null ? Visibility.Visible : Visibility.Collapsed;
-
     public MainViewModel() { }
 
     public MainViewModel(
         INotificationService notificationService,
         INotificationApiService notificationApiService,
-        IMessageService messageService,
-        IAttachmentService attachmentService,
-        IChatUserService chatUserService,
+        MessagesViewModel messagesViewModel,
         INavigationService navigationService,
         IChatService chatService,
         IUserService userService,
+        ChatsViewModel chatsViewModel,
         UserInfo userInfo)
     {
         _notificationService = notificationService;
         _notificationApiService = notificationApiService;
-        _chatUserService = chatUserService;
-        _attachmentService = attachmentService;
-        _messageService = messageService;
+        MessagesViewModel = messagesViewModel;
         _navigationService = navigationService;
         _chatService = chatService;
         _userInfo = userInfo;
         _userService = userService;
-        _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
-        _notificationApiService.OnMessageEdited += _messageService.EditHandle;
-        _notificationApiService.OnChatUpdated += _chatService.Update;
-        ServiceRealizations.EventHandler.OnDelete += _messageService.DeleteLocal;
-        ServiceRealizations.EventHandler.OnEdit += _messageService.StartEdit;
+        ChatsViewModel = chatsViewModel;
         _notificationApiService.OnUserUpdated += _userService.OnUserUpdated;
         Chats = _chatService.Chats;
-        //It's so bad...
-        LoadSkippedData();
     }
 
-    public async void LoadSkippedData()
-    {
-        try
-        {
-            await _chatUserService.SyncChats(DateTime.UtcNow.AddMonths(-10));
-            await _messageService.LoadSkippedMesssages(DateTime.UtcNow.AddMonths(-10));
-        }
-        catch (Exception ex)
-        {
-            _notificationService.ShowToast(new() { Text = ex.Message, Type = Enums.NotificationType.Error });
-        }
-    }
 
     [RelayCommand]
     private void ShowProfile()
     {
         AdditionalView = _navigationService.GetProfileViewModel(this, Close);
-    }
-
-
-    [RelayCommand]
-    private async Task Send()
-    {
-        try
-        {
-            await _messageService.SendMessage(SelectedChat);
-        }
-        catch (Exception ex)
-        {
-            _notificationService.ShowToast(new() { Text = ex.Message, Type = Enums.NotificationType.Error });
-        }
-    }
-
-    [RelayCommand]
-    private void Attach()
-    {
-        if (SelectedChat is null) return;
-
-        _attachmentService.Attach(SelectedChat.CurrentMessage);
-    }
-
-    [RelayCommand]
-    private void ShowCreateGroup()
-    {
-        AdditionalView = _navigationService.GetCreateGroupViewModel(this, Close);
-    }
-
-    [RelayCommand]
-    private void Unattach(FileObject fileObject)
-    {
-        if (SelectedChat is null) return;
-        _attachmentService.Unattach(fileObject, SelectedChat.CurrentMessage);
     }
 
     [RelayCommand]
@@ -134,32 +75,20 @@ public partial class MainViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private async Task StopEdit(MessageModel message)
+    private void ShowChatInfo()
     {
-        await _messageService.StopEdit(message, SelectedChat);
+        if (MessagesViewModel.SelectedChat is not null)
+            AdditionalView = _navigationService.GetChatInfoViewModel(this, Close, MessagesViewModel.SelectedChat);
     }
 
     [RelayCommand]
-    private void ShowChatInfo()
+    private void ShowCreateGroup()
     {
-        if (SelectedChat is not null)
-            AdditionalView = _navigationService.GetChatInfoViewModel(this, Close, SelectedChat);
+        AdditionalView = _navigationService.GetCreateGroupViewModel(this, Close);
     }
 
     private void Close() =>
         AdditionalView = null;
-
-    public void Dispose()
-    {
-        token.Cancel();
-        _notificationApiService.OnMessageReceived -= _messageService.UploadMessage;
-        _notificationApiService.OnMessageEdited -= _messageService.EditHandle;
-        _notificationApiService.OnChatUpdated -= _chatService.Update;
-        ServiceRealizations.EventHandler.OnDelete -= _messageService.DeleteLocal;
-        ServiceRealizations.EventHandler.OnEdit -= _messageService.StartEdit;
-        _notificationApiService.OnUserUpdated -= _userService.OnUserUpdated;
-        GC.SuppressFinalize(this);
-    }
 
     public void Close(Window window, CancelEventArgs e)
     {
@@ -167,11 +96,33 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             window.Hide();
             if (_userInfo.UnselectChat)
-                SelectedChat = null;
+                MessagesViewModel.SelectedChat = null;
             AdditionalView?.CloseCommand.Execute(null);
             AdditionalView = null;
             e.Cancel = true;
             SideMenuVisibility = Visibility.Collapsed;
         }
+    }
+
+    public async Task InitializeAsync()
+    {
+        try
+        {
+            await ChatsViewModel.InitializeAsync();
+            await MessagesViewModel.InitializeAsync();
+            ChatsViewModel.OnSelectionChatChanged += MessagesViewModel.OnSelectionChatChanged;
+        }
+        catch (Exception ex)
+        {
+            _notificationService.ShowError(ex.Message);
+        }
+    }
+
+    public void Dispose()
+    {
+        token.Cancel();
+        _notificationApiService.OnUserUpdated -= _userService.OnUserUpdated;
+        ChatsViewModel.OnSelectionChatChanged -= MessagesViewModel.OnSelectionChatChanged;
+        GC.SuppressFinalize(this);
     }
 }
