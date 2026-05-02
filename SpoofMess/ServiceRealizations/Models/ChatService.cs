@@ -10,7 +10,6 @@ using SpoofMess.Services.Models;
 using SpoofMess.Setters;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
@@ -22,6 +21,10 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
     private readonly IChatApiService _chatApiService = chatApiService;
     private readonly ISerializer _serializer = serializer;
     private readonly IFileService _fileService = fileService;
+
+    public event Action<Chat, int?> ChatAdded;
+
+    public event Action<int, int> ChatMoved;
 
     public async Task<Chat?> Get(Guid id)
     {
@@ -37,7 +40,7 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
         if (!chatResult.Success)
             return null;
         chat = chatResult.Body!.Set();
-        Chats.Add(chat);
+        Add(chat);
         return chat;
     }
 
@@ -56,7 +59,7 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
                     Token = chat.ChatAvatarToken,
                     Category = Enums.FileCategory.Image,
                     Name = chat.OriginalFileName,
-                    Path = Path.Combine(_userInfo.SessionSettings.Directory, chat.OriginalFileName),
+                    Path = Path.Combine(_userInfo.SessionSettings.Directory, chat.OriginalFileName ?? ""),
                     Metadata = _serializer.Deserialize<IFileMetadata>(chat.Metadata ?? "")
                 };
                 file.Size = file.Metadata.Size;
@@ -82,10 +85,15 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
 
         lock (Chats)
         {
+            int? index = null;
             if (olderChat is null)
                 Chats.Add(newChat);
             else
-                Chats.Insert(Chats.IndexOf(olderChat), newChat);
+            {
+                index = Chats.IndexOf(olderChat);
+                Chats.Insert(index!.Value, newChat);
+            }
+            ChatAdded(newChat, index);
         }
     }
 
@@ -125,10 +133,9 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
         {
             lock (Chats)
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Chats.Move(Chats.IndexOf(currentChat), Chats.IndexOf(olderChat));
-                });
+                int current = Chats.IndexOf(currentChat), old = Chats.IndexOf(olderChat);
+                Chats.Move(current, old);
+                ChatMoved(current, old);
             }
         }
     }
