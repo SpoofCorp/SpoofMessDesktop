@@ -5,27 +5,30 @@ using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 
 namespace SpoofMess.ViewModels;
 
-public partial class MainViewModel : ObservableObject, IDisposable, IInitializable
+public partial class MainViewModel(
+    INotificationService notificationService,
+    INotificationApiService notificationApiService,
+    MessagesViewModel messagesViewModel,
+    INavigationService navigationService,
+    IUserService userService,
+    ChatsViewModel chatsViewModel,
+    UserInfo userInfo) : ObservableObject, IDisposable, IInitializable
 {
     private readonly CancellationTokenSource token = new();
-    private readonly UserInfo _userInfo;
-    private readonly INotificationApiService _notificationApiService;
-    private readonly INotificationService _notificationService;
-    private readonly IUserService _userService;
-    private readonly IChatService _chatService;
-    private readonly INavigationService _navigationService;
+    private readonly UserInfo _userInfo = userInfo;
+    private readonly INotificationApiService _notificationApiService = notificationApiService;
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly IUserService _userService = userService;
+    private readonly INavigationService _navigationService = navigationService;
 
-    public ChatsViewModel ChatsViewModel { get; set; }
+    public ChatsViewModel ChatsViewModel { get; set; } = chatsViewModel;
 
-    public MessagesViewModel MessagesViewModel { get; set; }
-
-    public ObservableCollection<Chat> Chats { get; set; }
+    public MessagesViewModel MessagesViewModel { get; set; } = messagesViewModel;
 
 
     [NotifyPropertyChangedFor(nameof(AdditionalVisibility))]
@@ -36,31 +39,6 @@ public partial class MainViewModel : ObservableObject, IDisposable, IInitializab
     private Visibility _sideMenuVisibility = Visibility.Collapsed;
 
     public Visibility AdditionalVisibility => AdditionalView is null ? Visibility.Collapsed : Visibility.Visible;
-
-    public MainViewModel() { }
-
-    public MainViewModel(
-        INotificationService notificationService,
-        INotificationApiService notificationApiService,
-        MessagesViewModel messagesViewModel,
-        INavigationService navigationService,
-        IChatService chatService,
-        IUserService userService,
-        ChatsViewModel chatsViewModel,
-        UserInfo userInfo)
-    {
-        _notificationService = notificationService;
-        _notificationApiService = notificationApiService;
-        MessagesViewModel = messagesViewModel;
-        _navigationService = navigationService;
-        _chatService = chatService;
-        _userInfo = userInfo;
-        _userService = userService;
-        ChatsViewModel = chatsViewModel;
-        _notificationApiService.OnUserUpdated += _userService.OnUserUpdated;
-        Chats = _chatService.Chats;
-    }
-
 
     [RelayCommand]
     private void ShowProfile()
@@ -96,7 +74,7 @@ public partial class MainViewModel : ObservableObject, IDisposable, IInitializab
         {
             window.Hide();
             if (_userInfo.UnselectChat)
-                MessagesViewModel.SelectedChat = null;
+                ChatsViewModel.SelectedChat = null;
             AdditionalView?.CloseCommand.Execute(null);
             AdditionalView = null;
             e.Cancel = true;
@@ -108,9 +86,10 @@ public partial class MainViewModel : ObservableObject, IDisposable, IInitializab
     {
         try
         {
+            _notificationApiService.OnUserUpdated += _userService.OnUserUpdated;
+            ChatsViewModel.OnSelectionChatChanged += MessagesViewModel.OnSelectionChatChanged;
             await ChatsViewModel.InitializeAsync();
             await MessagesViewModel.InitializeAsync();
-            ChatsViewModel.OnSelectionChatChanged += MessagesViewModel.OnSelectionChatChanged;
         }
         catch (Exception ex)
         {
