@@ -7,8 +7,7 @@
         xmlns:ve="clr-namespace:SpoofMess.ViewElements"
         xmlns:filevm="clr-namespace:SpoofMess.ViewModels.FileViewModels"
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
-        mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=vm:MainViewModel, IsDesignTimeCreatable=True}">
+        mc:Ignorable="d">
     <Grid Background="{DynamicResource ThirdWhite}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.45*" />
@@ -27,7 +26,7 @@
                 <Button Focusable="False" Height="40" Width="40" Padding="0 0 0 5" VerticalAlignment="Center" DockPanel.Dock="Left" Content="≡" Style="{StaticResource MinimalCircleButton}" Click="Menu_Click"/>
                 <ve:InputTextBox Holder="{DynamicResource SearchHolder}" DockPanel.Dock="Right"/>
             </DockPanel>
-            <ListBox Background="{DynamicResource SecondWhite}" DockPanel.Dock="Bottom" SelectionChanged="ChatsList_SelectionChanged" ItemsSource="{Binding Chats}" x:Name="ChatsList" SelectedItem="{Binding SelectedChat}" MinWidth="100">
+            <ListBox SnapsToDevicePixels="True" Background="{DynamicResource SecondWhite}" DockPanel.Dock="Bottom" ItemsSource="{Binding ChatsViewModel.Chats}" x:Name="ChatsList" SelectedItem="{Binding ChatsViewModel.SelectedChat}" MinWidth="100">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -61,7 +60,7 @@
                 </ListBox.ItemTemplate>
                 <ListBox.Template>
                     <ControlTemplate TargetType="ListBox">
-                        <ScrollViewer Background="{DynamicResource SecondWhite}" HorizontalScrollBarVisibility="Disabled">
+                        <ScrollViewer CanContentScroll="False" Background="{DynamicResource SecondWhite}" HorizontalScrollBarVisibility="Disabled">
                             <ItemsPresenter />
                         </ScrollViewer>
                     </ControlTemplate>
@@ -70,189 +69,7 @@
         </DockPanel>
         <GridSplitter Focusable="False" Grid.Column="1" Background="Transparent" Panel.ZIndex="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="2"/>
         <Border Background="{DynamicResource ThirdWhite}" Grid.Column="1" Grid.ColumnSpan="2">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <DockPanel Grid.Row="0" Background="{DynamicResource SecondWhite}">
-                    <Grid VerticalAlignment="Top" Width="40" Height="40">
-                        <Border x:Name="Mask" 
-                                BorderThickness="1" 
-                                CornerRadius="40" 
-                                Background="White"
-                                BorderBrush="Gray"/>
-                        <Image Source="{Binding SelectedChat.Avatar.Path}" Stretch="UniformToFill">
-                            <Image.OpacityMask>
-                                <VisualBrush Visual="{Binding ElementName=Mask}"/>
-                            </Image.OpacityMask>
-                        </Image>
-                    </Grid>
-                    <ContentControl Focusable="False" DockPanel.Dock="Right">
-                        <ContentControl.Style>
-                            <Style TargetType="{x:Type ContentControl}">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate>
-                                            <Grid Margin="0 0 5 0">
-                                                <ToggleButton Focusable="False" Style="{StaticResource MinimalToggleButton}" x:Name="Button" Content="⁝"/>
-                                                <Popup IsOpen="{Binding IsChecked, ElementName=Button, Mode=TwoWay}" 
-                                                       PlacementTarget="{Binding ElementName=Button}" 
-                                                       Placement="Left"
-                                                       PlacementRectangle="45 35 0 0"
-                                                       StaysOpen="False"
-                                                       AllowsTransparency="True">
-                                                    <Border Padding="5">
-                                                        <Border Style="{StaticResource CardBorder}">
-                                                            <StackPanel>
-                                                                <ve:FunctionButton Text="Info" Icon="ℹ️" Command="{Binding ShowChatInfoCommand}"/>
-                                                                <ve:FunctionButton Text="Settings" Icon="⚙️"/>
-                                                            </StackPanel>
-                                                        </Border>
-                                                    </Border>
-                                                </Popup>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ContentControl.Style>
-                    </ContentControl>
-                    <TextBlock Text="{Binding SelectedChat.Name}" DockPanel.Dock="Left" Style="{DynamicResource PrimaryText}" Padding="5 0" FontWeight="DemiBold"/>
-                </DockPanel>
-                <ItemsControl Focusable="False" Grid.Row="1" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" x:Name="MessagesList">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
-                                <Grid.ContextMenu>
-                                    <ContextMenu Style="{DynamicResource BaseContextMenu}">
-                                        <MenuItem Header="Edit" Style="{DynamicResource MinimalMenuItem}"
-                                                  Command="{Binding PlacementTarget.DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                                        <MenuItem Header="Delete" Style="{DynamicResource MinimalMenuItem}"
-                                                  Command="{Binding PlacementTarget.DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                                        <MenuItem Header="Copy Text" Style="{DynamicResource MinimalMenuItem}"
-                                                  Command="{Binding PlacementTarget.DataContext.CopyCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                                    </ContextMenu>
-                                </Grid.ContextMenu>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid VerticalAlignment="Top" Width="40" Height="40">
-                                    <Border x:Name="Mask" 
-                                            BorderThickness="1" 
-                                            CornerRadius="40" 
-                                            Background="White"
-                                            BorderBrush="Gray" />
-
-                                    <Image Source="{Binding User.Avatar.Path}" Stretch="UniformToFill">
-                                        <Image.OpacityMask>
-                                            <VisualBrush Visual="{Binding ElementName=Mask}"/>
-                                        </Image.OpacityMask>
-                                    </Image>
-                                </Grid>
-                                <Border Padding="10 0" Grid.Column="1" CornerRadius="10" Background="{DynamicResource PrimaryWhite}" Margin="0 2">
-                                    <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition Height="auto"/>
-                                            <RowDefinition Height="auto"/>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Focusable="False" Grid.Row="0" Grid.Column="0" Text="{Binding User.Name}"/>
-                                        <ItemsControl Focusable="False" ItemsSource="{Binding Attachments}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                                            <ItemsControl.ItemContainerStyle>
-                                                <Style TargetType="ContentPresenter">
-                                                    <Setter Property="Margin" Value="0 2" />
-                                                </Style>
-                                            </ItemsControl.ItemContainerStyle>
-                                        </ItemsControl>
-                                        <TextBox Focusable="False" IsReadOnly="True" BorderThickness="0" Background="Transparent" Height="auto" FontSize="14" Grid.Row="2" Grid.Column="0" Text="{Binding Text}" TextWrapping="WrapWithOverflow"/>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Foreground="{DynamicResource SecondBlack}" Text="{Binding SentAt, StringFormat={}{0:HH:mm}}"/>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Focusable="False"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.Template>
-                        <ControlTemplate TargetType="ItemsControl">
-                            <ScrollViewer Focusable="False" x:Name="MessageScroll" CanContentScroll="False" ScrollChanged="ScrollViewer_ScrollChanged">
-                                <ItemsPresenter Focusable="False"/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ItemsControl.Template>
-                </ItemsControl>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding SelectedChat.CurrentMessage.Attachments}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ItemsControl ItemsSource="{Binding Files}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition Height="auto"/>
-                                                <RowDefinition Height="auto"/>
-                                            </Grid.RowDefinitions>
-                                            <Image Grid.ColumnSpan="2"/>
-                                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}"/>
-                                            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Size}"/>
-                                            <Button Style="{StaticResource FunctionButton}" Content="❌" Command="{Binding DataContext.UnattachCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" Grid.Column="1"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.Template>
-                        <ControlTemplate TargetType="ItemsControl">
-                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                                <ItemsPresenter/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ItemsControl.Template>
-                </ItemsControl>
-                <DockPanel Grid.Row="3" Background="{DynamicResource SecondWhite}">
-                    <Button DockPanel.Dock="Right" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" IsDefault="True" Content="✉️" Command="{Binding SendCommand}"/>
-                    <Button DockPanel.Dock="Right" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" Content="📎" Command="{Binding AttachCommand}"/>
-                    <ve:InputTextBox MaxHeight="200" TextWrapping="Wrap" Holder="{DynamicResource MessageHolder}" Text="{Binding SelectedChat.CurrentMessage.Text}" AcceptsReturn="True"/>
-                </DockPanel>
-                <Grid Visibility="{Binding SelectChatVisibility}" Grid.RowSpan="4" Background="{StaticResource ThirdWhite}">
-                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Border Style="{StaticResource CardBorder}" Background="{StaticResource SecondWhite}"/>
-                        <TextBlock Text="{DynamicResource SelectChatHolder}" Padding="5 2" Style="{StaticResource BaseText}"/>
-                    </Grid>
-                </Grid>
-            </Grid>
+            <ContentPresenter Content="{Binding MessagesViewModel}"/>
         </Border>
         <Grid x:Name="AdditionalContainer" Visibility="{Binding AdditionalVisibility}" Tag="{Binding AdditionalView, Mode=TwoWay}" Grid.ColumnSpan="3" Panel.ZIndex="10" MouseDown="Border_MouseDown" Background="#99000000">
             <Border x:Name="Container" MouseDown="ContentPresenter_MouseDown" Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 10" Background="{DynamicResource PrimaryWhite}" CornerRadius="10">
