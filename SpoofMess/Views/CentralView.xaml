@@ -10,7 +10,7 @@
         xmlns:uc="clr-namespace:SpoofMess.ViewElements"
         Title="{DynamicResource AppName}"
         Closing="Window_Closing"
-        mc:Ignorable="d" Height="{Binding UserInfo.Height, Mode=TwoWay}" Width="{Binding UserInfo.Width, Mode=TwoWay}">
+        mc:Ignorable="d" Height="{Binding UserInfo.Height, Mode=TwoWay}" Width="{Binding UserInfo.Width, Mode=TwoWay}" MinWidth="400" MinHeight="500">
     <Grid>
         <tb:TaskbarIcon Cursor="Hand"
                         IconSource="/Assets/SM.ico"

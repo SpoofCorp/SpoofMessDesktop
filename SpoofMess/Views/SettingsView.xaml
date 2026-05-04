@@ -23,13 +23,13 @@
                 </DockPanel>
             </Border>
             <Border Padding="10 0" Grid.Row="1" Background="{StaticResource SecondWhite}">
-                <Grid Height="100">
+                <Grid Height="auto">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <ContentControl>
+                    <ContentControl Focusable="False">
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Setter Property="Template">
@@ -40,10 +40,9 @@
                                                         BorderThickness="1" 
                                                         CornerRadius="70" 
                                                         Background="White"
-                                                        BorderBrush="Gray" 
-                                                        Width="70" Height="70"/>    
+                                                        BorderBrush="Gray" />
 
-                                                <Image Source="{Binding UserInfo.User.Avatar.Path}" Stretch="UniformToFill">
+                                                <Image Width="70" Height="70" Source="{Binding UserInfo.User.Avatar.Path}" Stretch="UniformToFill">
                                                     <Image.OpacityMask>
                                                         <VisualBrush Visual="{Binding ElementName=Mask}"/>
                                                     </Image.OpacityMask>
@@ -65,7 +64,7 @@
                         <TextBlock Text="{Binding UserInfo.User.Name}"/>
                         <TextBlock Text="{Binding UserInfo.User.Login}"/>
                     </StackPanel>
-                    <Button Grid.Column="2" Style="{StaticResource MinimalButton}" Width="32" Height="32">
+                    <Button Focusable="False" Grid.Column="2" Padding="5" Style="{StaticResource MinimalButton}" Width="42" Height="42">
                         <Button.Content>
                             <Image>
                                 <Image.Source>
