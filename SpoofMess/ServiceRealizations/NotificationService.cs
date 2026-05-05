@@ -2,6 +2,7 @@
 using SpoofMess.Services;
 using SpoofMess.ViewModels;
 using System.Windows;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SpoofMess.ServiceRealizations;
 
@@ -37,4 +38,17 @@ public class NotificationService(CentralViewModel centralViewModel) : INotificat
             _semaphore.Release();
         }
     }
+
+    public void ShowError(string? text) =>
+        ShowToast(new(text, Enums.NotificationType.Error));
+
+    public void ShowWarning(string? text) =>
+        ShowToast(new(text, Enums.NotificationType.Warning));
+
+    public void ShowFail(string? text) =>
+        ShowToast(new(text, Enums.NotificationType.Fail));
+
+    public void ShowInfo(string? text) =>
+        ShowToast(new(text, Enums.NotificationType.Info));
+
 }
