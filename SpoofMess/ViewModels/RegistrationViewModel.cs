@@ -41,10 +41,6 @@ public partial class RegistrationViewModel(
         if (result.Success)
             _navigationService.ShowMainView();
         else
-            _notificationService.ShowToast(new()
-            {
-                Text = result.Error,
-                Type = Enums.NotificationType.Fail
-            });
+            _notificationService.ShowError(result.Error);
     }
 }

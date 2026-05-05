@@ -17,6 +17,6 @@ public partial class ChatInfoViewModel(IChatAvatarService chatAvatarService, INo
     {
         Result result = await _chatAvatarService.Set(Chat);
         if (!result.Success)
-            _notificationService.ShowToast(new() { Opacity = 1, Text = result.Error ?? result.Message, Type = Enums.NotificationType.Error });
+            _notificationService.ShowError(result.Error);
     }
 }
