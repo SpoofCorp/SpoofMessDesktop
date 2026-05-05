@@ -23,4 +23,6 @@ public interface INavigationService
     public CreateGroupViewModel GetCreateGroupViewModel(ObservableObject owner, Action close);
     public AdvancedViewModel GetAdvancedViewModel(ObservableObject owner, Action close);
     public ProfileViewModel GetProfileViewModel(ObservableObject owner, Action close);
+    public LanguageViewModel GetLanguageViewModel(ObservableObject owner, Action close);
+    public ChatInfoViewModel GetChatInfoViewModel(ObservableObject owner, Action close, Chat chat);
 }
