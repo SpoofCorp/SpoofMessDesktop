@@ -5,13 +5,16 @@ using SpoofMess.Models;
 using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.FileViewModels;
-
-public partial class MusicViewModel : FileViewModel, IDisposable
+public partial class MusicViewModel : ObjectViewModel, IDisposable
 {
     private readonly IAudioService _audioService;
     private bool _init;
     [ObservableProperty]
     private bool _isPlayeed;
+
+    public override ObjectViewModel Clone() =>
+        new MusicViewModel(_audioService) { Files = [.. Files], Icon = Icon };
+    public override string Icon { get; init; } = "🎶";
 
     public MusicViewModel(IAudioService audioService)
     {

@@ -1,10 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SpoofMess.Models;
-using System.Collections.ObjectModel;
+﻿namespace SpoofMess.ViewModels.FileViewModels;
 
-namespace SpoofMess.ViewModels.FileViewModels;
-
-public partial class FileViewModel : ObservableObject
+public partial class FileViewModel : ObjectViewModel
 {
-    public ObservableCollection<FileObject> Files { get; set; } = [];
+    public override string Icon { get; init; } = "📁";
+
+    public override ObjectViewModel Clone() =>
+        new FileViewModel() { Files = [.. Files], Icon = Icon };
 }
