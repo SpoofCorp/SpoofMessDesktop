@@ -10,8 +10,6 @@ public partial class FileObject : ObservableObject
     [ObservableProperty]
     private double _downloadPercent;
     [ObservableProperty]
-    private byte[]? _token;
-    [ObservableProperty]
     private string? _path;
     [ObservableProperty]
     private string? _name;
@@ -25,6 +23,9 @@ public partial class FileObject : ObservableObject
     [JsonIgnore]
     private string _prettySize = string.Empty;
     public byte[]? Id;
+
+    public byte[]? Token;
+    public byte[]? AttachmentToken;
     public IFileMetadata Metadata { get; set; } = null!;
     public FileCategory Category { get; set; }
 }
