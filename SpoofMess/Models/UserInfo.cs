@@ -1,6 +1,7 @@
 ﻿using CommonObjects.Requests.Changes;
 using CommonObjects.Responses;
 using CommunityToolkit.Mvvm.ComponentModel;
+using SpoofMess.Enums;
 using System.Text.Json.Serialization;
 using System.Windows;
 
@@ -41,6 +42,10 @@ public partial class UserInfo : ObservableObject
 
     [ObservableProperty]
     private string _editedName = string.Empty;
+    [ObservableProperty]
+    private Language _language = Language.Ru;
+    [ObservableProperty]
+    private Theme _theme = Theme.Light;
 
     public UserAuthorizeResponse? Authorize { get; set; }
 
@@ -62,7 +67,9 @@ public partial class UserInfo : ObservableObject
         ShowMe = userInfo.ShowMe;
         ForwardMessage = userInfo.ForwardMessage;
         InviteMe = userInfo.InviteMe;
-        MonthsBeforeDelete = userInfo.MonthsBeforeDelete; 
+        MonthsBeforeDelete = userInfo.MonthsBeforeDelete;
+        Language = userInfo.Language;
+        Theme = userInfo.Theme; 
     }
 
     public bool Change(UserInfo edit, out ChangeUserSettingsRequest request)
