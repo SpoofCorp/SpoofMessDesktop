@@ -17,6 +17,8 @@ public interface IFileService
 
     public Result<FileObject> GetImage();
 
+    public void Remove(FileObject file);
+
     public FileCategory GetCategory(Attachment attachment);
 
     public Task Save(FileObject file);

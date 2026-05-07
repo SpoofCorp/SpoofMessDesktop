@@ -29,7 +29,7 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
         IEnumerable<Result<FileObject>> result = (GetMany() ?? []).Select(x => GetFileInfo(x));
         if (result.Any(x => !x.Success))
             return Result<List<FileObject>>.ErrorResult("Okak");
-        return Result<List<FileObject>>.OkResult(result.Select(x => x.Body!).ToList());
+        return Result<List<FileObject>>.OkResult([.. result.Select(x => x.Body!)]);
     }
 
     public string[]? GetImages() =>
@@ -78,6 +78,22 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
         form.Add(fileContent, "file", Path.GetFileName(path));
         return form;
     }
+
+    public void Remove(FileObject file)
+    {
+        if (File.Exists(file.Path))
+        {
+            string directory = (Path.HasExtension(file.Path) ? Path.GetDirectoryName(file.Path) : file.Path) ?? Guid.CreateVersion7().ToString();
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+            file.Path = Path.Combine(directory, file.Name ?? (Path.HasExtension(file.Path) ? Path.GetFileName(file.Path) : "Undefined"));
+            lock (file.Path)
+            {
+                File.Delete(file.Path);
+            }
+        }
+    }
+
     public async Task Save(FileObject file)
     {
         await _downloadService.TryStart(file);
