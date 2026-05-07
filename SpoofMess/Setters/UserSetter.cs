@@ -8,7 +8,10 @@ public static class UserSetter
     public static User Set(this UserDTO userDTO) =>
         new()
         {
-            AvatarId = userDTO.AvatarToken,
+            Avatar = new()
+            {
+                Token = userDTO.AvatarToken,
+            },
             Login = userDTO.Login,
             Name = userDTO.Name,
         };
