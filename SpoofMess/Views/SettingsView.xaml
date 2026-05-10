@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:SpoofMess.Views"
         xmlns:ve="clr-namespace:SpoofMess.ViewElements"
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
-        mc:Ignorable="d" Height="450" Width="420" >
-    <Grid>
-        <Grid Visibility="{Binding MainViewVisibility}">
+        mc:Ignorable="d" Height="450" Width="430" >
+    <Grid >
+        <Grid Width="430" Visibility="{Binding MainViewVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -22,7 +22,7 @@
                     <TextBlock Text="{DynamicResource Settings}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
             </Border>
-            <Border Padding="10 0" Grid.Row="1" Background="{StaticResource SecondWhite}">
+            <Border Padding="10 5" Grid.Row="1" Background="{StaticResource SecondWhite}">
                 <Grid Height="auto">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
@@ -61,8 +61,8 @@
                         </ContentControl.Style>
                     </ContentControl>
                     <StackPanel Margin="10 0" Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding UserInfo.User.Name}"/>
-                        <TextBlock Text="{Binding UserInfo.User.Login}"/>
+                        <TextBlock Style="{DynamicResource BaseText}" Text="{Binding UserInfo.User.Name}" FontWeight="DemiBold"/>
+                        <TextBlock Style="{DynamicResource BaseText}" FontSize="16" Text="{Binding UserInfo.User.Login}"/>
                     </StackPanel>
                     <Button Focusable="False" Grid.Column="2" Padding="5" Style="{StaticResource MinimalButton}" Width="42" Height="42">
                         <Button.Content>
@@ -87,6 +87,45 @@
                 </StackPanel>
             </Border>
         </Grid>
-        <ContentPresenter Content="{Binding AdditionalViewModel}"/>
+        <ContentPresenter Panel.ZIndex="22" HorizontalAlignment="Right" Content="{Binding AdditionalViewModel}">
+            <ContentPresenter.Style>
+                <Style TargetType="{x:Type ContentPresenter}">
+                    <Setter Property="Width" Value="0"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DataContext.MainViewVisibility, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="Collapsed">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation                 
+                                             To="430"
+                                             Storyboard.TargetProperty="Width"
+                                             Duration="0:0:0.2">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                                 To="0"
+                                                 Storyboard.TargetProperty="Width"
+                                                 Duration="0:0:0.2">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseIn"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentPresenter.Style>
+        </ContentPresenter>
     </Grid>
 </UserControl>

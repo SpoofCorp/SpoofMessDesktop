@@ -14,8 +14,8 @@
                 <DropShadowEffect BlurRadius="10" Color="#999999" ShadowDepth="0" RenderingBias="Quality"/>
             </Border.Effect>
         </Border>
-        <Border CornerRadius="10" Background="White" Padding="10 20">
-            <TextBlock Text="{Binding Text}"/>
+        <Border CornerRadius="10" Background="{DynamicResource SecondWhite}" Padding="10 20">
+            <TextBlock Style="{DynamicResource BaseText}" Text="{Binding Text}"/>
         </Border>
     </Grid>
 </UserControl>
