@@ -1,6 +1,5 @@
-﻿using SpoofMess.ViewModels;
-using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Input;
 
 namespace SpoofMess.Views;
 public partial class CentralView : Window
@@ -10,16 +9,14 @@ public partial class CentralView : Window
         InitializeComponent();
     }
 
-    private void Window_Closing(object sender, CancelEventArgs e)
-    {
-        if(DataContext is CentralViewModel { View: MainViewModel mainViewModel})
-        {
-            mainViewModel.Close(this, e);
-        }
-    }
-
     private void Close_Click(object sender, RoutedEventArgs e)
     {
         Application.Current.Shutdown(0);
+    }
+
+    private void DockPanel_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Left)
+            DragMove();
     }
 }
