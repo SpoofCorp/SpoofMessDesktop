@@ -1,8 +1,24 @@
 ﻿using CommonObjects.DTO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace SpoofMess.Models;
+
+public partial class SearchaebleModel : ObservableObject
+{
+
+    [ObservableProperty]
+    private string? _name;
+
+    [ObservableProperty]
+    private string _uniqueName = string.Empty;
+
+    [ObservableProperty]
+    private bool _isPublic;
+    public Guid Id { get; set; }
+
+}
 
 public partial class Chat : ObservableObject
 {
@@ -15,7 +31,17 @@ public partial class Chat : ObservableObject
     [ObservableProperty]
     private MessageModel _currentMessage;
 
-    public MessageModel? _editedMessage;
+    public Visibility EditedMessageVisibility => EditedMessage is null ? Visibility.Collapsed : Visibility.Visible;
+
+    public MessageModel? EditedMessage
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(EditedMessageVisibility));
+        }
+    }
 
     [ObservableProperty]
     private string? _name;
@@ -27,7 +53,10 @@ public partial class Chat : ObservableObject
     private bool _isPublic;
 
     [ObservableProperty]
-    private FileObject _avatar = new() { Path = "D:\\Storage\\No_Cover.jpg", Category = Enums.FileCategory.Image };
+    private MessageModel? _targetMessage;
+
+    [ObservableProperty]
+    private FileObject _avatar;
 
     public double Position { get; set; }
 
@@ -38,7 +67,11 @@ public partial class Chat : ObservableObject
 
     public DateTime CreatedAt { get; set; }
 
+    public ObservableCollection<FileObject> Avatars { get; } = [];
+
     public ObservableCollection<MessageModel> Messages { get; } = [];
+
+    public long RulesNumbers { get; set; }
 
     public ObservableCollection<PermissionResult> Rules { get; set; } = [];
 
