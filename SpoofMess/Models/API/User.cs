@@ -8,10 +8,7 @@ public partial class User : ObservableObject
 {
     public Guid Id { get; set; }
     [ObservableProperty]
-    private FileObject _avatar = new()
-    {
-        
-    };
+    private FileObject? _avatar;
     public ObservableCollection<FileObject> Avatars { get; set; } = [];
     [ObservableProperty]
     private string? _name;
@@ -28,16 +25,19 @@ public partial class User : ObservableObject
     }
     public void Update(UpdateUserInfo userInfo)
     {
-        if(userInfo.FileId is not null)
+        if (userInfo.FileId is not null && !Avatars.Any(x => x.Id.SequenceEqual(userInfo.FileId)))
         {
-            Avatar = new()
+            FileObject avatar = new()
             {
                 Category = Enums.FileCategory.Image,
                 Name = userInfo.OriginalFileName,
-                Id = userInfo.FileId
+                Id = userInfo.FileId,
+                Path = userInfo.OriginalFileName,
+                AttachmentToken = userInfo.AccessToken
             };
+            ServiceRealizations.EventHandler.NotifyUserAvatarUpdated(avatar, this);
         }
-        Name = userInfo.Name;
-        Login = userInfo.Login;
+        Name = userInfo.Name ?? Name;
+        Login = userInfo.Login ?? Login;
     }
 }
