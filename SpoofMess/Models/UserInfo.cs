@@ -1,7 +1,7 @@
 ﻿using CommonObjects.Requests.Changes;
 using CommonObjects.Responses;
 using CommunityToolkit.Mvvm.ComponentModel;
-using SpoofMess.Enums;
+using System.Globalization;
 using System.Text.Json.Serialization;
 using System.Windows;
 
@@ -43,9 +43,11 @@ public partial class UserInfo : ObservableObject
     [ObservableProperty]
     private string _editedName = string.Empty;
     [ObservableProperty]
-    private Language _language = Language.Ru;
+    private Language _language = new("English", "En", "en-US");
     [ObservableProperty]
-    private Theme _theme = Theme.Light;
+    private Theme _theme = new("Light");
+
+    public CultureInfo CurrentCultureInfo = new("en-US");
 
     public UserAuthorizeResponse? Authorize { get; set; }
 
@@ -69,7 +71,7 @@ public partial class UserInfo : ObservableObject
         InviteMe = userInfo.InviteMe;
         MonthsBeforeDelete = userInfo.MonthsBeforeDelete;
         Language = userInfo.Language;
-        Theme = userInfo.Theme; 
+        Theme = userInfo.Theme;
     }
 
     public bool Change(UserInfo edit, out ChangeUserSettingsRequest request)
