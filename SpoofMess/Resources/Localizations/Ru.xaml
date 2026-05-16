@@ -4,12 +4,14 @@
     <sys:String x:Key="SearchHolder">Искать здесь</sys:String>
     <sys:String x:Key="MessageHolder">Писать здесь</sys:String>
     <sys:String x:Key="SelectChatHolder">Выберите чат, чтобы начать общение</sys:String>
+    <sys:String x:Key="Info">Информация</sys:String>
     <sys:String x:Key="Settings">Настройки</sys:String>
     <sys:String x:Key="Profile">Профиль</sys:String>
     <sys:String x:Key="NewGroup">Новая группа</sys:String>
     <sys:String x:Key="Language">Язык</sys:String>
     <sys:String x:Key="PrivacySecurity">Приватность и безопастность</sys:String>
     <sys:String x:Key="Advanced">Расширенные</sys:String>
+    <sys:String x:Key="Design">Дизайн</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Уведомления и звуки</sys:String>
     <sys:String x:Key="SearchMe">Искать вас</sys:String>
     <sys:String x:Key="ShowMe">Отображать вашу информацию</sys:String>
@@ -31,4 +33,15 @@
     <sys:String x:Key="UniqueName">Уникальное название</sys:String>
     <sys:String x:Key="Create">Создать</sys:String>
     <sys:String x:Key="Public">Публичный</sys:String>
+
+    <sys:String x:Key="MidNight">Полночь</sys:String>
+    <sys:String x:Key="Light">Светлая</sys:String>
+    <sys:String x:Key="Dark">Тёмная</sys:String>
+    <sys:String x:Key="Curb">Поребрик</sys:String>
+    <sys:String x:Key="Grayness">Серость</sys:String>
+    <sys:String x:Key="TheColdAirOfRelief">Январский штиль</sys:String>
+    <sys:String x:Key="BlueFresh">Голубая свежесть</sys:String>
+    <sys:String x:Key="BerryMarshmallow">Ягодный зефир</sys:String>
+    <sys:String x:Key="DoubleLightning">Двойная молния</sys:String>
+    <sys:String x:Key="Milkshake">Милкшейк</sys:String>
 </ResourceDictionary>

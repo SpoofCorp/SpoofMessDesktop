@@ -4,12 +4,14 @@
     <sys:String x:Key="SearchHolder">Search here</sys:String>
     <sys:String x:Key="MessageHolder">Write here</sys:String>
     <sys:String x:Key="SelectChatHolder">Select a chat to start messaging</sys:String>
+    <sys:String x:Key="Info">Info</sys:String>
     <sys:String x:Key="Settings">Settings</sys:String>
     <sys:String x:Key="Profile">Profile</sys:String>
     <sys:String x:Key="NewGroup">New group</sys:String>
     <sys:String x:Key="Language">Language</sys:String>
     <sys:String x:Key="PrivacySecurity">Privacy and security</sys:String>
     <sys:String x:Key="Advanced">Advanced</sys:String>
+    <sys:String x:Key="Design">Design</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Notifications and sounds</sys:String>
     <sys:String x:Key="SearchMe">Search for you</sys:String>
     <sys:String x:Key="ShowMe">Display your information</sys:String>
@@ -31,4 +33,15 @@
     <sys:String x:Key="UniqueName">Unique name</sys:String>
     <sys:String x:Key="Create">Create</sys:String>
     <sys:String x:Key="Public">Public</sys:String>
+
+    <sys:String x:Key="MidNight">MidNight</sys:String>
+    <sys:String x:Key="Light">Light</sys:String>
+    <sys:String x:Key="Dark">Dark</sys:String>
+    <sys:String x:Key="Curb">Curb</sys:String>
+    <sys:String x:Key="Grayness">Grayness</sys:String>
+    <sys:String x:Key="TheColdAirOfRelief">The Cold Air of Relief</sys:String>
+    <sys:String x:Key="BlueFresh">Blue Fresh</sys:String>
+    <sys:String x:Key="BerryMarshmallow">Berry Marshmallow</sys:String>
+    <sys:String x:Key="DoubleLightning">Double Lightningя</sys:String>
+    <sys:String x:Key="Milkshake">Milkshake</sys:String>
 </ResourceDictionary>

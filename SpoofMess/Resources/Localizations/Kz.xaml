@@ -1,0 +1,47 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="SearchHolder">Осы жерден іздеу</sys:String>
+    <sys:String x:Key="MessageHolder">Осы жерге жазу</sys:String>
+    <sys:String x:Key="SelectChatHolder">Сөйлесуді бастау үшін чатты таңдаңыз</sys:String>
+    <sys:String x:Key="Info">Ақпарат</sys:String>
+    <sys:String x:Key="Settings">Баптаулар</sys:String>
+    <sys:String x:Key="Profile">Профиль</sys:String>
+    <sys:String x:Key="NewGroup">Жаңа топ</sys:String>
+    <sys:String x:Key="Language">Тіл</sys:String>
+    <sys:String x:Key="PrivacySecurity">Құпиялылық және қауіпсіздік</sys:String>
+    <sys:String x:Key="Advanced">Кеңейтілген</sys:String>
+    <sys:String x:Key="Design">Дизайн</sys:String>
+    <sys:String x:Key="NotificationsAndSounds">Хабарландырулар мен дыбыстар</sys:String>
+    <sys:String x:Key="SearchMe">Сізді іздеу</sys:String>
+    <sys:String x:Key="ShowMe">Ақпаратыңызды көрсету</sys:String>
+    <sys:String x:Key="ForwardMessage">Хабарламаларыңызды қайта бағыттау</sys:String>
+    <sys:String x:Key="InviteMe">Сізді чатқа шақыру</sys:String>
+    <sys:String x:Key="EditedName">Есімі</sys:String>
+    <sys:String x:Key="HideToTray">Жүйелік трейге жасыру</sys:String>
+    <sys:String x:Key="UnselectChat">Жапқан кезде чатты таңдаудан алып тастау</sys:String>
+
+    <sys:String x:Key="LogIn">Авторизациялау</sys:String>
+    <sys:String x:Key="Registration">Тіркелу</sys:String>
+    <sys:String x:Key="Register">Тіркелу</sys:String>
+    <sys:String x:Key="Login">Логин</sys:String>
+    <sys:String x:Key="Name">Есімі</sys:String>
+    <sys:String x:Key="Password">Құпия сөз</sys:String>
+    <sys:String x:Key="LogInQuestion">SpoofMess-те бірінші ретсіз бе?</sys:String>
+    <sys:String x:Key="RegistrationQuestion">Тіркеліп қойғансыз ба?</sys:String>
+    <sys:String x:Key="AppName">SpoofMess</sys:String>
+    <sys:String x:Key="UniqueName">Бірегей атау</sys:String>
+    <sys:String x:Key="Create">Құру</sys:String>
+    <sys:String x:Key="Public">Ашық</sys:String>
+    
+    <sys:String x:Key="MidNight">Түн ортасы</sys:String>
+    <sys:String x:Key="Light">Жарық</sys:String>
+    <sys:String x:Key="Dark">Қараңғы</sys:String>
+    <sys:String x:Key="Curb">Жиектас</sys:String>
+    <sys:String x:Key="Grayness">Қызықсыз өмір</sys:String>
+    <sys:String x:Key="TheColdAirOfRelief">Жеңілдік түні</sys:String>
+    <sys:String x:Key="BlueFresh">Көгілдір сергектік</sys:String>
+    <sys:String x:Key="BerryMarshmallow">Жидек маршмеллоуы</sys:String>
+    <sys:String x:Key="DoubleLightning">Қос найзағай</sys:String>
+    <sys:String x:Key="Milkshake">Милкшейк</sys:String>
+</ResourceDictionary>
