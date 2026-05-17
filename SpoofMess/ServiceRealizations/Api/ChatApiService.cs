@@ -16,10 +16,8 @@ class ChatApiService(
 
     public async Task<Result<ChatDTO>> GetChat(Guid id)
     {
-        Result<ChatDTO> result = await GetAsync<ChatDTO>("?chatId={id}");
-        if (result.Success)
-            return result;
-        return Result<ChatDTO>.ErrorResult("");
+        Result<ChatDTO> result = await GetAsync<ChatDTO>($"/get?chatId={id}");
+        return result;
     }
 
     public async Task<Result<ChatDTO>> Create(CreateChatRequest chat, CancellationToken token)
