@@ -1,6 +1,7 @@
 ﻿using AdditionalHelpers.Services;
 using CommonObjects.DTO;
 using CommonObjects.Requests.Changes;
+using CommonObjects.Responses;
 using CommonObjects.Results;
 using SpoofFileParser.FileMetadata;
 using SpoofMess.Models;
@@ -13,12 +14,14 @@ using System.IO;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
-public class ChatService(IChatApiService chatApiService, IFileService fileService, UserInfo userInfo, ISerializer serializer) : IChatService
+public class ChatService(IChatApiService chatApiService, IChatAvatarService chatAvatarService, IFileService fileService, UserInfo userInfo, ISerializer serializer) : IChatService
 {
     public ObservableCollection<Chat> Chats { get; set; } = [];
+    public List<Chat> ChatsStorage { get; set; } = [];
 
     private readonly UserInfo _userInfo = userInfo;
     private readonly IChatApiService _chatApiService = chatApiService;
+    private readonly IChatAvatarService _chatAvatarService = chatAvatarService;
     private readonly ISerializer _serializer = serializer;
     private readonly IFileService _fileService = fileService;
 
@@ -26,12 +29,12 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
 
     public event Action<int, int> ChatMoved;
 
-    public async Task<Chat?> Get(Guid id)
+    public async Task<Chat?> Get(Guid id, bool saveToLocal = true)
     {
         Chat? chat;
-        lock (Chats)
+        lock (ChatsStorage)
         {
-            chat = Chats.FirstOrDefault(c => c.Id == id);
+            chat = ChatsStorage.FirstOrDefault(c => c.Id == id);
         }
         if (chat is not null)
             return chat;
@@ -40,8 +43,28 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
         if (!chatResult.Success)
             return null;
         chat = chatResult.Body!.Set();
-        Add(chat);
+        if (saveToLocal)
+            Add(chat);
+        lock (ChatsStorage)
+        {
+            ChatsStorage.Add(chat);
+        }
+        await UploadAvatar(chat, chatResult.Body!);
         return chat;
+    }
+
+    private async Task UploadAvatar(Chat chat, ChatDTO chatDTO)
+    {
+        if (chatDTO.AvatarToken is null) return;
+
+        chat.Avatar = new()
+        {
+            Token = chatDTO.AvatarToken,
+            Id = chatDTO.AvatarId,
+            Name = chatDTO.OriginalAvatarFileName
+        };
+
+        await _chatAvatarService.UploadAvatar(chat);
     }
 
     public async Task AddChats(List<ChatUserDTO> chats)
@@ -51,16 +74,21 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
         {
             newChat = chat.Set();
             Add(newChat);
-            if (chat.ChatAvatarToken is not null)
+            lock (ChatsStorage)
+            {
+                ChatsStorage.Add(newChat);
+            }
+            if (chat.AvatarFileToken is not null)
             {
                 FileObject file = new()
                 {
-                    Id = chat.ChatAvatarId,
-                    Token = chat.ChatAvatarToken,
+                    Id = chat.AvatarId,
+                    Token = chat.AvatarFileToken,
+                    AttachmentToken = chat.AvatarAccessToken,
                     Category = Enums.FileCategory.Image,
                     Name = chat.OriginalFileName,
                     Path = Path.Combine(_userInfo.SessionSettings.Directory, chat.OriginalFileName ?? ""),
-                    Metadata = _serializer.Deserialize<IFileMetadata>(chat.Metadata ?? "")
+                    Metadata = chat.Metadata is null ? new ImageMetadata() : _serializer.Deserialize<IFileMetadata>(chat.Metadata)
                 };
                 file.Size = file.Metadata.Size;
                 file.PrettySize = _fileService.ToPrettySize(file.Metadata.Size);
@@ -74,17 +102,18 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
     {
         Chat? olderChat = null;
         DateTime timeNewChat = newChat.LastMessage is null ? newChat.CreatedAt : newChat.LastMessage.SentAt;
-        foreach (Chat chat in Chats)
-        {
-            if (chat.LastMessage is null ? chat.CreatedAt <= timeNewChat : chat.LastMessage.SentAt <= timeNewChat)
-            {
-                olderChat = chat;
-                break;
-            }
-        }
+
 
         lock (Chats)
         {
+            foreach (Chat chat in Chats)
+            {
+                if (chat.LastMessage is null ? chat.CreatedAt <= timeNewChat : chat.LastMessage.SentAt <= timeNewChat)
+                {
+                    olderChat = chat;
+                    break;
+                }
+            }
             int? index = null;
             if (olderChat is null)
                 Chats.Add(newChat);
@@ -107,7 +136,8 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
             IsPublic = chat.IsPublic
         });
         if (result.Success)
-            Chats.Add(result.Body!.Set());
+            lock (Chats)
+                Chats.Add(result.Body!.Set());
     }
 
     public async void Update(ChangeChatSettingsRequest request)
@@ -126,7 +156,9 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
         if (currentChat is null)
             return;
         DateTime timeCurrentChat = currentChat.LastMessage is null ? currentChat.CreatedAt : currentChat.LastMessage.SentAt;
-        Chat? olderChat = Chats.FirstOrDefault(x => x.LastMessage is null ? x.CreatedAt <= timeCurrentChat : x.LastMessage.SentAt <= timeCurrentChat);
+        Chat? olderChat;
+        lock (Chats)
+            olderChat = Chats.FirstOrDefault(x => x.LastMessage is null ? x.CreatedAt <= timeCurrentChat : x.LastMessage.SentAt <= timeCurrentChat);
         if (olderChat is null)
             return;
         else
@@ -134,9 +166,25 @@ public class ChatService(IChatApiService chatApiService, IFileService fileServic
             lock (Chats)
             {
                 int current = Chats.IndexOf(currentChat), old = Chats.IndexOf(olderChat);
+                if (current == -1)
+                    return;
                 Chats.Move(current, old);
                 ChatMoved(current, old);
             }
         }
+    }
+
+    public async void OnChatAvatarUpdated(ChatAvatarResponse response)
+    {
+        Chat? chat = await Get(response.ChatId);
+        if (chat is null)
+            return;
+        FileObject avatar = new()
+        {
+            AttachmentToken = response.AvatarTokenAccess
+        };
+        chat.Avatar = avatar;
+        chat.Avatars.Add(avatar);
+        await _chatAvatarService.OnChatAvatarUpdated(avatar);
     }
 }
