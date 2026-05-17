@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="ShadowColor" Color="#0B0810"/>
+    
+    <SolidColorBrush x:Key="DefaultTextColor" Color="#6C5F56"/>
+    <SolidColorBrush x:Key="ActiveTextColor" Color="#2E2520"/>
+    
+    <SolidColorBrush x:Key="PrimaryBlack" Color="#1F1610"/>
+    <SolidColorBrush x:Key="SecondBlack" Color="#4A5568"/>
+    
+    <SolidColorBrush x:Key="SixWhite" Color="#D9C3B0"/>
+    <SolidColorBrush x:Key="FiveWhite" Color="#B8A494"/>
+    <SolidColorBrush x:Key="FourWhite" Color="#E6DED7"/>
+    <SolidColorBrush x:Key="ThirdWhite" Color="#F4EBE1"/>
+    <SolidColorBrush x:Key="SecondWhite" Color="#FFFDFB"/>
+    <SolidColorBrush x:Key="PrimaryWhite" Color="#FAF3EB"/>
+    <SolidColorBrush x:Key="PrimaryAccent" Color="#93C5FD"/>
+    <SolidColorBrush x:Key="SecondAccent" Color="#60A5FA"/>
+    <SolidColorBrush x:Key="ThirdAccent" Color="#2563EB"/>
+    
+    <Color x:Key="ThirdWhiteColor">#F4EBE1</Color>
+    <Color x:Key="SecondWhiteColor">#FFFDFB</Color>
+    <Color x:Key="PrimaryWhiteColor">#FAF3EB</Color>
+    <Color x:Key="PrimaryAccentColor">#93C5FD</Color>
+    <Color x:Key="SecondAccentColor">#60A5FA</Color>
+    <Color x:Key="ThirdAccentColor">#2563EB</Color>
+</ResourceDictionary>
