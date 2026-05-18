@@ -1,6 +1,4 @@
-﻿using CommonObjects.DTO;
-using CommonObjects.Results;
-using SpoofFileParser;
+﻿using SpoofFileParser;
 using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
@@ -16,7 +14,7 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
     private readonly ConcurrentDictionary<byte[], Task> _downloadTasks = new();
     private readonly ConcurrentDictionary<byte[], DownloadProgress> _progressMap = new();
 
-    public async Task TryStart(FileObject file)
+    public async Task TryStart(FileObject file, CancellationToken cancellationToken = default)
     {
         DownloadProgress progress = _progressMap.GetOrAdd(file.Id!, _ => new());
 
@@ -32,10 +30,10 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
         {
             try
             {
-                Result<FileMetadata> result = await _fileApiService.GetToken(Guid.Parse(file.Id));
-                if (!result.Success)
-                    return;
-                var streamResult = await _fileApiService.Upload(result.Body.Token);
+                if (file.Token is null)
+                    throw new ApplicationException("Token can't been null!");
+
+                var streamResult = await _fileApiService.Upload(file.Token, cancellationToken);
                 if (streamResult.Success)
                 {
                     await Download(file, progress, streamResult.Body!);
@@ -49,7 +47,7 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
         }));
     }
 
-    public async Task Download(FileObject file, DownloadProgress progress, Stream input)
+    public async Task Download(FileObject file, DownloadProgress progress, Stream input, CancellationToken cancellationToken = default)
     {
         string directory = (Path.HasExtension(file.Path) ? Path.GetDirectoryName(file.Path) : file.Path) ?? Guid.CreateVersion7().ToString();
         if (!Directory.Exists(directory))
@@ -67,17 +65,14 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
             FileMode.CreateNew))
         {
             byte[] buffer = new byte[8192];
-            long totalRead = 0;
+            long totalRead = 0, totalBytes = file.Size;
             int bytesRead;
-            long totalBytes = file.Size;
-            while ((bytesRead = await input.ReadAsync(buffer)) > 0)
+            while ((bytesRead = await input.ReadAsync(buffer, cancellationToken)) > 0)
             {
-                await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
                 totalRead += bytesRead;
                 if (totalBytes > 0)
-                {
                     progress.Raise((double)totalRead / totalBytes * 100);
-                }
             }
         }
         FileExtension extension = _fileClassifier.GetExtension(file.Path);
