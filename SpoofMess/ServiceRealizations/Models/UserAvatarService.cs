@@ -1,4 +1,5 @@
 ﻿using CommonObjects.Requests.Files;
+using CommonObjects.Responses;
 using CommonObjects.Results;
 using SpoofMess.Models;
 using SpoofMess.Services;
@@ -21,6 +22,10 @@ public class UserAvatarService(
     private readonly IFingerprintService _fingerprintService = fingerprintService;
     private readonly UserInfo _userInfo = userInfo;
 
+    public async Task<Result<AvatarResponse>> GetToken(byte[] accessToken, CancellationToken cancellationToken = default)
+    {
+        return await _userAvatarApiService.Get(accessToken, cancellationToken);
+    }
 
     public async Task<Result> Set()
     {
