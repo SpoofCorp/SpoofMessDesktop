@@ -6,6 +6,7 @@ using SpoofMess.Models;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.Setters;
+using System.Diagnostics;
 using System.Windows;
 
 namespace SpoofMess.ServiceRealizations.Models;
@@ -32,7 +33,6 @@ public class MessageService(
         AddMessage(messageModel, chat);
         await UploadAdditionalData(messageModel, message, default);
     }
-
     public async Task LoadSkippedMesssages(DateTime after)
     {
         Result<List<MessageDTO>> chats = await _messageApiService.GetSkippedMessages(after);
@@ -65,10 +65,6 @@ public class MessageService(
         Chat? chat = await _chatService.Get(message.ChatId);
         if (chat is null)
             return;
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            chat.Messages.Remove(message);
-        });
     }
 
     public async void StartEdit(MessageModel message)
@@ -76,33 +72,29 @@ public class MessageService(
         Chat? chat = await _chatService.Get(message.ChatId);
         if (chat is null)
             return;
-
-        chat._editedMessage = chat.CurrentMessage;
+        if (chat.EditedMessage is null)
+            chat.EditedMessage = chat.CurrentMessage;
+        else
+            chat.EditedMessage = new()
+            {
+                ChatId = chat.Id,
+                Text = string.Empty
+            };
         chat.CurrentMessage = message.GetEdit();
     }
 
-    public async Task StopEdit(MessageModel message, Chat? chat)
+    public async Task StopEdit(Chat? chat)
     {
-        if (chat is not null && chat.Id == message.ChatId)
-        {
-            chat.CurrentMessage = chat._editedMessage ?? new();
-            chat._editedMessage = null;
-        }
-        else
-        {
-            Chat? currentChat = await _chatService.Get(message.ChatId);
-            if (currentChat is null)
-                return;
-
-            currentChat.CurrentMessage = currentChat._editedMessage ?? new();
-            currentChat._editedMessage = null;
-        }
+        if (chat is null)
+            return;
+        chat.CurrentMessage = chat.EditedMessage ?? new();
+        chat.EditedMessage = null;
     }
 
     public async Task SendMessage(Chat? chat, CancellationToken token = default)
     {
         if (chat is null) return;
-        if (chat._editedMessage is not null)
+        if (chat.EditedMessage is not null)
         {
             await Edit(chat, token);
             return;
@@ -121,14 +113,29 @@ public class MessageService(
 
     private async Task Edit(Chat chat, CancellationToken token = default)
     {
-        if (chat._editedMessage is null || chat.CurrentMessage is not EditMessageModel edit)
+        if (chat.EditedMessage is null || chat.CurrentMessage is not EditMessageModel edit)
             return;
         edit.ChatId = chat.Id;
-        chat.CurrentMessage = chat._editedMessage;
-
+        chat.CurrentMessage = chat.EditedMessage;
+        chat.EditedMessage = null;
         Result<List<CommonObjects.Responses.EditAttachment>> attachments = await _attachmentService.SendAttachments(edit, token);
         if (attachments.Success)
             await _notificationApiService.EditMessage(edit.SetEdit(attachments.Body!));
+    }
+
+    public async void OnDelete(Guid messageId, Guid chatId)
+    {
+        Chat? chat = await _chatService.Get(chatId);
+        if (chat is null)
+            return;
+        MessageModel? message = chat.Messages.FirstOrDefault(x => x.Id == messageId);
+        if (message is null)
+            return;
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            chat.Messages.Remove(message);
+        });
     }
 
     public async void EditHandle(EditMessageResponse message)
@@ -166,11 +173,7 @@ public class MessageService(
 
         Task userTask = Task.Run(async () =>
         {
-            User? user = await _userService.Get(
-                message.User!.Login,
-                message.User.Avatar.Id,
-                message.User.Avatar.Token,
-                messageDTO.OriginalAvatarName);
+            User? user = await _userService.Get(message.User!.Login, cancelationToken);
             if (user is null)
                 return;
             user.Name = messageDTO.SenderName;
@@ -185,5 +188,31 @@ public class MessageService(
             message,
             messageDTO.Attachments);
         await Task.WhenAll(userTask, uploadTask);
+    }
+
+    public async Task UploadMessagesAfterDate(Chat chat)
+    {
+        DateTime date = DateTime.UtcNow;
+        Result<List<MessageDTO>> chats = await _messageApiService.GetBeforeMessages(chat.Id, date);
+        while (chats.Success && chats.Body?.Count > 0)
+        {
+            if (chats.Success)
+            {
+                await Parallel.ForEachAsync(chats.Body!, async (messageDTO, cancelationToken) =>
+                {
+                    MessageModel message = messageDTO.Set();
+                    Chat? chat = await _chatService.Get(messageDTO.ChatId);
+                    if (chat is null)
+                        return;
+                    AddMessage(message, chat);
+                    await UploadAdditionalData(message, messageDTO, cancelationToken);
+                    if (message.SentAt < date)
+                        date = message.SentAt;
+                });
+            }
+            if (chats.Body!.Count < 50)
+                break;
+            chats = await _messageApiService.GetBeforeMessages(chat.Id, date);
+        }
     }
 }
