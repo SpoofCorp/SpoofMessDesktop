@@ -1,5 +1,6 @@
 ﻿using CommonObjects.DTO;
 using CommonObjects.Results;
+using SpoofMess.Models;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 
@@ -16,6 +17,17 @@ public class ChatUserService(
     {
         Result<List<ChatUserDTO>> chats = await _chatUserApiService.GetChats(after);
         if (chats.Success)
-            _chatService.AddChats(chats.Body!);
+            await _chatService.AddChats(chats.Body!);
+    }
+
+    public async Task<bool> Join(Chat chat)
+    {
+        Result result = await _chatUserApiService.Join(new(chat.Id));
+        return result.Success;
+    }
+
+    public async void ChatCreated(ChatUserDTO chatUserDTO)
+    {
+        await _chatService.AddChats([chatUserDTO]);
     }
 }

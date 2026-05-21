@@ -12,11 +12,9 @@ using SpoofMess.ViewModels.FileViewModels;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
@@ -103,7 +101,7 @@ internal class AttachmentService(
         if (message is EditMessageModel editMessage)
             editMessage.NewAttachments.Add(new(true, file));
         if (vm is not null)
-            vm.Files.Add(file);
+            vm.Add(file);
         else
             message.Attachments.Add(fileView);
     }
@@ -119,7 +117,6 @@ internal class AttachmentService(
         return Result.OkResult();
     }
 
-    [Obsolete("Need remove file from server")]
     public void Unattach(FileObject file, MessageModel message)
     {
         ObjectViewModel fileView = GetViewModel(file);
@@ -217,10 +214,17 @@ internal class AttachmentService(
         {
             if (attachment.IsAdded)
             {
+                Result<CommonObjects.DTO.FileMetadata> result = await _attachmentApiService.GetToken(attachment.Token);
+                if (!result.Success)
+                {
+                    //need handle error
+                    return;
+                }
                 FileObject file = new()
                 {
                     Id = attachment.Id,
-                    Token = attachment.Token,
+                    AttachmentToken = attachment.Token,
+                    Token = result.Body!.Token,
                     Category = Enum.Parse<FileCategory>(attachment.Category, true),
                     Name = attachment.OriginalFileName,
                     Path = Path.Combine(_userInfo.SessionSettings.Directory, attachment.OriginalFileName),
@@ -263,7 +267,7 @@ internal class AttachmentService(
                 vm = Get(message, file);
                 if (vm is null)
                     continue;
-                vm.Files.Add(file);
+                vm.Add(file);
             }
         });
 

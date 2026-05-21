@@ -1,5 +1,6 @@
 ﻿using AdditionalHelpers.Services;
 using CommonObjects.DTO;
+using CommonObjects.Requests.Changes;
 using CommonObjects.Results;
 using SpoofMess.Services.Api;
 using System.Net.Http;
@@ -13,6 +14,11 @@ internal class UserApiService(
         serializer), IUserApiService
 {
     protected override string BaseUrl => "https://localhost:7082/api/v2/User";
+
+    public async Task<Result> ChangeSettings(ChangeUserSettingsRequest request)
+    {
+        return await PatchAsync($"/ChangeSettings", request);
+    }
 
     public async Task<Result<UserDTO>> GetByLogin(string login)
     {

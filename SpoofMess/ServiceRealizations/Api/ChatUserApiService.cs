@@ -1,5 +1,6 @@
 ﻿using AdditionalHelpers.Services;
 using CommonObjects.DTO;
+using CommonObjects.Requests.Members;
 using CommonObjects.Results;
 using SpoofMess.Services.Api;
 using System.Net.Http;
@@ -28,9 +29,12 @@ public class ChatUserApiService(
             //Need show exception
             return result;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return Result<List<ChatUserDTO>>.ErrorResult("");
         }
     }
+
+    public async Task<Result> Join(JoinToChatRequest request, CancellationToken cancellationToken = default) =>
+        await PostAsync("/join", request, cancellationToken);
 }

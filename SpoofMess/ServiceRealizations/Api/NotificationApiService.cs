@@ -15,9 +15,12 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
     private readonly HubConnection _connection;
 
     public event Action<MessageDTO> OnMessageReceived = null!;
+    public event Action<Guid, Guid> OnMessageDeleted = null!;
     public event Action<EditMessageResponse> OnMessageEdited = null!;
     public event Action<UpdateUserInfo> OnUserUpdated = null!;
     public event Action<ChangeChatSettingsRequest> OnChatUpdated = null!;
+    public event Action<ChatAvatarResponse> OnChatAvatarUpdated = null!;
+    public event Action<ChatUserDTO> OnChatCreated = null!;
 
     private readonly CancellationTokenSource _cts = new();
 
@@ -41,19 +44,19 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
     private async void InitializeAsync()
     {
         await _connection.StartAsync();
-        _connection.On<MessageDTO>("new-message", (message) =>
+        _connection.On<ChatUserDTO>("chat-user-created", (chatUserDTO) =>
         {
-            OnMessageReceived?.Invoke(message);
+            OnChatCreated?.Invoke(chatUserDTO);
         });
+        _connection.On<MessageDTO>("new-message", (message) => OnMessageReceived?.Invoke(message));
+        _connection.On<Guid, Guid>("delete-message", (messageId, chatId) => OnMessageDeleted?.Invoke(messageId, chatId));
         _connection.On<EditMessageResponse>("edited-message", (message) =>
         {
             OnMessageEdited?.Invoke(message);
         });
-        _connection.On<UpdateUserInfo>("user-updated", (userInfo) =>
-        {
-            OnUserUpdated?.Invoke(userInfo);
-        });
+        _connection.On("user-updated", OnUserUpdated);
         _connection.On("chat-updated", OnChatUpdated);
+        _connection.On("chat-avatar-updated", OnChatAvatarUpdated);
     }
 
     public async Task SendMessage(CreateMessageRequest message)
@@ -75,7 +78,7 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
     {
         try
         {
-            await _connection.InvokeAsync("DeleteMessage", message);
+            await _connection.InvokeAsync("DeleteMessage", message.ChatId, message.Id);
             return true;
         }
         catch
