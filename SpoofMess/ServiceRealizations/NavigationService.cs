@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.Services;
+using SpoofMess.Services.Models;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
 using SpoofMess.ViewModels.Settings;
@@ -15,21 +16,42 @@ public class NavigationService(
         IServiceProvider serviceProvider
     ) : INavigationService
 {
-    private Window _currentMainWindow = null!;
+    public Window CurrentMainWindow { get; set; } = null!;
     private CentralViewModel _currentViewModel = null!;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public void OpenWindow()
     {
-        _currentMainWindow.Show();
-        _currentMainWindow.Activate();
+        CurrentMainWindow.Show();
+        CurrentMainWindow.Activate();
     }
+
+    public void CloseWindow()
+    {
+        CurrentMainWindow.Close();
+    }
+
+    public void ResizeWindow()
+    {
+        CurrentMainWindow.WindowState = CurrentMainWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    }
+
+    public void HideWindow()
+    {
+        CurrentMainWindow.WindowState = WindowState.Minimized;
+    }
+
+    public void HideToTrayWindow()
+    {
+        CurrentMainWindow.Hide();
+    }
+
     public void ShowCentralView()
     {
-        _currentMainWindow = _serviceProvider.GetRequiredService<CentralView>();
+        CurrentMainWindow = _serviceProvider.GetRequiredService<CentralView>();
         _currentViewModel = GetViewModel<CentralViewModel>();
-        _currentMainWindow.DataContext = _currentViewModel;
-        _currentMainWindow.Show();
+        CurrentMainWindow.DataContext = _currentViewModel;
+        CurrentMainWindow.Show();
     }
 
     public void ShowCentralViewWithMain() =>
@@ -69,6 +91,9 @@ public class NavigationService(
     public LanguageViewModel GetLanguageViewModel(ObservableObject owner, Action close) =>
         GetAdditionalViewModel<LanguageViewModel>(owner, close);
 
+    public DesingViewModel GetDesignViewModel(ObservableObject owner, Action close) =>
+        GetAdditionalViewModel<DesingViewModel>(owner, close);
+
     public ChatInfoViewModel GetChatInfoViewModel(ObservableObject owner, Action close, Chat chat)
     {
         ChatInfoViewModel viewModel = GetAdditionalViewModel<ChatInfoViewModel>(owner, close);
@@ -86,7 +111,7 @@ public class NavigationService(
     private TFileViewModel GetFileViewModel<TFileViewModel>(FileObject file) where TFileViewModel : ObjectViewModel
     {
         TFileViewModel imageViewModel = GetViewModel<TFileViewModel>();
-        imageViewModel.Files.Add(file);
+        imageViewModel.Add(file);
         return imageViewModel;
     }
 
@@ -99,11 +124,11 @@ public class NavigationService(
 
     private void ShowCentralViewWithViewModel<TViewModel>() where TViewModel : ObservableObject
     {
-        _currentMainWindow = _serviceProvider.GetRequiredService<CentralView>();
+        CurrentMainWindow = _serviceProvider.GetRequiredService<CentralView>();
         _currentViewModel = GetViewModel<CentralViewModel>();
-        _currentMainWindow.DataContext = _currentViewModel;
+        CurrentMainWindow.DataContext = _currentViewModel;
         _currentViewModel.View = GetViewModel<TViewModel>();
-        _currentMainWindow.Show();
+        CurrentMainWindow.Show();
     }
 
     private TViewModel GetViewModel<TViewModel>() where TViewModel : ObservableObject
@@ -112,5 +137,12 @@ public class NavigationService(
         if (viewModel is IInitializable initializable)
             initializable.InitializeAsync();
         return viewModel;
+    }
+
+    public ChatCardViewModel GetChatCardViewModel(ObservableObject owner, Action close, Chat chat)
+    {
+        ChatCardViewModel chatCardViewModel = new(chat, _serviceProvider.GetRequiredService<IChatService>(), _serviceProvider.GetRequiredService<IChatUserService>(), _serviceProvider.GetRequiredService<IMessageService>());
+        chatCardViewModel.Initialize(owner, close);
+        return chatCardViewModel;
     }
 }

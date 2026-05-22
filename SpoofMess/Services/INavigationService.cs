@@ -9,6 +9,10 @@ namespace SpoofMess.Services;
 public interface INavigationService
 {
     public void OpenWindow();
+    public void CloseWindow(); 
+    public void ResizeWindow();
+    public void HideToTrayWindow();
+    public void HideWindow();
     public void ShowCentralViewWithMain();
     public void ShowCentralViewWithAuthorization();
     public void ShowCentralView();
@@ -24,5 +28,7 @@ public interface INavigationService
     public AdvancedViewModel GetAdvancedViewModel(ObservableObject owner, Action close);
     public ProfileViewModel GetProfileViewModel(ObservableObject owner, Action close);
     public LanguageViewModel GetLanguageViewModel(ObservableObject owner, Action close);
+    public DesingViewModel GetDesignViewModel(ObservableObject owner, Action close);
     public ChatInfoViewModel GetChatInfoViewModel(ObservableObject owner, Action close, Chat chat);
+    public ChatCardViewModel GetChatCardViewModel(ObservableObject owner, Action close, Chat chat);
 }
