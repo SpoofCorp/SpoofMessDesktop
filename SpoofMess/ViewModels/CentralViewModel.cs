@@ -22,4 +22,25 @@ public partial class CentralViewModel(UserInfo userInfo, INavigationService navi
     {
         _navigation.OpenWindow();
     }
+
+    [RelayCommand]
+    private void Close()
+    {
+        if (View is MainViewModel mainViewModel)
+            mainViewModel?.CloseWindow();
+        else
+            _navigation.CloseWindow();
+    }
+
+    [RelayCommand]
+    private void Hide()
+    {
+        _navigation.HideWindow();
+    }
+
+    [RelayCommand]
+    private void Resize()
+    {
+        _navigation.ResizeWindow();
+    }
 }
