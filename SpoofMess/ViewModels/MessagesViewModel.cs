@@ -19,12 +19,14 @@ public partial class MessagesViewModel(
     private readonly IAttachmentService _attachmentService = attachmentService;
     private readonly IMessageService _messageService = messageService;
     private readonly INotificationApiService _notificationApiService = notificationApiService;
-
+    private Action getChatInfo = null!; 
     public Visibility SelectChatVisibility => SelectedChat is null ? Visibility.Visible : Visibility.Collapsed;
 
     [NotifyPropertyChangedFor(nameof(SelectChatVisibility))]
     [ObservableProperty]
     private Chat? _selectedChat;
+    [ObservableProperty]
+    public bool _isOpen = false;
 
     [RelayCommand]
     private async Task Send()
@@ -57,17 +59,29 @@ public partial class MessagesViewModel(
     [RelayCommand]
     private async Task StopEdit(MessageModel message)
     {
-        await _messageService.StopEdit(message, SelectedChat);
+        await _messageService.StopEdit(SelectedChat);
     }
 
-    public async Task InitializeAsync()
+    [RelayCommand]
+    private void ShowChatInfo()
+    {
+        IsOpen = false;
+        if (SelectedChat is not null)
+            getChatInfo();
+    }
+
+    public async void InitializeAsync()
     {
         _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
         _notificationApiService.OnMessageEdited += _messageService.EditHandle;
+        _notificationApiService.OnMessageDeleted += _messageService.OnDelete;
         ServiceRealizations.EventHandler.OnDelete += _messageService.DeleteLocal;
         ServiceRealizations.EventHandler.OnEdit += _messageService.StartEdit;
         await _messageService.LoadSkippedMesssages(DateTime.UtcNow.AddMonths(-10));
     }
+
+    public void SetGetChatInfo(Action func) =>
+        getChatInfo = func;
 
     public void OnSelectionChatChanged(Chat? chat) =>
         SelectedChat = chat;
@@ -75,6 +89,7 @@ public partial class MessagesViewModel(
     public void Dispose()
     {
         _notificationApiService.OnMessageReceived -= _messageService.UploadMessage;
+        _notificationApiService.OnMessageDeleted -= _messageService.OnDelete;
         _notificationApiService.OnMessageEdited -= _messageService.EditHandle;
         ServiceRealizations.EventHandler.OnDelete -= _messageService.DeleteLocal;
         ServiceRealizations.EventHandler.OnEdit -= _messageService.StartEdit;
