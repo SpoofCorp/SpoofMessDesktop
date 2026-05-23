@@ -17,13 +17,17 @@ Now you can:
 
 ## Roadmap
 Soon you can:
-- Create your chat types;
-- Search chats, messages, users;
-- Change settings;
-- Upload avatars.
+- create chats with any types;
+- manage your chats:
+    - settings;
+    - manage members:
+        - (un)kick;
+        - (un)mute;
+        - grant/revoke permissions;
+        - grant/revoke roles.
 
 ## What stage of project at?
-### While on Alpha 0.0.3 Implemented first prototypes of:
+### While on Alpha 0.0.5 Implemented first prototypes of:
 - Entry:
     - Registration;
     - Authorization;
@@ -37,3 +41,31 @@ Soon you can:
     - send files;
     - see images;
     - listen music;
+    - delete;
+    - edit.
+- Search:
+    - chats:
+        - card info with join button.
+    - messages (in your chats):
+        - navigate on chats.
+    - users.
+- Settings:
+    - set avatar:
+        - your profile;
+        - your chats.
+    - set session data;
+    - set localization:
+        - en;
+        - kz;
+        - ru;
+    - set theme:
+        - BerryMarshmallow;
+        - BlueFresh;
+        - Curb;
+        - Dark;
+        - DoubleLightning;
+        - Grayness;
+        - Light;
+        - MidNight;
+        - Milkshake;
+        - TheColdAirOfRelief.
