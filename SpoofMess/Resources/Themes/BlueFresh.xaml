@@ -8,12 +8,12 @@
     <SolidColorBrush x:Key="PrimaryBlack" Color="#0F172A"/>
 
     <SolidColorBrush x:Key="SecondBlack" Color="#334155"/>
-    <SolidColorBrush x:Key="SixWhite" Color="#2563EB"/>
-    <SolidColorBrush x:Key="FiveWhite" Color="#3B82F6"/>
-    <SolidColorBrush x:Key="FourWhite" Color="#CBD5E1"/>
-    <SolidColorBrush x:Key="ThirdWhite" Color="#E6ECF0"/>
-    <SolidColorBrush x:Key="SecondWhite" Color="#F1F5F9"/>
-    <SolidColorBrush x:Key="PrimaryWhite" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="Six" Color="#2563EB"/>
+    <SolidColorBrush x:Key="Five" Color="#3B82F6"/>
+    <SolidColorBrush x:Key="Four" Color="#CBD5E1"/>
+    <SolidColorBrush x:Key="Third" Color="#E6ECF0"/>
+    <SolidColorBrush x:Key="Second" Color="#F1F5F9"/>
+    <SolidColorBrush x:Key="Primary" Color="#E2E8F0"/>
     
     <SolidColorBrush x:Key="PrimaryAccent" Color="#60A5FA"/>
     <SolidColorBrush x:Key="SecondAccent" Color="#3B82F6"/>
