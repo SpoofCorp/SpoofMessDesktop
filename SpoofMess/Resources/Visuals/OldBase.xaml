@@ -1,0 +1,21 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <Thickness x:Key="MarginVertical">0 5</Thickness>
+    <sys:Double x:Key="Width1">200</sys:Double>
+    <sys:Double x:Key="MinButtonWith">30</sys:Double>
+    <sys:Double x:Key="MinButtonHeight">30</sys:Double>
+    <sys:Double x:Key="Height1">30</sys:Double>
+    <CornerRadius x:Key="Corner1">5</CornerRadius>
+    <CornerRadius x:Key="Corner2">10</CornerRadius>
+    <CornerRadius x:Key="FunctionBlockBorderCorner">10</CornerRadius>
+    <Thickness x:Key="Margin1">0 5</Thickness>
+    <Thickness x:Key="MarginBase">5</Thickness>
+    <Thickness x:Key="MarginBottom">0 0 0 5</Thickness>
+    <Thickness x:Key="MarginLeftTop">5 5 0 0</Thickness>
+    <Thickness x:Key="MarginLeft">5 0 0 0</Thickness>
+    <Thickness x:Key="BorderThickness">1</Thickness>
+    <Thickness x:Key="FunctionBlockBorderThickness">1</Thickness>
+    <CornerRadius x:Key="TopCorner">10 10 0 0</CornerRadius>
+    <CornerRadius x:Key="DownCorner">0 0 10 10</CornerRadius>
+</ResourceDictionary>
