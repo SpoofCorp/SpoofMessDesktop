@@ -12,6 +12,7 @@
     <sys:String x:Key="PrivacySecurity">Приватность и безопастность</sys:String>
     <sys:String x:Key="Advanced">Расширенные</sys:String>
     <sys:String x:Key="Design">Дизайн</sys:String>
+    <sys:String x:Key="Visual">Отображение</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Уведомления и звуки</sys:String>
     <sys:String x:Key="SearchMe">Искать вас</sys:String>
     <sys:String x:Key="ShowMe">Отображать вашу информацию</sys:String>
@@ -44,4 +45,7 @@
     <sys:String x:Key="BerryMarshmallow">Ягодный зефир</sys:String>
     <sys:String x:Key="DoubleLightning">Двойная молния</sys:String>
     <sys:String x:Key="Milkshake">Милкшейк</sys:String>
+
+    <sys:String x:Key="NewBase">Новый стандартный</sys:String>
+    <sys:String x:Key="OldBase">Старый стандартный</sys:String>
 </ResourceDictionary>

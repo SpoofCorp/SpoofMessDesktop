@@ -12,6 +12,7 @@
     <sys:String x:Key="PrivacySecurity">Privacy and security</sys:String>
     <sys:String x:Key="Advanced">Advanced</sys:String>
     <sys:String x:Key="Design">Design</sys:String>
+    <sys:String x:Key="Visual">Visual</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Notifications and sounds</sys:String>
     <sys:String x:Key="SearchMe">Search for you</sys:String>
     <sys:String x:Key="ShowMe">Display your information</sys:String>
@@ -44,4 +45,7 @@
     <sys:String x:Key="BerryMarshmallow">Berry Marshmallow</sys:String>
     <sys:String x:Key="DoubleLightning">Double Lightningя</sys:String>
     <sys:String x:Key="Milkshake">Milkshake</sys:String>
+
+    <sys:String x:Key="NewBase">New base</sys:String>
+    <sys:String x:Key="OldBase">Old base</sys:String>
 </ResourceDictionary>

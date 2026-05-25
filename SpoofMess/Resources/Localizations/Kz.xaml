@@ -12,6 +12,7 @@
     <sys:String x:Key="PrivacySecurity">Құпиялылық және қауіпсіздік</sys:String>
     <sys:String x:Key="Advanced">Кеңейтілген</sys:String>
     <sys:String x:Key="Design">Дизайн</sys:String>
+    <sys:String x:Key="Visual">Отображение</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Хабарландырулар мен дыбыстар</sys:String>
     <sys:String x:Key="SearchMe">Сізді іздеу</sys:String>
     <sys:String x:Key="ShowMe">Ақпаратыңызды көрсету</sys:String>
@@ -44,4 +45,7 @@
     <sys:String x:Key="BerryMarshmallow">Жидек маршмеллоуы</sys:String>
     <sys:String x:Key="DoubleLightning">Қос найзағай</sys:String>
     <sys:String x:Key="Milkshake">Милкшейк</sys:String>
+
+    <sys:String x:Key="NewBase">New base</sys:String>
+    <sys:String x:Key="OldBase">Old base</sys:String>
 </ResourceDictionary>
