@@ -11,41 +11,43 @@ public partial class UserInfo : ObservableObject
 {
     [JsonIgnore]
     [ObservableProperty]
-    private string _password = string.Empty;
+    public partial string Password { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial double Width { get; set; } = SystemParameters.PrimaryScreenWidth / 2;
 
     [ObservableProperty]
-    private double _width = SystemParameters.PrimaryScreenWidth / 2;
+    public partial double Height { get; set; } = SystemParameters.FullPrimaryScreenHeight / 1.75;
 
     [ObservableProperty]
-    private double _height = SystemParameters.FullPrimaryScreenHeight / 1.75;
+    public partial bool HideToTray { get; set; }
 
     [ObservableProperty]
-    private bool _hideToTray;
+    public partial bool UnselectChat { get; set; }
 
     [ObservableProperty]
-    private bool _unselectChat;
+    public partial bool SearchMe { get; set; }
 
     [ObservableProperty]
-    private bool _searchMe;
+    public partial bool ShowMe { get; set; }
 
     [ObservableProperty]
-    private bool _showMe;
+    public partial bool ForwardMessage { get; set; }
 
     [ObservableProperty]
-    private bool _forwardMessage;
+    public partial bool InviteMe { get; set; }
 
     [ObservableProperty]
-    private bool _inviteMe;
+    public partial int MonthsBeforeDelete { get; set; }
 
     [ObservableProperty]
-    private int _monthsBeforeDelete;
+    public partial string EditedName { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial Language Language { get; set; } = new("English", "En", "en-US");
+    [ObservableProperty]
+    public partial Theme Theme { get; set; } = new("Light");
+    [ObservableProperty]
+    public partial Visual Visual { get; set; } = new("NewBase");
 
-    [ObservableProperty]
-    private string _editedName = string.Empty;
-    [ObservableProperty]
-    private Language _language = new("English", "En", "en-US");
-    [ObservableProperty]
-    private Theme _theme = new("Light");
 
     public CultureInfo CurrentCultureInfo = new("en-US");
 

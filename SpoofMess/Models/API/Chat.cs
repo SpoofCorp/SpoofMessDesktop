@@ -5,21 +5,6 @@ using System.Windows;
 
 namespace SpoofMess.Models;
 
-public partial class SearchaebleModel : ObservableObject
-{
-
-    [ObservableProperty]
-    private string? _name;
-
-    [ObservableProperty]
-    private string _uniqueName = string.Empty;
-
-    [ObservableProperty]
-    private bool _isPublic;
-    public Guid Id { get; set; }
-
-}
-
 public partial class Chat : ObservableObject
 {
     public Chat()
