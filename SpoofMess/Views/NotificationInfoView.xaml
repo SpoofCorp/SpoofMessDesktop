@@ -9,12 +9,12 @@
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance data:Notification, IsDesignTimeCreatable=False}" Opacity="{Binding Opacity}">
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Border CornerRadius="10" Background="{DynamicResource ThirdWhite}">
+        <Border CornerRadius="10" Background="{DynamicResource Third}">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="10" Color="#999999" ShadowDepth="0" RenderingBias="Quality"/>
             </Border.Effect>
         </Border>
-        <Border CornerRadius="10" Background="{DynamicResource SecondWhite}" Padding="10 20">
+        <Border CornerRadius="10" Background="{DynamicResource Second}" Padding="10 20">
             <TextBlock Style="{DynamicResource BaseText}" Text="{Binding Text}"/>
         </Border>
     </Grid>

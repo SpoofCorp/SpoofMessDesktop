@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="SpoofMess.ViewElements.IconButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SpoofMess.ViewElements"
+             mc:Ignorable="d" 
+             x:Name="IconButtonView"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Button 
+        Focusable="False"
+        Style="{StaticResource MinimalButton}" 
+        HorizontalContentAlignment="{Binding ElementName=IconButtonView, Path=Alignment}"
+        Padding="10 0"
+        Click="InternalButton_Click"
+        Command="{Binding ElementName=IconButtonView, Path=Command}">
+        <Button.Content>
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Center" Text="{Binding ElementName=IconButtonView, Path=Icon}"/>
+                <TextBlock Text="{Binding ElementName=IconButtonView, Path=Text}"/>
+            </StackPanel>
+        </Button.Content>
+    </Button>
+</UserControl>

@@ -10,13 +10,13 @@
             <Button Padding="5 0" HorizontalContentAlignment="Left" Focusable="False" Click="Button_Click" Style="{StaticResource MinimalButton}" Cursor="Hand">
                 <Grid Focusable="False" ColumnDefinitions="auto auto" Background="Transparent">
 
-                    <Border Focusable="False" Width="50" Height="20" x:Name="BackBorder" Style="{StaticResource CardBorder}" Background="{StaticResource ThirdWhite}"/>
+                    <Border Focusable="False" Width="50" Height="20" x:Name="BackBorder" Style="{StaticResource CardBorder}" Background="{StaticResource Third}"/>
 
                     <Border Focusable="False" x:Name="Boulder" Width="30" Height="30" CornerRadius="15" 
-                            Background="White" BorderThickness="1" BorderBrush="Gray"
+                            Background="{DynamicResource Primary}" BorderThickness="1"
                             HorizontalAlignment="Left" IsHitTestVisible="False">
                         <Border.RenderTransform>
-                            <TranslateTransform x:Name="BallTransform" X="0"/>
+                            <TranslateTransform x:Name="BallTransform" X="-1.1"/>
                         </Border.RenderTransform>
                     </Border>
                     <TextBlock Focusable="False" IsHitTestVisible="False" Grid.Column="1" Text="{Binding Path=Text, ElementName=Root}" VerticalAlignment="Center" Style="{StaticResource BaseText}" Margin="5 0 0 0"/>
@@ -29,7 +29,7 @@
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="BallTransform" 
                                                  Storyboard.TargetProperty="X" 
-                                                 To="20" Duration="0:0:0.2"/>
+                                                 To="21.03" Duration="0:0:0.2"/>
                                 <ColorAnimation Storyboard.TargetName="BackBorder" 
                                                 Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
                                                 To="{StaticResource SecondAccentColor}" Duration="0:0:0.2"/>
@@ -44,7 +44,7 @@
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="BallTransform" 
                                                  Storyboard.TargetProperty="X" 
-                                                 To="0" Duration="0:0:0.2"/>
+                                                 To="-1.03" Duration="0:0:0.2"/>
                                 <ColorAnimation Storyboard.TargetName="BackBorder" 
                                                 Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
                                                 To="{StaticResource ThirdWhiteColor}" Duration="0:0:0.2"/>

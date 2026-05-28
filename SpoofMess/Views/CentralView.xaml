@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:uc="clr-namespace:SpoofMess.ViewElements"
-        mc:Ignorable="d" Height="{Binding UserInfo.Height, Mode=TwoWay}" Background="{DynamicResource SecondWhite}" Width="{Binding UserInfo.Width, Mode=TwoWay}" MinWidth="400" MinHeight="500">
+        mc:Ignorable="d" Height="{Binding UserInfo.Height, Mode=TwoWay}" Background="{DynamicResource Second}" Width="{Binding UserInfo.Width, Mode=TwoWay}" MinWidth="400" MinHeight="500">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" 
                       CornerRadius="8"
@@ -29,7 +29,7 @@
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
-        <DockPanel Height="25" Background="{DynamicResource PrimaryWhite}" LastChildFill="True" Grid.Row="0">
+        <DockPanel Height="25" Background="{DynamicResource Primary}" LastChildFill="True" Grid.Row="0">
             <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="❌" Command="{Binding CloseCommand}" DockPanel.Dock="Right"/>
             <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="⬜" Command="{Binding ResizeCommand}" DockPanel.Dock="Right"/>
             <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="➖" Command="{Binding HideCommand}" DockPanel.Dock="Right"/>

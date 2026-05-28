@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              x:Name="FunctionalButtonView">
     <Button 
+        Focusable="False"
         Style="{StaticResource MinimalButton}" 
         HorizontalContentAlignment="{Binding ElementName=FunctionalButtonView, Path=Alignment}"
         Padding="10 0"
@@ -14,7 +15,7 @@
         Command="{Binding ElementName=FunctionalButtonView, Path=Command}">
         <Button.Content>
             <DockPanel>
-                <TextBlock Text="{Binding ElementName=FunctionalButtonView, Path=Icon}" DockPanel.Dock="Left"/>
+                <TextBlock Text="{Binding ElementName=FunctionalButtonView, Path=Icon}" DockPanel.Dock="Left" Margin="0 0 6 0"/>
                 <TextBlock Text="{Binding ElementName=FunctionalButtonView, Path=Text}" DockPanel.Dock="Right"/>
             </DockPanel>
         </Button.Content>

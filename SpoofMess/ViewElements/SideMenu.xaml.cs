@@ -5,8 +5,13 @@ namespace SpoofMess.ViewElements;
 
 public partial class SideMenu : UserControl
 {
-    private readonly static DependencyProperty IsOpenProperty =
-        DependencyProperty.Register("IsOpen", typeof(Visibility), typeof(SideMenu));
+    private static readonly DependencyProperty IsOpenProperty = DependencyProperty.Register(
+        nameof(IsOpen),
+        typeof(Visibility),
+        typeof(SideMenu),
+        new FrameworkPropertyMetadata(
+            default(Visibility),
+            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     public Visibility IsOpen
     {
@@ -21,13 +26,13 @@ public partial class SideMenu : UserControl
 
     public void ChangeMenuVisibility()
     {
-        SideMenuView.Visibility = SideMenuView.Visibility is Visibility.Visible
+        SetCurrentValue(IsOpenProperty, SideMenuView.Visibility is Visibility.Visible
             ? Visibility.Collapsed
-            : Visibility.Visible;
+            : Visibility.Visible);
     }
 
     private void Rectangle_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        SideMenuView.Visibility = Visibility.Collapsed;
+        SetCurrentValue(IsOpenProperty, Visibility.Collapsed);
     }
 }

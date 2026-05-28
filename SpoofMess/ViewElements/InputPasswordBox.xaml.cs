@@ -10,7 +10,10 @@ public partial class InputPasswordBox : UserControl
         DependencyProperty.Register(nameof(Holder), typeof(string), typeof(InputPasswordBox));
 
     private readonly static DependencyProperty TextProperty =
-        DependencyProperty.Register(nameof(Text), typeof(string), typeof(InputPasswordBox));
+        DependencyProperty.Register(nameof(Text), typeof(string), typeof(InputPasswordBox),
+            new FrameworkPropertyMetadata(
+                default(string),
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     private readonly static DependencyProperty WithShowingProperty =
         DependencyProperty.Register(nameof(WithShowing), typeof(Visibility), typeof(InputPasswordBox));

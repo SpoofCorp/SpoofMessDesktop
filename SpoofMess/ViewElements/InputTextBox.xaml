@@ -7,8 +7,8 @@
              mc:Ignorable="d" x:Name="InputTextBoxView">
     <Grid>
         <TextBlock 
+            Margin="0"
             VerticalAlignment="Center" 
-            Foreground="Gray" 
             Style="{StaticResource PlaceHolder}" 
             x:Name="HolderText" 
             IsHitTestVisible="False" 
@@ -16,6 +16,7 @@
             Text="{Binding ElementName=InputTextBoxView, Path=Holder}"
             Background="Transparent"/>
         <TextBox
+            Margin="0"
             BorderBrush="Transparent"
             Height="auto"
             VerticalScrollBarVisibility="Auto" 

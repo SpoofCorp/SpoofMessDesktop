@@ -4,25 +4,122 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SpoofMess.ViewElements"
-             mc:Ignorable="d" x:Name="SideMenuView" Visibility="{Binding ElementName=SideMenuView, Path=IsOpen}">
+             mc:Ignorable="d" x:Name="SideMenuView">
 
+    <UserControl.Style>
+        <Style TargetType="UserControl">
+            <Setter Property="Visibility" Value="{Binding ElementName=SideMenuView, Path=IsOpen}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsOpen, ElementName=SideMenuView}" Value="Visible">
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Duration="0:0:0.2">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Duration="0:0:0.2">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0.0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
     <UserControl.Template>
         <ControlTemplate TargetType="UserControl">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.26*"/>
+                    <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="0.6*"/>
                 </Grid.ColumnDefinitions>
-                <Border Background="White">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5 0">
+
+                <Rectangle Grid.ColumnSpan="2" 
+                    Fill="{DynamicResource ShadowColor}"
+                    MinWidth="50"
+                    PreviewMouseDown="Rectangle_PreviewMouseDown">
+                    <Rectangle.Style>
+                        <Style TargetType="{x:Type Rectangle}">
+                            <Setter Property="Opacity" Value="0"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsOpen, ElementName=SideMenuView}" Value="Visible">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    To="0.70"
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    To="0.0"
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
+                </Rectangle>
+                <Border Background="{DynamicResource Second}">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="40" Opacity="0.3" ShadowDepth="15"/>
+                    </Border.Effect>
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <TranslateTransform X="-400"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsOpen, ElementName=SideMenuView}" Value="Visible">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    To="0"
+                                                    Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)"
+                                                    Duration="0:0:0.2">
+                                                    <DoubleAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseOut"/>
+                                                    </DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    To="-400"
+                                                    Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)"
+                                                    Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Auto">
                         <ContentPresenter Grid.Column="0" Content="{Binding Content, ElementName=SideMenuView}" />
                     </ScrollViewer>
                 </Border>
-
-                <Rectangle Grid.Column="1" 
-                    Fill="#AA111111" 
-                    MinWidth="50"
-                    PreviewMouseDown="Rectangle_PreviewMouseDown"/>
             </Grid>
         </ControlTemplate>
     </UserControl.Template>
