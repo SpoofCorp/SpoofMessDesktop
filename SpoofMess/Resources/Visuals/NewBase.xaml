@@ -15,7 +15,7 @@
     <Thickness x:Key="MarginLeftTop">0</Thickness>
     <Thickness x:Key="MarginLeft">0</Thickness>
     <Thickness x:Key="BorderThickness">0</Thickness>
-    <Thickness x:Key="FunctionBlockBorderThickness">0</Thickness>
+    <Thickness x:Key="FunctionBlockBorderThickness">0 0 0 0.75</Thickness>
     <CornerRadius x:Key="TopCorner">0</CornerRadius>
     <CornerRadius x:Key="DownCorner">0</CornerRadius>
 </ResourceDictionary>

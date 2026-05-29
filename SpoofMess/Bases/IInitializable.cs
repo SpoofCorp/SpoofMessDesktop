@@ -2,5 +2,5 @@
 
 public interface IInitializable
 {
-    public Task InitializeAsync();
+    public void InitializeAsync();
 }

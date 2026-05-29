@@ -48,4 +48,7 @@
 
     <sys:String x:Key="NewBase">New base</sys:String>
     <sys:String x:Key="OldBase">Old base</sys:String>
+
+    <sys:String x:Key="CountMembers">{0} members</sys:String>
+    <sys:String x:Key="CountSubs">{0} subscribers</sys:String>
 </ResourceDictionary>

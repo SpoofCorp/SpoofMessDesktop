@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
 	<Version>0.0.1</Version>
+	<ApplicationIcon>Assets\SM.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,12 +19,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\No_Cover.jpg" />
+    <None Remove="Assets\qr.png" />
+    <None Remove="Assets\SM.ico" />
     <None Remove="startup\FileExtensions.json" />
     <None Remove="startup\ImageRoadMap.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.3" />
@@ -39,11 +44,14 @@
       <HintPath>..\..\SpoofMess\CommonObjects\bin\Debug\net10.0\CommonObjects.dll</HintPath>
     </Reference>
     <Reference Include="SpoofFileParser">
-      <HintPath>..\..\SpoofFileParser\SpoofFileInfo\bin\Debug\net10.0\SpoofFileParser.dll</HintPath>
+      <HintPath>..\..\SpoofFileParser\SpoofFileInfo\bin\Release\net10.0\SpoofFileParser.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\No_Cover.jpg" />
+    <Resource Include="Assets\qr.png" />
+    <Resource Include="Assets\SM.ico" />
     <Resource Include="startup\FileExtensions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

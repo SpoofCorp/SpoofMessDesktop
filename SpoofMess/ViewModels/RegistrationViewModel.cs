@@ -38,9 +38,9 @@ public partial class RegistrationViewModel(
                     Name = UserInfo.User.Name ?? ""
                 }
             );
-        if (result.Success)
+        if (result)
             _navigationService.ShowMainView();
         else
-            _notificationService.ShowError(result.Error);
+            _notificationService.ShowError(result);
     }
 }

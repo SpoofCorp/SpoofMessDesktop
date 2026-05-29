@@ -74,6 +74,7 @@ public partial class UserInfo : ObservableObject
         MonthsBeforeDelete = userInfo.MonthsBeforeDelete;
         Language = userInfo.Language;
         Theme = userInfo.Theme;
+        Visual = userInfo.Visual;
     }
 
     public bool Change(UserInfo edit, out ChangeUserSettingsRequest request)

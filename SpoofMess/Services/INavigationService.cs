@@ -2,6 +2,7 @@
 using SpoofMess.Models;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
+using SpoofMess.ViewModels.Notifications;
 using SpoofMess.ViewModels.Settings;
 
 namespace SpoofMess.Services;
@@ -9,6 +10,7 @@ namespace SpoofMess.Services;
 public interface INavigationService
 {
     public void OpenWindow();
+    public StaticNotificationViewModel GetAudioService();
     public void CloseWindow(); 
     public void ResizeWindow();
     public void HideToTrayWindow();

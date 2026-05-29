@@ -1,8 +1,8 @@
-﻿using SpoofMess.Models.API;
+﻿using CommonObjects.Results;
+using SpoofMess.Models.API;
 using SpoofMess.Services;
 using SpoofMess.ViewModels;
 using System.Windows;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SpoofMess.ServiceRealizations;
 
@@ -25,12 +25,7 @@ public class NotificationService(CentralViewModel centralViewModel) : INotificat
         try
         {
             _centralViewModel.Notification = notification;
-            await Task.Delay(notification.Time / 4);
-            for (int i = 0; i < 30; i++)
-            {
-                notification.Opacity -= 0.03;
-                await Task.Delay(notification.Time / 40);
-            }
+            await Task.Delay(notification.Time);
             _centralViewModel.Notification = null;
         }
         finally
@@ -51,4 +46,9 @@ public class NotificationService(CentralViewModel centralViewModel) : INotificat
     public void ShowInfo(string? text) =>
         ShowToast(new(text, Enums.NotificationType.Info));
 
+    public void ShowError(Result error) =>
+        ShowError(error.Error ?? error.Message);
+
+    public void ShowError<T>(Result<T> error) =>
+        ShowError(error.Error ?? error.Message);
 }

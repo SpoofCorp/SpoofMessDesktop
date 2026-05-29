@@ -29,8 +29,8 @@ public class UserService(
 
     public async Task<User?> Get(string login, CancellationToken cancellationToken = default)
     {
-        if(login == _userInfo.User.Login)
-            Users.TryAdd(login, _userInfo.User);
+        if (login == _userInfo.User.Login && !Users.TryAdd(login, _userInfo.User))
+            return _userInfo.User;
 
         return await UploadQueue(login, cancellationToken);
     }
@@ -67,7 +67,7 @@ public class UserService(
         UserDTO userDTO,
         CancellationToken cancellationToken = default)
     {
-        if(user.Avatar.Id != userDTO.AvatarId)
+        if(user.Avatar?.Id != userDTO.AvatarId)
         {
             FileObject? oldAvatar = user.Avatars.FirstOrDefault(x => x.Id == userDTO.AvatarId);
             if (userDTO.AvatarId is not null && oldAvatar is null)

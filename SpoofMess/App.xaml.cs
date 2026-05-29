@@ -13,6 +13,8 @@ using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
+using SpoofMess.ViewModels.Notifications;
+using SpoofMess.ViewModels.Settings;
 using SpoofMess.Views;
 using System.IO;
 using System.Windows;
@@ -21,17 +23,23 @@ namespace SpoofMess;
 
 public partial class App : Application
 {
-    private IServiceProvider _serviceProvider;
-
-
+    private IServiceProvider _serviceProvider = null!;
+    internal static UserInfo UserInfo = null!; 
     protected override async void OnStartup(StartupEventArgs e)
     {
-        base.OnStartup(e);
+        FrameworkElement.LanguageProperty.OverrideMetadata(
+            typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag))
+        );
 
         ServiceCollection services = new();
 
         services.AddTransient<AuthHandler>();
         services.AddHttpClient<IEntryApiService, EntryApiService>();
+        services.AddHttpClient<IChatAvatarApiService, ChatAvatarApiService>()
+            .AddHttpMessageHandler<AuthHandler>();
+        services.AddHttpClient<IAttachmentApiService, AttachmentApiService>()
+            .AddHttpMessageHandler<AuthHandler>();
         services.AddHttpClient<IChatApiService, ChatApiService>()
             .AddHttpMessageHandler<AuthHandler>();
         services.AddHttpClient<IChatUserApiService, ChatUserApiService>()
@@ -44,19 +52,23 @@ public partial class App : Application
             .AddHttpMessageHandler<AuthHandler>();
         services.AddHttpClient<IUserAvatarApiService, UserAvatarApiService>()
             .AddHttpMessageHandler<AuthHandler>();
+        services.AddHttpClient<ISearchApiService, SearchApiService>()
+            .AddHttpMessageHandler<AuthHandler>();
 
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ISerializer, JsonSerializerService>();
         services.AddSingleton<IDownloadService, DownloadService>();
 
-        services.AddScoped<EntryViewModel>();
-        services.AddScoped<SettingsViewModel>();
-        services.AddScoped<CreateGroupViewModel>();
-        services.AddScoped<ProfileViewModel>();
+        services.AddTransient<EntryViewModel>();
+        services.AddTransient<SettingsViewModel>();
+        services.AddTransient<AdvancedViewModel>();
+        services.AddTransient<CreateGroupViewModel>();
+        services.AddTransient<ProfileViewModel>();
+        services.AddSingleton<StaticNotificationViewModel>();
         ParserFactory factory = new(
             new()
-                {
-                    [FileType.Image] =
+            {
+                [FileType.Image] =
                     new ImageMetadataParser(new()
                     {
                         ["jpeg"] = new(0, 2, 2, 2, true, [[0xFF, 0xC0], [0xFF, 0xC1], [0xFF, 0xC2]], 5),
@@ -69,7 +81,7 @@ public partial class App : Application
                 {
                     ["mp3"] = new Mp3MetadataParser()
                 })
-                },
+            },
             new FileMetadataParser());
         services.AddSingleton<IFileService, FileService>();
         services.AddSingleton<IFingerprintService, FingerprintService>();
@@ -77,50 +89,64 @@ public partial class App : Application
         services.AddSingleton<IMessageService, MessageService>();
         services.AddSingleton<IUserAvatarService, UserAvatarService>();
         services.AddSingleton<IChatService, ChatService>();
+        services.AddSingleton<IChatAvatarService, ChatAvatarService>();
         services.AddSingleton<IChatUserService, ChatUserService>();
+        services.AddSingleton<IUserService, UserService>();
+        services.AddSingleton<ISearchService, SearchService>();
 
         services.AddSingleton<INotificationApiService, NotificationApiService>();
 
         services.AddSingleton<IAudioService, AudioService>();
-        services.AddScoped<MainViewModel>();
-        services.AddScoped<INotificationService, NotificationService>();
-        services.AddScoped<IUserService, UserService>();
+        services.AddSingleton<INotificationService, NotificationService>();
+        services.AddTransient<IThemesService, ThemesService>();
 
         services.AddSingleton<IAuthService, AuthService>();
 
         services.AddSingleton<UserInfo>();
 
+        services.AddTransient<MainViewModel>();
+        services.AddTransient<LanguageViewModel>();
+        services.AddTransient<DesingViewModel>();
         services.AddTransient<AuthorizationViewModel>();
+        services.AddTransient<ChatInfoViewModel>();
+        services.AddTransient<ProfileViewModel>();
         services.AddTransient<RegistrationViewModel>();
         services.AddTransient<ImageViewModel>();
         services.AddTransient<FileViewModel>();
         services.AddTransient<MusicViewModel>();
         services.AddSingleton<CentralViewModel>();
+        services.AddSingleton<ChatsViewModel>();
+        services.AddSingleton<MessagesViewModel>();
 
-        services.AddTransient<RegistrationView>();
-        services.AddTransient<AuthorizationView>();
         services.AddTransient<MainView>();
         services.AddSingleton<CentralView>();
         IServiceProvider tempProvider = services.BuildServiceProvider();
-
+        
         ISerializer serializer = tempProvider.GetRequiredService<ISerializer>();
         services.AddSingleton<IFileClassifier>(new FileClassifier(factory, await serializer.Deserialize<ExtensionRoadMap[]>(File.OpenRead("startup\\FileExtensions.json"))));
-
         _serviceProvider = services.BuildServiceProvider();
 
         IAuthService authService = _serviceProvider.GetRequiredService<IAuthService>();
+        StaticNotificationViewModel staticNotificationViewModel = _serviceProvider.GetRequiredService<StaticNotificationViewModel>();
+        staticNotificationViewModel.ViewModel = new MusicNotification(_serviceProvider.GetRequiredService<IAudioService>());
+        IUserService userService = _serviceProvider.GetRequiredService<IUserService>();
         INavigationService navigationService = _serviceProvider.GetRequiredService<INavigationService>();
         if (await authService.Initialize())
+        {
+            await userService.SyncAccount();
             navigationService!.ShowCentralViewWithMain();
+        }
         else
             navigationService!.ShowCentralViewWithAuthorization();
+        UserInfo = _serviceProvider.GetRequiredService<UserInfo>();
+        IThemesService themesServices = _serviceProvider.GetRequiredService<IThemesService>();
+        themesServices.Initialize();
+        base.OnStartup(e);
     }
 
     protected override async void OnExit(ExitEventArgs e)
     {
-        IAuthService authService = _serviceProvider.GetRequiredService<IAuthService>();
-
-        await authService.Save();
         base.OnExit(e);
+        Current.Shutdown(0);
     }
 }

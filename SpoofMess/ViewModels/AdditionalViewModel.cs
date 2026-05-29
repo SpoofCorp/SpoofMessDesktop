@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SpoofMess.Bases;
 
 namespace SpoofMess.ViewModels;
 
@@ -16,7 +17,7 @@ public abstract partial class AdditionalViewModel : ObservableObject
         OnClose();
     }
 
-    public void Initialize(ObservableObject ownerView, Action close)
+    public virtual void Initialize(ObservableObject ownerView, Action close)
     {
         _ownerView = ownerView;
         _close = close;

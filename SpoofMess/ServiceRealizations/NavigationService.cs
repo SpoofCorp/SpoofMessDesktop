@@ -6,6 +6,7 @@ using SpoofMess.Services;
 using SpoofMess.Services.Models;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
+using SpoofMess.ViewModels.Notifications;
 using SpoofMess.ViewModels.Settings;
 using SpoofMess.Views;
 using System.Windows;
@@ -20,6 +21,8 @@ public class NavigationService(
     private CentralViewModel _currentViewModel = null!;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
+    public StaticNotificationViewModel GetAudioService() =>
+        _serviceProvider.GetRequiredService<StaticNotificationViewModel>();
     public void OpenWindow()
     {
         CurrentMainWindow.Show();
@@ -129,13 +132,13 @@ public class NavigationService(
         CurrentMainWindow.DataContext = _currentViewModel;
         _currentViewModel.View = GetViewModel<TViewModel>();
         CurrentMainWindow.Show();
+        if (_currentViewModel.View is IInitializable initializable)
+            initializable.InitializeAsync();
     }
 
     private TViewModel GetViewModel<TViewModel>() where TViewModel : ObservableObject
     {
         TViewModel viewModel = _serviceProvider.GetRequiredService<TViewModel>();
-        if (viewModel is IInitializable initializable)
-            initializable.InitializeAsync();
         return viewModel;
     }
 

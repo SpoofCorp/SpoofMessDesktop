@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SpoofMess": {
+      "commandName": "Project",
+      "workingDirectory": "$(TargetDir)"
+    }
+  }
+}

@@ -9,15 +9,19 @@ using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.Setters;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
 public class ChatService(IChatApiService chatApiService, IChatAvatarService chatAvatarService, IFileService fileService, UserInfo userInfo, ISerializer serializer) : IChatService
 {
+    private static Lock chatsLock = new();
     public ObservableCollection<Chat> Chats { get; set; } = [];
-    public List<Chat> ChatsStorage { get; set; } = [];
+    //public List<Chat> ChatsStorage { get; set; } = [];
+    public ConcurrentDictionary<Guid, Chat> ChatsStorage { get; set; } = [];
 
     private readonly UserInfo _userInfo = userInfo;
     private readonly IChatApiService _chatApiService = chatApiService;
@@ -25,31 +29,26 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
     private readonly ISerializer _serializer = serializer;
     private readonly IFileService _fileService = fileService;
 
-    public event Action<Chat, int?> ChatAdded;
+    public event Action<Chat, int?> ChatAdded = null!;
 
-    public event Action<int, int> ChatMoved;
-
+    public event Action<int, int> ChatMoved = null!;
     public async Task<Chat?> Get(Guid id, bool saveToLocal = true)
     {
-        Chat? chat;
-        lock (ChatsStorage)
+        if (ChatsStorage.TryGetValue(id, out Chat? chat))
         {
-            chat = ChatsStorage.FirstOrDefault(c => c.Id == id);
-        }
-        if (chat is not null)
             return chat;
+        }
 
         Result<ChatDTO> chatResult = await _chatApiService.GetChat(id);
-        if (!chatResult.Success)
+        if (!chatResult)
             return null;
         chat = chatResult.Body!.Set();
-        if (saveToLocal)
+        if (ChatsStorage.TryAdd(id, chat) && saveToLocal)
             Add(chat);
-        lock (ChatsStorage)
-        {
-            ChatsStorage.Add(chat);
-        }
+        else
+            ChatsStorage.TryGetValue(id, out chat);
         await UploadAvatar(chat, chatResult.Body!);
+
         return chat;
     }
 
@@ -74,10 +73,8 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
         {
             newChat = chat.Set();
             Add(newChat);
-            lock (ChatsStorage)
-            {
-                ChatsStorage.Add(newChat);
-            }
+            if (!ChatsStorage.TryAdd(newChat.Id, newChat))
+                return;
             if (chat.AvatarFileToken is not null)
             {
                 FileObject file = new()
@@ -104,7 +101,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
         DateTime timeNewChat = newChat.LastMessage is null ? newChat.CreatedAt : newChat.LastMessage.SentAt;
 
 
-        lock (Chats)
+        lock (chatsLock)
         {
             foreach (Chat chat in Chats)
             {
@@ -136,7 +133,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
             IsPublic = chat.IsPublic
         });
         if (result.Success)
-            lock (Chats)
+            lock (chatsLock)
                 Chats.Add(result.Body!.Set());
     }
 
@@ -157,13 +154,13 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
             return;
         DateTime timeCurrentChat = currentChat.LastMessage is null ? currentChat.CreatedAt : currentChat.LastMessage.SentAt;
         Chat? olderChat;
-        lock (Chats)
+        lock (chatsLock)
             olderChat = Chats.FirstOrDefault(x => x.LastMessage is null ? x.CreatedAt <= timeCurrentChat : x.LastMessage.SentAt <= timeCurrentChat);
         if (olderChat is null)
             return;
         else
         {
-            lock (Chats)
+            lock (chatsLock)
             {
                 int current = Chats.IndexOf(currentChat), old = Chats.IndexOf(olderChat);
                 if (current == -1)

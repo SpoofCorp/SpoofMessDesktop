@@ -10,4 +10,7 @@ public abstract partial class ObjectViewModel : ObservableObject
     public abstract string Icon { get; init; }
 
     public abstract ObjectViewModel Clone();
+
+    public virtual void Add(FileObject fileObject) =>
+        Files.Add(fileObject);
 }

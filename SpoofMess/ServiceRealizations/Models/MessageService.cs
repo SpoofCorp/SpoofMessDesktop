@@ -6,7 +6,6 @@ using SpoofMess.Models;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using SpoofMess.Setters;
-using System.Diagnostics;
 using System.Windows;
 
 namespace SpoofMess.ServiceRealizations.Models;
@@ -154,18 +153,22 @@ public class MessageService(
 
     private static void AddMessage(MessageModel message, Chat chat)
     {
+        MessageModel? prefixMessage = null;
+        int targetIndex = -1;
         lock (chat)
         {
-            MessageModel? prefixMessage = chat.Messages.FirstOrDefault(x => x.SentAt >= message.SentAt);
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (prefixMessage is null)
-                    chat.Messages.Add(message);
-                else
-                    chat.Messages.Insert(chat.Messages.IndexOf(prefixMessage), message);
-            });
-            EventHandler.NotifyAdd(message);
+            prefixMessage = chat.Messages.FirstOrDefault(x => x.SentAt >= message.SentAt);
+            if (prefixMessage is not null)
+                targetIndex = chat.Messages.IndexOf(prefixMessage);
         }
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            if (prefixMessage is null)
+                chat.Messages.Add(message);
+            else
+                chat.Messages.Insert(targetIndex, message);
+        });
+        EventHandler.NotifyAdd(message);
     }
 
     private async Task UploadAdditionalData(MessageModel message, MessageDTO messageDTO, CancellationToken cancelationToken)

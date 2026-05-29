@@ -10,10 +10,9 @@ public partial class CentralViewModel(UserInfo userInfo, INavigationService navi
 {
     private readonly INavigationService _navigation = navigation;
     [ObservableProperty]
-    private ObservableObject? _view;
+    public partial ObservableObject? View { get; set; }
     [ObservableProperty]
-    private Notification? _notification;
-
+    public partial Notification? Notification { get; set; }
     public UserInfo UserInfo { get; set; } = userInfo;
 
 

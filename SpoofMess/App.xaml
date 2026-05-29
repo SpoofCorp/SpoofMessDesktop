@@ -5,7 +5,11 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/Light.xaml"/>
+                <ResourceDictionary Source="/Resources/Localizations/En.xaml"/>
+                <ResourceDictionary Source="/Resources/Themes/Dark.xaml"/>
+                <ResourceDictionary Source="/Resources/Visuals/NewBase.xaml"/>
+                <ResourceDictionary Source="/Resources/Templates.xaml"/>
+                <ResourceDictionary Source="/Resources/Views.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -2,10 +2,10 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <Compile Update="Views\AuthorizationView.xaml.cs">
+    <Compile Update="ViewElements\FunctionButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="ViewElements\FunctionButton.xaml.cs">
+    <Compile Update="ViewElements\IconButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="ViewElements\InputPasswordBox.xaml.cs">
@@ -17,13 +17,16 @@
     <Compile Update="ViewElements\QuestionTextButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="ViewElements\Switch.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\CentralView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\CreateGroupView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\ProfileView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\RegistrationView.xaml.cs">
+    <Compile Update="Views\NotificationInfoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="ViewElements\ShowView.xaml.cs">
@@ -32,13 +35,13 @@
     <Compile Update="ViewElements\SideMenu.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\EntryWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\MainView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\MediaView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\NotificationView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\SettingsView.xaml.cs">

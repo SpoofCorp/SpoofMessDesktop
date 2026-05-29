@@ -29,20 +29,19 @@ public partial class Chat : ObservableObject
     }
 
     [ObservableProperty]
-    private string? _name;
+    public partial string? Name { get; set; }
 
     [ObservableProperty]
-    private string _uniqueName = string.Empty;
+    public partial string UniqueName { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool _isPublic;
+    public partial bool IsPublic { get; set; }
 
     [ObservableProperty]
-    private MessageModel? _targetMessage;
+    public partial MessageModel? TargetMessage { get; set; }
 
     [ObservableProperty]
-    private FileObject _avatar;
-
+    public partial FileObject Avatar { get; set; }
     public double Position { get; set; }
 
     public MessageModel? LastMessage => Messages.LastOrDefault();

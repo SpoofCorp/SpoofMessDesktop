@@ -104,7 +104,23 @@
 
     </Style>
 
-    <Style x:Key="NoScrollListBoxStyle" TargetType="ListBox" BasedOn="{StaticResource MinimalListBox}">
+    <Style x:Key="TopNoScrollListBoxStyle" TargetType="ListBox" BasedOn="{StaticResource MinimalListBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                          CornerRadius="{DynamicResource TopCorner}"
+                          Padding="2 1"
+                          BorderThickness="0.75 0.75 0.75 0"
+                          Background="{TemplateBinding Background}">
+                        <ItemsPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style x:Key="BottomNoScrollListBoxStyle" TargetType="ListBox" BasedOn="{StaticResource MinimalListBox}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBox">
@@ -124,13 +140,13 @@
         <Setter Property="CornerRadius" Value="{DynamicResource FunctionBlockBorderCorner}"/>
         <Setter Property="Background" Value="{DynamicResource Primary}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Four}"/>
-        <Setter Property="BorderThickness" Value="{StaticResource FunctionBlockBorderThickness}"/>
+        <Setter Property="BorderThickness" Value="{DynamicResource FunctionBlockBorderThickness}"/>
     </Style>
 
     <Style x:Key="FunctionBlockBorderLeft" BasedOn="{StaticResource FunctionBlockBorder}" TargetType="{x:Type Border}">
         <Setter Property="Margin" Value="{DynamicResource MarginLeftTop}"/>
         <Setter Property="CornerRadius" Value="{DynamicResource TopCorner}"/>
-        <Setter Property="BorderThickness" Value="{StaticResource FunctionBlockBorderThickness}"/>
+        <Setter Property="BorderThickness" Value="{DynamicResource FunctionBlockBorderThickness}"/>
     </Style>
 
     <Style x:Key="FunctionBlockBorderCenterWithPadding" BasedOn="{StaticResource FunctionBlockBorder}" TargetType="{x:Type Border}">
@@ -141,7 +157,7 @@
         <Setter Property="Margin" Value="{DynamicResource MarginBase}"/>
     </Style>
 
-    <Style x:Key="ChatList" BasedOn="{StaticResource NoScrollListBoxStyle}" TargetType="{x:Type ListBox}">
+    <Style x:Key="ChatList" BasedOn="{StaticResource BottomNoScrollListBoxStyle}" TargetType="{x:Type ListBox}">
         <Setter Property="Margin" Value="{DynamicResource MarginBottom}"/>
     </Style>
 
@@ -1013,6 +1029,12 @@
         <Setter Property="Foreground" Value="{DynamicResource ActiveTextColor}"/>
     </Style>
     <Style x:Key="AdditionalText" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="{StaticResource Margin1}"/>
+        <Setter Property="FontFamily" Value="Inter"/>
+        <Setter Property="Foreground" Value="{DynamicResource DefaultTextColor}"/>
+    </Style>
+    <Style x:Key="AdditionalLabelText" TargetType="{x:Type Label}">
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Margin" Value="{StaticResource Margin1}"/>
         <Setter Property="FontFamily" Value="Inter"/>

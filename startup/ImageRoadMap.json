@@ -22,9 +22,9 @@
     "SizeOffset": -1
   },
   "jpeg": {
-    "WitdhtOffset": 0,
+    "WitdhtOffset": 2,
     "WitdhtSize": 2,
-    "HeightOffset": 2,
+    "HeightOffset": 0,
     "HeightSize": 2,
     "IsBigEndian": true,
     "SizeMaskOffset": [

@@ -21,8 +21,8 @@ public class AuthService(
         serializer
         ), IAuthService
 {
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
     private DateTime ValidTo;
+    private static readonly SemaphoreSlim semaphore = new(1, 1);
     protected override string BaseUrl => "https://localhost:7217/api/v1/Entrance";
     private static string BackupPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SpoofMess", "SessionData.json");
     private readonly IFileService _fileService = fileService;
@@ -49,7 +49,7 @@ public class AuthService(
         else if (UserInfo.Authorize is null)
             return null;
 
-        await _semaphore.WaitAsync();
+        await semaphore.WaitAsync();
         try
         {
             if (TokenIsNotExpired()) return UserInfo.Authorize.AccessToken;
@@ -62,7 +62,7 @@ public class AuthService(
         }
         finally
         {
-            _semaphore.Release();
+            semaphore.Release();
         }
     }
 
@@ -75,7 +75,7 @@ public class AuthService(
                 Token = UserInfo.Authorize!.RefreshToken
             });
         if (result.Success)
-            SetTokens(result.Body!);
+            await SetTokens(result.Body!);
 
         return result.Success;
     }

@@ -15,11 +15,10 @@ public static class ChatSetter
     public static Chat Set(this ChatUserDTO chat) =>
         new()
         {
-            Id = chat.Id,
+            Id = chat.ChatId,
             Name = chat.Name,
-            ChatTypeId = chat.ChatTypeId,
             UniqueName = chat.UniqueName,
             CreatedAt = chat.CreatedAt,
-            Rules = [.. chat.Rules]
+            RulesNumbers = chat.Rules
         };
 }

@@ -2,7 +2,7 @@
 
 namespace SpoofMess.Services;
 
-public interface IThemesServices
+public interface IThemesService
 {
     public void ChangeLanguage(Language language);
     public void ChangeTheme(Theme theme);

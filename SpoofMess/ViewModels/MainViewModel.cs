@@ -5,7 +5,7 @@ using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
-using System.ComponentModel;
+using SpoofMess.ViewModels.Notifications;
 using System.Windows;
 
 namespace SpoofMess.ViewModels;
@@ -15,7 +15,9 @@ public partial class MainViewModel(
     INotificationApiService notificationApiService,
     MessagesViewModel messagesViewModel,
     INavigationService navigationService,
+    StaticNotificationViewModel staticNotificationViewModel,
     IUserService userService,
+    IAuthService authService,
     ChatsViewModel chatsViewModel,
     UserInfo userInfo) : ObservableObject, IDisposable, IInitializable
 {
@@ -24,19 +26,34 @@ public partial class MainViewModel(
     private readonly INotificationApiService _notificationApiService = notificationApiService;
     private readonly INotificationService _notificationService = notificationService;
     private readonly IUserService _userService = userService;
+    private readonly IAuthService _authService = authService;
     private readonly INavigationService _navigationService = navigationService;
+
+    public MainViewModel() : this(default,
+                                  default,
+                                  default,
+                                  default,
+                                  default,
+                                  default,
+                                  default,
+                                  default,
+                                  default)
+    {
+
+    }
 
     public ChatsViewModel ChatsViewModel { get; set; } = chatsViewModel;
 
     public MessagesViewModel MessagesViewModel { get; set; } = messagesViewModel;
+    public StaticNotificationViewModel StaticNotificationViewModel { get; set; }
 
 
     [NotifyPropertyChangedFor(nameof(AdditionalVisibility))]
     [ObservableProperty]
-    private AdditionalViewModel? _additionalView;
+    public partial AdditionalViewModel? AdditionalView { get; set; }
 
     [ObservableProperty]
-    private Visibility _sideMenuVisibility = Visibility.Collapsed;
+    public partial Visibility SideMenuVisibility { get; set; } = Visibility.Collapsed;
 
     public Visibility AdditionalVisibility => AdditionalView is null ? Visibility.Collapsed : Visibility.Visible;
 
@@ -53,13 +70,6 @@ public partial class MainViewModel(
     }
 
     [RelayCommand]
-    private void ShowChatInfo()
-    {
-        if (MessagesViewModel.SelectedChat is not null)
-            AdditionalView = _navigationService.GetChatInfoViewModel(this, Close, MessagesViewModel.SelectedChat);
-    }
-
-    [RelayCommand]
     private void ShowCreateGroup()
     {
         AdditionalView = _navigationService.GetCreateGroupViewModel(this, Close);
@@ -68,28 +78,34 @@ public partial class MainViewModel(
     private void Close() =>
         AdditionalView = null;
 
-    public void Close(Window window, CancelEventArgs e)
+    public async Task CloseWindow()
     {
         if (_userInfo.HideToTray)
         {
-            window.Hide();
+            _navigationService.HideToTrayWindow();
             if (_userInfo.UnselectChat)
                 ChatsViewModel.SelectedChat = null;
             AdditionalView?.CloseCommand.Execute(null);
             AdditionalView = null;
-            e.Cancel = true;
             SideMenuVisibility = Visibility.Collapsed;
+        }
+        else
+        {
+            await _authService.Save();
+            _navigationService.CloseWindow();
         }
     }
 
-    public async Task InitializeAsync()
+    public async void InitializeAsync()
     {
         try
         {
+            MessagesViewModel.SetGetChatInfo(() => AdditionalView = _navigationService.GetChatInfoViewModel(this, Close, MessagesViewModel.SelectedChat!));
             _notificationApiService.OnUserUpdated += _userService.OnUserUpdated;
             ChatsViewModel.OnSelectionChatChanged += MessagesViewModel.OnSelectionChatChanged;
-            await ChatsViewModel.InitializeAsync();
-            await MessagesViewModel.InitializeAsync();
+            ServiceRealizations.EventHandler.OnUserAvatarUpdated += _userService.AvatarUpdateHandler;
+            ChatsViewModel.InitializeAsync();
+            MessagesViewModel.InitializeAsync();
         }
         catch (Exception ex)
         {
@@ -101,6 +117,7 @@ public partial class MainViewModel(
     {
         token.Cancel();
         _notificationApiService.OnUserUpdated -= _userService.OnUserUpdated;
+        ServiceRealizations.EventHandler.OnUserAvatarUpdated -= _userService.AvatarUpdateHandler;
         ChatsViewModel.OnSelectionChatChanged -= MessagesViewModel.OnSelectionChatChanged;
         GC.SuppressFinalize(this);
     }

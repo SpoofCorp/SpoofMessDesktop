@@ -1,13 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using SpoofMess.Models;
 using SpoofMess.Services.Models;
 
 namespace SpoofMess.ViewModels;
 
-public partial class CreateGroupViewModel(IChatService chatService) : ObservableObject
+public partial class CreateGroupViewModel(IChatService chatService) : AdditionalViewModel
 {
     private readonly IChatService _chatService = chatService;
+
     public Chat Chat { get; set; } = new();
 
     [RelayCommand]

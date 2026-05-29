@@ -9,7 +9,12 @@
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=False}">
-    <Grid Background="{DynamicResource Third}" RowDefinitions="auto *" ColumnDefinitions="0.45* auto *">
+    <Grid Background="{DynamicResource Third}" RowDefinitions="auto *">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.45* " MinWidth="200"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         <ve:SideMenu Grid.RowSpan="2" Background="{DynamicResource Primary}" x:Name="SideMenu" IsOpen="{Binding SideMenuVisibility}" Panel.ZIndex="10" Grid.ColumnSpan="3">
             <StackPanel>
                 <ve:FunctionButton Click="Menu_Item_Click" Text="{DynamicResource Profile}" Alignment="Stretch" Icon="👤" Command="{Binding ShowProfileCommand}"/>
@@ -24,7 +29,7 @@
                     <ve:InputTextBox Holder="{DynamicResource SearchHolder}" Text="{Binding ChatsViewModel.Query}" DockPanel.Dock="Right" Margin="0 5 5 5"/>
                 </DockPanel>
             </Border>
-            <ScrollViewer Style="{DynamicResource ChatListScrollViewer}" SnapsToDevicePixels="True" Grid.Row="1">
+            <ScrollViewer Style="{StaticResource ChatListScrollViewer}" SnapsToDevicePixels="True" Grid.Row="1">
                 <ListBox Style="{StaticResource ChatList}" Visibility="{Binding ChatsViewModel.ChatsVisibility}" ItemsSource="{Binding ChatsViewModel.Chats}" x:Name="ChatsList" SelectedItem="{Binding ChatsViewModel.SelectedChat}" MinWidth="100">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -42,10 +47,10 @@
 
                                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.RowSpan="2" Width="45" Height="45">
                                     <Border x:Name="Mask" 
-                    BorderThickness="1" 
-                    CornerRadius="50" 
-                    Background="{DynamicResource Primary}"
-                    BorderBrush="Transparent"/>
+                                    BorderThickness="1" 
+                                    CornerRadius="50" 
+                                    Background="{DynamicResource Primary}"
+                                    BorderBrush="Transparent"/>
                                     <Image Source="{Binding Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
                                         <Image.OpacityMask>
                                             <VisualBrush Visual="{x:Reference Mask}"/>
@@ -60,12 +65,12 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </ScrollViewer>
-            <ScrollViewer HorizontalScrollBarVisibility="Hidden" Background="{DynamicResource Second}" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True" Visibility="{Binding ChatsViewModel.SearchResultsVisibility}" Grid.Row="1">
+            <ScrollViewer Style="{StaticResource ChatListScrollViewer}" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True" Visibility="{Binding ChatsViewModel.SearchResultsVisibility}" Grid.Row="1">
                 <Grid RowDefinitions="auto auto">
-                    <ListBox Style="{StaticResource NoScrollListBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="{DynamicResource Second}" ItemsSource="{Binding ChatsViewModel.SearchResultsChats}" SelectedItem="{Binding ChatsViewModel.SelectedSearchableEntity}" MinWidth="100">
+                    <ListBox Style="{StaticResource TopNoScrollListBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="{DynamicResource Second}" ItemsSource="{Binding ChatsViewModel.SearchResultsChats}" SelectedItem="{Binding ChatsViewModel.SelectedSearchableEntity}" MinWidth="100">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid>
+                                <Grid Height="55">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition/>
@@ -93,7 +98,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <ListBox Style="{StaticResource NoScrollListBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1" Background="{DynamicResource Second}" ItemsSource="{Binding ChatsViewModel.SearchResultsMessages}" SelectedItem="{Binding ChatsViewModel.SelectedSearchableMessage}" MinWidth="100">
+                    <ListBox Style="{StaticResource BottomNoScrollListBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1" Background="{DynamicResource Second}" ItemsSource="{Binding ChatsViewModel.SearchResultsMessages}" SelectedItem="{Binding ChatsViewModel.SelectedSearchableMessage}" MinWidth="100">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="auto * auto" RowDefinitions="auto *">
@@ -121,9 +126,10 @@
             </ScrollViewer>
         </Grid>
         <GridSplitter Grid.Row="1" Focusable="False" Grid.Column="1" Background="Transparent" Panel.ZIndex="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="2"/>
-        <Border Background="{DynamicResource Third}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
-            <ContentPresenter Content="{Binding MessagesViewModel}"/>
-        </Border>
+        <Grid RowDefinitions="auto *" Background="{DynamicResource Third}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+            <ContentPresenter Content="{Binding StaticNotificationViewModel}"/>
+            <ContentPresenter Grid.Row="1" Content="{Binding MessagesViewModel}"/>
+        </Grid>
         <Grid Visibility="{Binding ChatsViewModel.AdditionalViewModelVisibility}" Grid.RowSpan="2" Grid.ColumnSpan="3" Panel.ZIndex="10">
             <Rectangle Fill="{DynamicResource ShadowColor}" Tag="{Binding ChatsViewModel.AdditionalViewModel}" PreviewMouseLeftButtonDown="Rectangle_PreviewMouseLeftButtonDown">
                 <Rectangle.Style>

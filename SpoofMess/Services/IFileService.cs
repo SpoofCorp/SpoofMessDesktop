@@ -21,7 +21,7 @@ public interface IFileService
 
     public FileCategory GetCategory(Attachment attachment);
 
-    public Task Save(FileObject file);
+    public Task Save(FileObject file, CancellationToken cancellationToken = default);
 
     public Result<FileObject> GetFileInfo();
 

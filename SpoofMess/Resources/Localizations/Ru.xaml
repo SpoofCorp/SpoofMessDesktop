@@ -48,4 +48,7 @@
 
     <sys:String x:Key="NewBase">Новый стандартный</sys:String>
     <sys:String x:Key="OldBase">Старый стандартный</sys:String>
+
+    <sys:String x:Key="CountMembers">{0} участников</sys:String>
+    <sys:String x:Key="CountSubs">{0} подписчиков</sys:String>
 </ResourceDictionary>

@@ -6,5 +6,5 @@ internal partial class EntryViewModel(
     ) : ObservableObject
 {
     [ObservableProperty]
-    public object _viewModel = null!;
+    public partial object ViewModel { get; set; } = null!;
 }

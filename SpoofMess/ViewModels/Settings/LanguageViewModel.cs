@@ -1,21 +1,28 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SpoofMess.Enums;
 using SpoofMess.Models;
 using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.Settings;
 
-public partial class LanguageViewModel(UserInfo userInfo, IThemesServices themesService) : AdditionalViewModel
+public partial class LanguageViewModel(UserInfo userInfo, IAuthService authService, IThemesService themesService) : AdditionalViewModel
 {
     private readonly UserInfo _userInfo = userInfo;
-    private readonly IThemesServices _themesService = themesService;
-    public List<Language> Languages { get; set; } = [Language.Ru, Language.En];
+    private readonly IAuthService _authService = authService;
+    private readonly IThemesService _themesService = themesService;
+    public static List<Language> Languages { get; set; } = [new("Русский", "Ru", "ru-RU"), new("English", "En", "en-US"), new("Қазақша", "Kz", "kk-KZ")];
     [ObservableProperty]
-    private Language _language = userInfo.Language;
+    public partial Language Language { get; set; } = userInfo.Language;
 
-    partial void OnLanguageChanged(Language value)
+    public override void Initialize(ObservableObject ownerView, Action close)
     {
-        _userInfo.Language = value;
+        Language = Languages.FirstOrDefault(x => x.Key == _userInfo.Language.Key) ?? Languages.First();
+        base.Initialize(ownerView, close);
+    }
+
+    async partial void OnLanguageChanged(Language value)
+    {
         _themesService.ChangeLanguage(value);
+        _userInfo.Language = value;
+        await _authService.Save();
     }
 }

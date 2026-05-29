@@ -24,9 +24,10 @@ public partial class MessagesViewModel(
 
     [NotifyPropertyChangedFor(nameof(SelectChatVisibility))]
     [ObservableProperty]
-    private Chat? _selectedChat;
+    public partial Chat? SelectedChat { get; set; }
+
     [ObservableProperty]
-    public bool _isOpen = false;
+    public partial bool IsOpen { get; set; } = false;
 
     [RelayCommand]
     private async Task Send()

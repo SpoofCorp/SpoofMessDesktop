@@ -33,7 +33,7 @@ public class ThemesService(UserInfo userInfo) : IThemesService
     {
         ChangeLanguageLocal(_userInfo.Language);
         ChangeThemeLocal(_userInfo.Theme);
-        ChangeThemeLocal(_userInfo.Theme);
+        ChangeVisualLocal(_userInfo.Visual);
     }
 
     private void ChangeLanguageLocal(Language language)

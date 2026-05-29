@@ -89,14 +89,14 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
             file.Path = Path.Combine(directory, file.Name ?? (Path.HasExtension(file.Path) ? Path.GetFileName(file.Path) : "Undefined"));
             lock (file.Path)
             {
-                File.Delete(file.Path);
+                //File.Delete(file.Path);
             }
         }
     }
 
-    public async Task Save(FileObject file)
+    public async Task Save(FileObject file, CancellationToken cancellationToken = default)
     {
-        await _downloadService.TryStart(file);
+        await _downloadService.TryStart(file, cancellationToken);
     }
 
     public FileCategory GetCategory(Attachment attachment)

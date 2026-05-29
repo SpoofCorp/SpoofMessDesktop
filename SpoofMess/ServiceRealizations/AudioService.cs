@@ -1,19 +1,25 @@
-﻿using NAudio.Wave;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using NAudio.Wave;
+using SpoofMess.Models;
 using SpoofMess.Services;
 using System.IO;
 
 namespace SpoofMess.ServiceRealizations;
 
-public class AudioService : IAudioService
+public partial class AudioService : ObservableObject, IAudioService
 {
+    [ObservableProperty]
+    public partial PlayableFileObject? PlayableFileObject { get; set; }
+
     private AudioFileReader _reader = null!;
     private WaveOutEvent _outputDevice = null!;
     public bool IsPlayeed { get; set; }
     public EventHandler<StoppedEventArgs> OutputDevice_PlaybackStopped { get; set; } = null!;
 
-    public void Play(string path)
+    public void Play(PlayableFileObject fileObject)
     {
-        if (!File.Exists(path))
+        PlayableFileObject = fileObject;
+        if (!File.Exists(fileObject.Path))
             return;
 
         if (_outputDevice is null)
@@ -25,20 +31,29 @@ public class AudioService : IAudioService
             _outputDevice.Stop();
 
         _reader?.Dispose();
-        _reader = new(path);
+        _reader = new(fileObject.Path);
         _outputDevice.Init(_reader);
         _outputDevice.Play();
-        IsPlayeed = true;
+        PlayableFileObject.IsPlayed = IsPlayeed = true;
     }
     public void PauseResume()
     {
+        if (PlayableFileObject is null)
+            return;
         if (IsPlayeed)
             _outputDevice.Pause();
         else
             _outputDevice.Play();
-        IsPlayeed = !IsPlayeed;
+        PlayableFileObject.IsPlayed = IsPlayeed = !IsPlayeed;
     }
 
-    public void Stop() =>
+    public void Stop()
+    {
         _outputDevice.Stop();
+        PlayableFileObject?.IsPlayed = IsPlayeed = false;
+        _outputDevice.PlaybackStopped -= OutputDevice_PlaybackStopped;
+    }
+
+    public bool ItIsPlayeed(PlayableFileObject fileObject) =>
+        PlayableFileObject == fileObject;
 }

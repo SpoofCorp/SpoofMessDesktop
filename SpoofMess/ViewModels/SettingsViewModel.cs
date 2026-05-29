@@ -12,24 +12,24 @@ public partial class SettingsViewModel(
     IUserAvatarService userAvatarService,
     INavigationService navigationService) : AdditionalViewModel
 {
-    [NotifyPropertyChangedFor(nameof(MainViewVisibility))]
     [ObservableProperty]
     private AdditionalViewModel? _additionalViewModel;
     public UserInfo UserInfo { get; set; } = userInfo;
     private readonly INavigationService _navigationService = navigationService;
     private readonly IUserAvatarService _userAvatarService = userAvatarService;
-    public Visibility MainViewVisibility => AdditionalViewModel is null ? Visibility.Visible : Visibility.Collapsed;
+    [ObservableProperty]
+    public partial Visibility MainViewVisibility { get; set; }
 
     [RelayCommand]
     private void Profile()
     {
-        AdditionalViewModel = _navigationService.GetProfileViewModel(this, Close);
+        SetAdditionalViewModel(_navigationService.GetProfileViewModel(this, CloseAdditional));
     }
 
     [RelayCommand]
     private void Notifications()
     {
-
+        
     }
 
     [RelayCommand]
@@ -41,13 +41,19 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private void Language()
     {
-
+        SetAdditionalViewModel(_navigationService.GetLanguageViewModel(this, CloseAdditional));
     }
 
     [RelayCommand]
     private void Advanced()
     {
-        AdditionalViewModel = _navigationService.GetAdvancedViewModel(this, Close);
+        SetAdditionalViewModel(_navigationService.GetAdvancedViewModel(this, CloseAdditional));
+    }
+
+    [RelayCommand]
+    private void Design()
+    {
+        SetAdditionalViewModel(_navigationService.GetDesignViewModel(this, CloseAdditional));
     }
 
     [RelayCommand]
@@ -56,9 +62,17 @@ public partial class SettingsViewModel(
         await _userAvatarService.Set();
     }
 
-    private void Close()
+    private async void CloseAdditional()
     {
+        MainViewVisibility = Visibility.Visible;
         AdditionalViewModel = null;
+    }
+
+    private void SetAdditionalViewModel(AdditionalViewModel viewModel)
+    {
+        AdditionalViewModel = viewModel;
+        MainViewVisibility = Visibility.Collapsed;
+
     }
 
     public override void OnClose()

@@ -8,13 +8,13 @@ public partial class Notification(string? text, NotificationType type) : Observa
     public string? Text
     {
         get => field ?? "Undefined";
-        set => field = value;
+        set;
     } = text;
 
     public NotificationType Type { get; set; } = type;
 
     [ObservableProperty]
-    private double _opacity = 1;
+    public partial double Opacity { get; set; } = 1;
 
-    public int Time => Type switch { Enums.NotificationType.Error => 4000, Enums.NotificationType.Info => 2000, _ => 3000 };
+    public TimeSpan Time => Type switch { NotificationType.Error => TimeSpan.FromMilliseconds(4000), NotificationType.Info => TimeSpan.FromMilliseconds(2000), _ => TimeSpan.FromMilliseconds(3000) };
 }
