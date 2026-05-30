@@ -14,15 +14,39 @@ using System.Windows;
 namespace SpoofMess.ServiceRealizations;
 
 public class NavigationService(
-        IServiceProvider serviceProvider
+        IServiceProvider serviceProvider,
+        NotificationInfoViewModel notificationInfoViewModel
     ) : INavigationService
 {
-    public Window CurrentMainWindow { get; set; } = null!;
+    public bool IsActive { get; set; }
+
+    public Window CurrentMainWindow
+    {
+        get;
+        set
+        {
+            if (field is not null)
+            {
+                field.Activated -= CurrentMainWindow_Activated;
+                field.Deactivated -= CurrentMainWindow_Deactivated;
+            }
+            field = value;
+            if (value is not null)
+            {
+                field.Activated += CurrentMainWindow_Activated;
+                field.Deactivated += CurrentMainWindow_Deactivated;
+            }
+        }
+    } = null!;
     private CentralViewModel _currentViewModel = null!;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
+    protected NotificationView? NotificationWindow;
+    protected Lock NotificationWindowLock = new();
+    protected NotificationInfoViewModel _notificationInfoViewModel = notificationInfoViewModel;
 
     public StaticNotificationViewModel GetAudioService() =>
         _serviceProvider.GetRequiredService<StaticNotificationViewModel>();
+
     public void OpenWindow()
     {
         CurrentMainWindow.Show();
@@ -147,5 +171,35 @@ public class NavigationService(
         ChatCardViewModel chatCardViewModel = new(chat, _serviceProvider.GetRequiredService<IChatService>(), _serviceProvider.GetRequiredService<IChatUserService>(), _serviceProvider.GetRequiredService<IMessageService>());
         chatCardViewModel.Initialize(owner, close);
         return chatCardViewModel;
+    }
+
+    public void ShowNotification(MessageModel message)
+    {
+        if (NotificationWindow is null)
+        {
+            lock (NotificationWindowLock)
+            {
+                if (NotificationWindow is not null)
+                    return;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    NotificationWindow = new() { DataContext = _notificationInfoViewModel };
+                    NotificationWindow.Show();
+                });
+            }
+        }
+        _notificationInfoViewModel.Add(message);
+    }
+
+
+
+    private void CurrentMainWindow_Deactivated(object? sender, EventArgs e) =>
+        IsActive = false;
+
+    private void CurrentMainWindow_Activated(object? sender, EventArgs e) =>
+        IsActive = true;
+
+    public void InitializeAsync()
+    {
     }
 }

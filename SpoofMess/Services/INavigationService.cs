@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
@@ -7,8 +8,10 @@ using SpoofMess.ViewModels.Settings;
 
 namespace SpoofMess.Services;
 
-public interface INavigationService
+public interface INavigationService : IInitializable
 {
+    public bool IsActive { get; }
+    public void ShowNotification(MessageModel message);
     public void OpenWindow();
     public StaticNotificationViewModel GetAudioService();
     public void CloseWindow(); 

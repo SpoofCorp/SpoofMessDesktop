@@ -1,4 +1,6 @@
 ﻿using CommonObjects.Results;
+using SpoofMess.Bases;
+using SpoofMess.Models;
 using SpoofMess.Models.API;
 using SpoofMess.Services;
 using SpoofMess.ViewModels;
@@ -6,10 +8,17 @@ using System.Windows;
 
 namespace SpoofMess.ServiceRealizations;
 
-public class NotificationService(CentralViewModel centralViewModel) : INotificationService
+public class NotificationService(CentralViewModel centralViewModel, INavigationService navigationService) : INotificationService
 {
-    private readonly CentralViewModel _centralViewModel = centralViewModel; 
+    private readonly CentralViewModel _centralViewModel = centralViewModel;
+    private readonly INavigationService _navigationService = navigationService;
     private static readonly SemaphoreSlim _semaphore = new(1, 1);
+
+    public void InitializeAsync()
+    {
+        EventHandler.OnAdd += ShowNewMessageNotification;
+    }
+
     public void ShowMessageBox(Notification notification)
     {
         MessageBox.Show(
@@ -17,6 +26,13 @@ public class NotificationService(CentralViewModel centralViewModel) : INotificat
             notification.Type.ToString(),
             MessageBoxButton.OK
             );
+    }
+
+    public async void ShowNewMessageNotification(MessageModel message)
+    {
+        if (_navigationService.IsActive)
+            return;
+        _navigationService.ShowNotification(message);
     }
 
     public async void ShowToast(Notification notification)

@@ -1,9 +1,10 @@
 ﻿using CommonObjects.Results;
+using SpoofMess.Bases;
 using SpoofMess.Models.API;
 
 namespace SpoofMess.Services;
 
-public interface INotificationService
+public interface INotificationService : IInitializable
 {
     public void ShowError(string? error);
 
