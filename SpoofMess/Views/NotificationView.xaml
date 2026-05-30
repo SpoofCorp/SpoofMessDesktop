@@ -4,15 +4,65 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpoofMess.Views"
+        xmlns:vm="clr-namespace:SpoofMess.ViewModels.Notifications"
         mc:Ignorable="d"
-        Title="NotificationView" Height="auto" Width="200" Visibility="{Binding Visibility}" Topmost="True">
+        Title="NotificationView" Background="{DynamicResource Second}" Visibility="{Binding Visibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:DataContext="{d:DesignInstance vm:NotificationInfoViewModel, IsDesignTimeCreatable=True}" MaxHeight="280" MinHeight="70" Padding="5" ResizeMode="NoResize" Height="auto" Width="200" SizeToContent="Height" Topmost="True" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" 
                       CornerRadius="8"
                       GlassFrameThickness="0,1,0,0"
                       UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
-    <ItemsControl ItemsSource="{Binding Notifications}">
-        
-    </ItemsControl>
+    <Grid RowDefinitions="auto auto *">
+        <Button Grid.Row="0" Content="Hide all" Command="{Binding HideAllCommand}" Style="{StaticResource MinimalButton}"/>
+        <Separator Grid.Row="1" Background="{DynamicResource Four}"/>
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Notifications}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="5" RowDefinitions="auto auto auto" ColumnDefinitions="auto * auto">
+                        <Line x:Name="ItemSeparator" Margin="0 0 0 5" SnapsToDevicePixels="True" Height="4" X1="0" X2="200" StrokeThickness="3" Grid.ColumnSpan="3" Stroke="{DynamicResource Four}">
+                            <Line.Style>
+                                <Style TargetType="Line">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
+                        <Grid HorizontalAlignment="Center" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" VerticalAlignment="Top" Width="40" Height="40">
+                            <Border x:Name="Mask" 
+                             BorderThickness="1" 
+                             CornerRadius="40" 
+                             Background="White"
+                             BorderBrush="Gray" />
+
+                            <Image Source="{Binding Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
+                                <Image.OpacityMask>
+                                    <VisualBrush Visual="{x:Reference Mask}"/>
+                                </Image.OpacityMask>
+                            </Image>
+                        </Grid>
+                        <TextBlock Text="{Binding Text}" Grid.Row="2" Grid.Column="1" Style="{StaticResource AdditionalText}"/>
+                        <TextBlock Text="{Binding SentAt, StringFormat={}{0:hh:mm}}" Grid.Row="2" Grid.Column="2" Style="{StaticResource AdditionalText}"/>
+                        <TextBlock Text="{Binding User.Name}" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="1" Style="{StaticResource BaseText}"/>
+                        <Button Grid.Row="1" Command="{Binding DataContext.HideCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding}" Style="{StaticResource MinimalCircleButton}" Content="❌" Grid.Column="2"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Focusable="False"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.Template>
+                <ControlTemplate TargetType="ItemsControl">
+                    <ScrollViewer Focusable="False" CanContentScroll="False">
+                        <ItemsPresenter Focusable="False"/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ItemsControl.Template>
+        </ItemsControl>
+    </Grid>
 </Window>
