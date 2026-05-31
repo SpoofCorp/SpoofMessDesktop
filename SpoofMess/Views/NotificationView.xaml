@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SpoofMess.Views"
         xmlns:vm="clr-namespace:SpoofMess.ViewModels.Notifications"
         mc:Ignorable="d"
-        Title="NotificationView" Background="{DynamicResource Second}" Visibility="{Binding Visibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:DataContext="{d:DesignInstance vm:NotificationInfoViewModel, IsDesignTimeCreatable=True}" MaxHeight="280" MinHeight="70" Padding="5" ResizeMode="NoResize" Height="auto" Width="200" SizeToContent="Height" Topmost="True" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
+        Title="NotificationView" Background="{DynamicResource Second}" Visibility="{Binding Visibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:DataContext="{d:DesignInstance vm:NotificationInfoViewModel, IsDesignTimeCreatable=True}" ShowInTaskbar="False" MaxHeight="280" MinHeight="70" Padding="5" ResizeMode="NoResize" Height="auto" Width="200" SizeToContent="Height" Topmost="True" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" 
                       CornerRadius="8"

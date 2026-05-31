@@ -16,6 +16,8 @@
     <Thickness x:Key="MarginLeft">5 0 0 0</Thickness>
     <Thickness x:Key="BorderThickness">1</Thickness>
     <Thickness x:Key="FunctionBlockBorderThickness">1</Thickness>
+    <CornerRadius x:Key="CardBorderRadius">10</CornerRadius>
+    <CornerRadius x:Key="HeaderCardBorderRadius">10 10 0 0</CornerRadius>
     <CornerRadius x:Key="TopCorner">10 10 0 0</CornerRadius>
     <CornerRadius x:Key="DownCorner">0 0 10 10</CornerRadius>
 </ResourceDictionary>

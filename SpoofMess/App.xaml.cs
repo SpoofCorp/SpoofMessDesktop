@@ -117,6 +117,7 @@ public partial class App : Application
         services.AddSingleton<CentralViewModel>();
         services.AddSingleton<ChatsViewModel>();
         services.AddSingleton<MessagesViewModel>();
+        services.AddSingleton<NotificationInfoViewModel>();
 
         services.AddTransient<MainView>();
         services.AddSingleton<CentralView>();
@@ -130,7 +131,10 @@ public partial class App : Application
         StaticNotificationViewModel staticNotificationViewModel = _serviceProvider.GetRequiredService<StaticNotificationViewModel>();
         staticNotificationViewModel.ViewModel = new MusicNotification(_serviceProvider.GetRequiredService<IAudioService>());
         IUserService userService = _serviceProvider.GetRequiredService<IUserService>();
+        INotificationService notificationService = _serviceProvider.GetRequiredService<INotificationService>();
         INavigationService navigationService = _serviceProvider.GetRequiredService<INavigationService>();
+        notificationService.InitializeAsync();
+        navigationService.InitializeAsync();
         if (await authService.Initialize())
         {
             await userService.SyncAccount();

@@ -29,7 +29,7 @@
 
     <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
         <Grid Margin="0 0 0 15" Width="auto" MinWidth="430" MinHeight="400" MaxWidth="500">
-            <Grid>
+            <Grid RowDefinitions="auto 5 auto 10 auto 10 auto">
                 <Grid.Style>
                     <Style TargetType="{x:Type Grid}">
                         <Setter Property="Visibility" Value="{Binding MainViewVisibility}"/>
@@ -75,21 +75,15 @@
                         </Style.Triggers>
                     </Style>
                 </Grid.Style>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="10"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Border Style="{DynamicResource HeaderBorder}" Panel.ZIndex="3" Background="{DynamicResource Primary}" Padding="10 0">
+                <ContentControl Style="{StaticResource HeaderCardBlock}">
                     <DockPanel>
                         <Button Width="30" Height="30" FontSize="18" Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
                         <Button Width="30" Height="30" FontSize="18" Style="{DynamicResource MinimalButton}" Content="➖" DockPanel.Dock="Right"/>
                         <TextBlock Text="{DynamicResource Settings}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                     </DockPanel>
-                </Border>
-                <Border Grid.Row="1" Style="{StaticResource DownBoardBorder}" Padding="10 5" Margin="0 0 0 0" Background="{DynamicResource Second}">
-                    <Grid Height="auto">
+                </ContentControl>
+                <ContentControl Style="{StaticResource CardBlock}" Grid.Row="2">
+                    <Grid Height="auto" Margin="10 7">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
@@ -103,8 +97,8 @@
                                             <ControlTemplate TargetType="{x:Type ContentControl}">
                                                 <Grid>
                                                     <Border x:Name="Mask" 
-                                    CornerRadius="70" 
-                                    Background="{DynamicResource Second}"/>
+                                                        CornerRadius="70" 
+                                                        Background="{DynamicResource Second}"/>
 
                                                     <Image Source="{Binding UserInfo.User.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
                                                         <Image.OpacityMask>
@@ -140,8 +134,8 @@
                             </Button.Content>
                         </Button>
                     </Grid>
-                </Border>
-                <Border Style="{StaticResource LastBoardBorder}" Grid.Row="3" Background="{DynamicResource Second}" Padding="0 10">
+                </ContentControl>
+                <ContentControl Style="{StaticResource CardBlock}" Grid.Row="4">
                     <StackPanel>
                         <ve:FunctionButton Text="{DynamicResource Profile}" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource NotificationsAndSounds}" Icon="🔔" Alignment="Stretch" Command="{Binding NotificationsCommand}"/>
@@ -150,7 +144,7 @@
                         <ve:FunctionButton Text="{DynamicResource Language}" Icon="🈵" Alignment="Stretch" Command="{Binding LanguageCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource Design}" Icon="🖼️" Alignment="Stretch" Command="{Binding DesignCommand}"/>
                     </StackPanel>
-                </Border>
+                </ContentControl>
             </Grid>
             <ContentPresenter Panel.ZIndex="22" HorizontalAlignment="Right" Content="{Binding AdditionalViewModel}">
                 <ContentPresenter.Style>
@@ -545,31 +539,31 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type st:AdvancedViewModel}">
-        <Grid RowDefinitions="auto auto">
-            <Border Style="{DynamicResource HeaderBorder}" Panel.ZIndex="3" Background="{DynamicResource Primary}" Padding="10 0">
+        <Grid RowDefinitions="auto 5 auto">
+            <ContentControl Style="{StaticResource HeaderCardBlock}">
                 <DockPanel>
-                    <Button Width="30" Height="30" FontSize="25" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
-                    <TextBlock Text="{DynamicResource Advanced}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                    <Button Width="30" Height="30" FontSize="18" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                        <TextBlock Text="{DynamicResource Advanced}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
-            </Border>
-            <Border Style="{StaticResource DownBoardBorder}" Grid.Row="2" Background="{DynamicResource Second}" Padding="0 10">
-                <StackPanel>
+            </ContentControl>
+            <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
+                <StackPanel Margin="7">
                     <ve:Switch IsChecked="{Binding UserInfo.HideToTray}" Text="{DynamicResource HideToTray}" Margin="0 5"/>
                     <ve:Switch IsChecked="{Binding UserInfo.UnselectChat}" Text="{DynamicResource UnselectChat}" Margin="0 5"/>
                 </StackPanel>
-            </Border>
+            </ContentControl>
         </Grid>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type st:ProfileViewModel}">
-        <Grid RowDefinitions="auto auto">
-            <Border Style="{DynamicResource HeaderBorder}" Panel.ZIndex="3" Background="{DynamicResource Primary}" Padding="10 0">
+        <Grid RowDefinitions="auto 5 auto">
+            <ContentControl Style="{StaticResource HeaderCardBlock}">
                 <DockPanel>
-                    <Button Width="30" Height="30" FontSize="25" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                    <Button Width="30" Height="30" FontSize="18" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
                     <TextBlock Text="{DynamicResource Profile}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
-            </Border>
-            <Border Style="{StaticResource DownBoardBorder}" Grid.Row="2" Background="{DynamicResource Second}" Padding="0 10" Margin="0 0 0 10">
+            </ContentControl>
+            <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
                 <StackPanel>
                     <ve:Switch IsChecked="{Binding Edit.SearchMe}" Text="{DynamicResource SearchMe}" Margin="0 5"/>
                     <ve:Switch IsChecked="{Binding Edit.ShowMe}" Text="{DynamicResource ShowMe}" Margin="0 5"/>
@@ -577,22 +571,22 @@
                     <ve:Switch IsChecked="{Binding Edit.InviteMe}" Text="{DynamicResource InviteMe}" Margin="0 5"/>
                     <ve:InputTextBox Text="{Binding Edit.EditedName}" Holder="{DynamicResource Name}" Margin="0 5"/>
                 </StackPanel>
-            </Border>
+            </ContentControl>
         </Grid>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type st:LanguageViewModel}">
-        <Grid RowDefinitions="auto auto">
-            <Border Style="{DynamicResource HeaderBorder}" Panel.ZIndex="3" Background="{DynamicResource Primary}" Padding="10 0">
+        <Grid RowDefinitions="auto 5 auto">
+            <ContentControl Style="{StaticResource HeaderCardBlock}">
                 <DockPanel>
-                    <Button Width="30" Height="30" FontSize="25" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                    <Button Width="30" Height="30" FontSize="18" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
                     <TextBlock Text="{DynamicResource Language}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
-            </Border>
-            <Border Style="{StaticResource DownBoardBorder}" Grid.Row="2" Background="{DynamicResource Second}" Padding="10 10" Margin="0 0 0 10">
-                <StackPanel>
+            </ContentControl>
+            <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
+                <StackPanel Margin="7">
                     <TextBlock Style="{DynamicResource BaseText}" Text="{DynamicResource Language}"/>
-                    <ComboBox VerticalContentAlignment="Center" FontSize="16" Padding="5 0 0 5" FontWeight="DemiBold" SelectedItem="{Binding Language}" Height="auto" Margin="0" ItemsSource="{Binding Languages}">
+                    <ComboBox VerticalContentAlignment="Center" Padding="5 0 5 0" FontWeight="DemiBold" SelectedItem="{Binding Language}" Height="auto" Margin="0" ItemsSource="{Binding Languages}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Style="{DynamicResource BaseText}" Text="{Binding Name}" FontSize="16"/>
@@ -600,20 +594,20 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
-            </Border>
+            </ContentControl>
         </Grid>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type st:DesingViewModel}">
-        <Grid RowDefinitions="auto auto auto">
-            <Border Style="{DynamicResource HeaderBorder}" Panel.ZIndex="3" Background="{DynamicResource Primary}" Padding="10 0">
+        <Grid RowDefinitions="auto 5 auto 10 auto">
+            <ContentControl Style="{StaticResource HeaderCardBlock}">
                 <DockPanel>
-                    <Button Width="30" Height="30" FontSize="25" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                    <Button Width="30" Height="30" FontSize="18" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
                     <TextBlock Text="{DynamicResource Design}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
-            </Border>
-            <Border Style="{StaticResource DownBoardBorder}" Grid.Row="1" Background="{DynamicResource Second}" Padding="10 10" Margin="0 0 0 10">
-                <StackPanel>
+            </ContentControl>
+            <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
+                <StackPanel Margin="7">
                     <TextBlock Style="{DynamicResource BaseText}" Text="{DynamicResource Design}"/>
                     <ComboBox VerticalContentAlignment="Center" FontSize="16" Padding="5 0 0 5" FontWeight="DemiBold" SelectedItem="{Binding Theme}" Height="auto" Margin="0" ItemsSource="{Binding Themes}">
                         <ComboBox.ItemTemplate>
@@ -623,9 +617,9 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
-            </Border>
-            <Border Style="{StaticResource DownBoardBorder}" Grid.Row="2" Background="{DynamicResource Second}" Padding="10 10" Margin="0 0 0 10">
-                <StackPanel>
+            </ContentControl>
+            <ContentControl Grid.Row="4" Style="{StaticResource CardBlock}">
+                <StackPanel Margin="7">
                     <TextBlock Style="{DynamicResource BaseText}" Text="{DynamicResource Visual}"/>
                     <ComboBox VerticalContentAlignment="Center" FontSize="16" Padding="5 0 0 5" FontWeight="DemiBold" SelectedItem="{Binding Visual}" Height="auto" Margin="0" ItemsSource="{Binding Visuals}">
                         <ComboBox.ItemTemplate>
@@ -635,7 +629,7 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
-            </Border>
+            </ContentControl>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

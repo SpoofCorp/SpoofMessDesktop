@@ -12,7 +12,7 @@
     <Grid Background="{DynamicResource Third}" RowDefinitions="auto *">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.45* " MinWidth="200"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <ve:SideMenu Grid.RowSpan="2" Background="{DynamicResource Primary}" x:Name="SideMenu" IsOpen="{Binding SideMenuVisibility}" Panel.ZIndex="10" Grid.ColumnSpan="3">
@@ -125,7 +125,7 @@
                 </Grid>
             </ScrollViewer>
         </Grid>
-        <GridSplitter Grid.Row="1" Focusable="False" Grid.Column="1" Background="Transparent" Panel.ZIndex="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="2"/>
+        <GridSplitter Grid.Row="1" Focusable="False" Grid.Column="1" BorderThickness="0" Background="Transparent" Panel.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="2"/>
         <Grid RowDefinitions="auto *" Background="{DynamicResource Third}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
             <ContentPresenter Content="{Binding StaticNotificationViewModel}"/>
             <ContentPresenter Grid.Row="1" Content="{Binding MessagesViewModel}"/>
@@ -235,11 +235,9 @@
                 </Rectangle.Style>
             </Rectangle>
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding AdditionalView, Mode=TwoWay}" MouseDown="Border_MouseDown" Background="Transparent">
-                <Border Style="{DynamicResource CardBorder}" Margin="0"/>
+                <Border Style="{DynamicResource CardBorder}" CornerRadius="10" Margin="0"/>
                 <Border x:Name="Container" MouseDown="ContentPresenter_MouseDown" Padding="0" Background="{DynamicResource Primary}" CornerRadius="10">
-                    <ContentPresenter MouseDown="ContentPresenter_MouseDown" Content="{Binding AdditionalView}">
-
-                    </ContentPresenter>
+                    <ContentPresenter MouseDown="ContentPresenter_MouseDown" Content="{Binding AdditionalView}"/>
                 </Border>
             </Grid>
         </Grid>
