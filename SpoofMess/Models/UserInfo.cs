@@ -25,6 +25,12 @@ public partial class UserInfo : ObservableObject
     public partial bool UnselectChat { get; set; }
 
     [ObservableProperty]
+    public partial bool ShowMessagesNotifications { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShowErrorNotifications { get; set; }
+
+    [ObservableProperty]
     public partial bool SearchMe { get; set; }
 
     [ObservableProperty]
@@ -75,6 +81,8 @@ public partial class UserInfo : ObservableObject
         Language = userInfo.Language;
         Theme = userInfo.Theme;
         Visual = userInfo.Visual;
+        ShowMessagesNotifications = userInfo.ShowMessagesNotifications;
+        ShowErrorNotifications = userInfo.ShowErrorNotifications;
     }
 
     public bool Change(UserInfo edit, out ChangeUserSettingsRequest request)
@@ -84,6 +92,16 @@ public partial class UserInfo : ObservableObject
         if (edit.ForwardMessage != ForwardMessage)
         {
             request.ForwardMessage = edit.ForwardMessage;
+            result = true;
+        }
+
+        if (edit.ShowErrorNotifications != ShowErrorNotifications)
+        {
+            result = true;
+        }
+
+        if (edit.ShowMessagesNotifications != ShowMessagesNotifications)
+        {
             result = true;
         }
 

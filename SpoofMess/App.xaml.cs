@@ -62,6 +62,7 @@ public partial class App : Application
         services.AddTransient<EntryViewModel>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<AdvancedViewModel>();
+        services.AddTransient<SoundsAndNotificationsViewModel>();
         services.AddTransient<CreateGroupViewModel>();
         services.AddTransient<ProfileViewModel>();
         services.AddSingleton<StaticNotificationViewModel>();

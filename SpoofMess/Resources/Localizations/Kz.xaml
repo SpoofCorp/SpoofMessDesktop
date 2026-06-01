@@ -21,6 +21,8 @@
     <sys:String x:Key="EditedName">Есімі</sys:String>
     <sys:String x:Key="HideToTray">Жүйелік трейге жасыру</sys:String>
     <sys:String x:Key="UnselectChat">Жапқан кезде чатты таңдаудан алып тастау</sys:String>
+    <sys:String x:Key="ErrorNotifications">Show error notifications</sys:String>
+    <sys:String x:Key="PushNewMessages">Show push of new messages</sys:String>
 
     <sys:String x:Key="LogIn">Авторизациялау</sys:String>
     <sys:String x:Key="Registration">Тіркелу</sys:String>

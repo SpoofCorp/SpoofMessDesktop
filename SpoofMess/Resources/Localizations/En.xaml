@@ -21,6 +21,8 @@
     <sys:String x:Key="EditedName">Name</sys:String>
     <sys:String x:Key="HideToTray">Hide to system tray</sys:String>
     <sys:String x:Key="UnselectChat">Unselect chat on close</sys:String>
+    <sys:String x:Key="ErrorNotifications">Show error notifications</sys:String>
+    <sys:String x:Key="PushNewMessages">Show push of new messages</sys:String>
 
     <sys:String x:Key="LogIn">Log In</sys:String>
     <sys:String x:Key="Registration">Registration</sys:String>

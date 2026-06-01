@@ -118,6 +118,9 @@ public class NavigationService(
     public LanguageViewModel GetLanguageViewModel(ObservableObject owner, Action close) =>
         GetAdditionalViewModel<LanguageViewModel>(owner, close);
 
+    public SoundsAndNotificationsViewModel GetSoundsAndNotificationsViewModel(ObservableObject owner, Action close) =>
+        GetAdditionalViewModel<SoundsAndNotificationsViewModel>(owner, close);
+
     public DesingViewModel GetDesignViewModel(ObservableObject owner, Action close) =>
         GetAdditionalViewModel<DesingViewModel>(owner, close);
 

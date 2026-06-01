@@ -10,7 +10,7 @@
             <Button Padding="5 0" HorizontalContentAlignment="Left" Focusable="False" Click="Button_Click" Style="{StaticResource MinimalButton}" Cursor="Hand">
                 <Grid Focusable="False" ColumnDefinitions="auto auto" Background="Transparent">
 
-                    <Border Focusable="False" Width="50" Height="20" x:Name="BackBorder" Style="{StaticResource CardBorder}" Background="{StaticResource Third}"/>
+                    <Border Focusable="False" Width="50" Height="20" x:Name="BackBorder" Style="{StaticResource CardBorder}" CornerRadius="{DynamicResource Corner2}" Background="{StaticResource Third}"/>
 
                     <Border Focusable="False" x:Name="Boulder" Width="30" Height="30" CornerRadius="15" 
                             Background="{DynamicResource Primary}" BorderThickness="1"

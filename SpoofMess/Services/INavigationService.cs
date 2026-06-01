@@ -29,6 +29,7 @@ public interface INavigationService : IInitializable
     public FileViewModel GetFileViewModel(FileObject file);
     public SettingsViewModel GetSettingsViewModel(ObservableObject owner, Action close);
     public ProfileViewModel GetProfileViewModel();
+    public SoundsAndNotificationsViewModel GetSoundsAndNotificationsViewModel(ObservableObject owner, Action close);
     public CreateGroupViewModel GetCreateGroupViewModel(ObservableObject owner, Action close);
     public AdvancedViewModel GetAdvancedViewModel(ObservableObject owner, Action close);
     public ProfileViewModel GetProfileViewModel(ObservableObject owner, Action close);

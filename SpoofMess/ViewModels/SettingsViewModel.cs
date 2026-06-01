@@ -13,7 +13,8 @@ public partial class SettingsViewModel(
     INavigationService navigationService) : AdditionalViewModel
 {
     [ObservableProperty]
-    private AdditionalViewModel? _additionalViewModel;
+    public partial AdditionalViewModel? AdditionalViewModel { get; set; }
+
     public UserInfo UserInfo { get; set; } = userInfo;
     private readonly INavigationService _navigationService = navigationService;
     private readonly IUserAvatarService _userAvatarService = userAvatarService;
@@ -29,7 +30,7 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private void Notifications()
     {
-        
+        SetAdditionalViewModel(_navigationService.GetSoundsAndNotificationsViewModel(this, CloseAdditional));
     }
 
     [RelayCommand]
@@ -72,7 +73,6 @@ public partial class SettingsViewModel(
     {
         AdditionalViewModel = viewModel;
         MainViewVisibility = Visibility.Collapsed;
-
     }
 
     public override void OnClose()

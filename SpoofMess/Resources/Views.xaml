@@ -438,15 +438,15 @@
 
     <DataTemplate DataType="{x:Type vm:AuthorizationViewModel}">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Border Style="{StaticResource CardBorder}" Padding="10 20">
-                <Grid RowDefinitions="auto auto auto auto auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
+            <ContentControl Style="{StaticResource CardBlock}">
+                <Grid Margin="10 20" RowDefinitions="auto auto auto auto auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
                     <TextBlock Text="{DynamicResource LogIn}" Style="{StaticResource HeaderText}" Grid.ColumnSpan="2"/>
                     <uc:InputTextBox Holder="{DynamicResource Login}" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
                     <uc:InputPasswordBox WithShowing="Visible" Holder="{DynamicResource Password}" Grid.Row="2" Text="{Binding UserInfo.Password}"/>
                     <Button Content="{DynamicResource LogIn}" Command="{Binding EnterCommand}" Grid.Row="3" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
                     <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="{DynamicResource LogInQuestion}" Grid.Row="4" CommandText="{DynamicResource Registration}" Command="{Binding ChangeViewCommand}"/>
                 </Grid>
-            </Border>
+            </ContentControl>
         </Grid>
     </DataTemplate>
 
@@ -593,6 +593,23 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+                </StackPanel>
+            </ContentControl>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type st:SoundsAndNotificationsViewModel}">
+        <Grid RowDefinitions="auto 5 auto">
+            <ContentControl Style="{StaticResource HeaderCardBlock}">
+                <DockPanel>
+                    <Button Width="30" Height="30" FontSize="18" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                    <TextBlock Text="{DynamicResource NotificationsAndSounds}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </ContentControl>
+            <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
+                <StackPanel Margin="7">
+                    <ve:Switch IsChecked="{Binding Edit.ShowErrorNotifications}" Text="{DynamicResource ErrorNotifications}" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding Edit.ShowMessagesNotifications}" Text="{DynamicResource PushNewMessages}" Margin="0 5"/>
                 </StackPanel>
             </ContentControl>
         </Grid>

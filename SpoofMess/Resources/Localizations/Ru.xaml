@@ -21,6 +21,8 @@
     <sys:String x:Key="EditedName">Имя</sys:String>
     <sys:String x:Key="HideToTray">Скрывать в системный трей</sys:String>
     <sys:String x:Key="UnselectChat">Снимать выбор с чата при закрытии</sys:String>
+    <sys:String x:Key="ErrorNotifications">Show error notifications</sys:String>
+    <sys:String x:Key="PushNewMessages">Show push of new messages</sys:String>
 
     <sys:String x:Key="LogIn">Авторизация</sys:String>
     <sys:String x:Key="Registration">Регистрация</sys:String>
