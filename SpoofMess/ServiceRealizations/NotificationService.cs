@@ -8,8 +8,9 @@ using System.Windows;
 
 namespace SpoofMess.ServiceRealizations;
 
-public class NotificationService(CentralViewModel centralViewModel, INavigationService navigationService) : INotificationService
+public class NotificationService(UserInfo userInfo, CentralViewModel centralViewModel, INavigationService navigationService) : INotificationService
 {
+    private readonly UserInfo _userInfo = userInfo;
     private readonly CentralViewModel _centralViewModel = centralViewModel;
     private readonly INavigationService _navigationService = navigationService;
     private static readonly SemaphoreSlim _semaphore = new(1, 1);
@@ -30,13 +31,15 @@ public class NotificationService(CentralViewModel centralViewModel, INavigationS
 
     public async void ShowNewMessageNotification(MessageModel message)
     {
-        if (_navigationService.IsActive)
+        if (!_userInfo.ShowMessagesNotifications || _navigationService.IsActive)
             return;
         _navigationService.ShowNotification(message);
     }
 
     public async void ShowToast(Notification notification)
     {
+        if (!_userInfo.ShowErrorNotifications)
+            return;
         await _semaphore.WaitAsync();
         try
         {
