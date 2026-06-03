@@ -155,7 +155,7 @@ public class MessageService(
     {
         MessageModel? prefixMessage = null;
         int targetIndex = -1;
-        lock (chat)
+        lock (chat.Messages)
         {
             prefixMessage = chat.Messages.FirstOrDefault(x => x.SentAt >= message.SentAt);
             if (prefixMessage is not null)
