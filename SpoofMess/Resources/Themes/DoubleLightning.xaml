@@ -10,7 +10,7 @@
     <SolidColorBrush x:Key="SecondBlack" Color="#FDF4FA"/>
 
     <SolidColorBrush x:Key="Six" Color="#E0F2FE"/>
-    <SolidColorBrush x:Key="Five" Color="#D6BCFA"/>
+    <SolidColorBrush x:Key="Five" Color="#7F8BA4"/>
     <SolidColorBrush x:Key="Four" Color="#5C6E85"/>
     <SolidColorBrush x:Key="Third" Color="#1E232A"/>
     <SolidColorBrush x:Key="Second" Color="#2F3745"/>

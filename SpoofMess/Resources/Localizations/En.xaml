@@ -45,7 +45,7 @@
     <sys:String x:Key="TheColdAirOfRelief">The Cold Air of Relief</sys:String>
     <sys:String x:Key="BlueFresh">Blue Fresh</sys:String>
     <sys:String x:Key="BerryMarshmallow">Berry Marshmallow</sys:String>
-    <sys:String x:Key="DoubleLightning">Double Lightningя</sys:String>
+    <sys:String x:Key="DoubleLightning">Double Lightning</sys:String>
     <sys:String x:Key="Milkshake">Milkshake</sys:String>
 
     <sys:String x:Key="NewBase">New base</sys:String>
