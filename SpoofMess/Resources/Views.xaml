@@ -208,11 +208,11 @@
                                             <Grid>
                                                 <ToggleButton Margin="0" Focusable="False" IsChecked="{Binding IsOpen, Mode=TwoWay}" Style="{StaticResource MinimalToggleButton}" x:Name="Button" Content="⁝"/>
                                                 <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" 
-                                        PlacementTarget="{Binding ElementName=Button}" 
-                                        Placement="Left"
-                                        PlacementRectangle="45 35 0 0"
-                                        StaysOpen="False"
-                                        AllowsTransparency="True">
+                                                    PlacementTarget="{Binding ElementName=Button}" 
+                                                    Placement="Left"
+                                                    PlacementRectangle="45 35 0 0"
+                                                    StaysOpen="False"
+                                                    AllowsTransparency="True">
                                                     <Border Padding="10">
                                                         <Border Style="{StaticResource CardBorder}" Background="{DynamicResource Second}">
                                                             <StackPanel>
@@ -230,10 +230,10 @@
                         </ContentControl.Style>
                     </ContentControl>
                     <TextBlock Text="{Binding SelectedChat.Name}" Style="{DynamicResource BaseText}" Padding="5 0" FontWeight="DemiBold"/>
-                    <Label Style="{DynamicResource AdditionalLabelText}" Margin="2 0 0 0" Grid.Row="1" Padding="5 0" FontWeight="DemiBold" Content="{Binding SelectedChat.Users.Count}" ContentStringFormat="{DynamicResource CountMembers}" />
+                    <Label Style="{DynamicResource AdditionalLabelText}" Margin="2 0 0 0" Grid.Row="1" Padding="5 0" FontWeight="DemiBold" Content="{Binding SelectedChat.CountUsers}" ContentStringFormat="{DynamicResource CountMembers}" />
                 </Grid>
             </Border>
-            <ItemsControl root:ScrollHelper.ScrollToItem="{Binding SelectedChat.TargetMessage, Mode=TwoWay}" Focusable="False" Grid.Row="1" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" x:Name="MessagesList">
+            <ItemsControl root:ScrollHelper.ScrollBottomCommand="{Binding ScrollBottomCommand}" root:ScrollHelper.ScrollToItem="{Binding SelectedChat.TargetMessage, Mode=TwoWay}" Focusable="False" Grid.Row="1" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" x:Name="MessagesList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="50 *" RowDefinitions="* auto auto" MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">

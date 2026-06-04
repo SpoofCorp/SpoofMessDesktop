@@ -15,6 +15,7 @@ public static class ChatSetter
     public static Chat Set(this ChatUserDTO chat) =>
         new()
         {
+            CountUsers = chat.UsersCount ?? 0,
             Id = chat.ChatId,
             Name = chat.Name,
             UniqueName = chat.UniqueName,

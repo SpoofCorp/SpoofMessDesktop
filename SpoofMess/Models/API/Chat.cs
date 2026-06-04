@@ -60,4 +60,7 @@ public partial class Chat : ObservableObject
     public ObservableCollection<PermissionResult> Rules { get; set; } = [];
 
     public ObservableCollection<User> Users { get; set; } = [];
+
+    [ObservableProperty]
+    public partial int CountUsers { get; set; }
 }
