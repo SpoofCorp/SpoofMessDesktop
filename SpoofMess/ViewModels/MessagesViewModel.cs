@@ -43,6 +43,12 @@ public partial class MessagesViewModel(
     }
 
     [RelayCommand]
+    private async Task ScrollBottom()
+    {
+        _notificationService.ShowError("Гей");
+    }
+
+    [RelayCommand]
     private void Attach()
     {
         if (SelectedChat is null) return;
