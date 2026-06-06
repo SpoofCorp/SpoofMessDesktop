@@ -233,7 +233,7 @@
                     <Label Style="{DynamicResource AdditionalLabelText}" Margin="2 0 0 0" Grid.Row="1" Padding="5 0" FontWeight="DemiBold" Content="{Binding SelectedChat.CountUsers}" ContentStringFormat="{DynamicResource CountMembers}" />
                 </Grid>
             </Border>
-            <ItemsControl root:ScrollHelper.ScrollBottomCommand="{Binding ScrollBottomCommand}" root:ScrollHelper.ScrollToItem="{Binding SelectedChat.TargetMessage, Mode=TwoWay}" Focusable="False" Grid.Row="1" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" x:Name="MessagesList">
+            <ItemsControl root:ScrollHelper.ScrollToItem="{Binding SelectedChat.TargetMessage, Mode=TwoWay}" Focusable="False" Grid.Row="1" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" x:Name="MessagesList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="50 *" RowDefinitions="* auto auto" MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
@@ -356,7 +356,7 @@
             </Border>
 
             <Border Margin="0 20 0 0" Grid.RowSpan="2">
-                <Grid RowDefinitions="auto auto auto auto" MinWidth="200">
+                <Grid RowDefinitions="auto auto auto 10 auto" MinWidth="200">
 
                     <ContentControl Width="70" Height="70">
                         <ContentControl.Style>
@@ -384,16 +384,45 @@
                         </ContentControl.Style>
                     </ContentControl>
                     <TextBlock TextAlignment="Center" Style="{StaticResource HeaderText}" Text="{Binding Chat.Name}" Grid.Row="1"/>
-                    <Border CornerRadius="0 0 10 10" Style="{StaticResource DownBoardBorder}" Grid.Row="2">
+                    <ContentControl Style="{StaticResource CardBlock}" Grid.Row="2">
                         <StackPanel Orientation="Horizontal">
                             <ve:IconButton Icon="🔕" Text="Mute"/>
                             <ve:IconButton Icon="⚙️" Text="Settings"/>
                             <ve:IconButton Icon="🚪" Text="Leave"/>
                             <ve:IconButton Icon="…" Text="More"/>
                         </StackPanel>
-                    </Border>
-                    <ItemsControl Focusable="False" ItemsSource="{Binding Chat.Users}">
+                    </ContentControl>
+                    <ItemsControl Grid.Row="4" root:ScrollHelper.ScrollBottomCommand="{Binding ScrollToBottomCommand}" Focusable="False" ItemsSource="{Binding Chat.Users}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Margin="2.5" Style="{StaticResource CardBlock}">
+                                    <Grid Margin="5 10" RowDefinitions="auto auto" ColumnDefinitions="auto *">
+                                        <Grid Margin="0 0 5 0" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Width="40" Height="40">
+                                            <Border x:Name="Mask" 
+                                                 BorderThickness="1" 
+                                                 CornerRadius="40" 
+                                                 Background="White"
+                                                 BorderBrush="Gray" />
 
+                                            <Image Source="{Binding User.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
+                                                <Image.OpacityMask>
+                                                    <VisualBrush Visual="{x:Reference Mask}"/>
+                                                </Image.OpacityMask>
+                                            </Image>
+                                        </Grid>
+                                        <TextBlock Margin="0" Style="{StaticResource BaseText}" Text="{Binding Name}" Grid.Column="1"/>
+                                        <TextBlock Margin="0" Style="{StaticResource AdditionalText}" Text="{Binding WasOnline, TargetNullValue=Недавно, StringFormat={}{0:dd.MM.yyyy}}" Grid.Column="1" Grid.Row="1"/>
+                                    </Grid>
+                                </ContentControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.Template>
+                            <ControlTemplate TargetType="ItemsControl">
+                                <ScrollViewer Focusable="False" CanContentScroll="False">
+                                    <ItemsPresenter Focusable="False"/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
                     </ItemsControl>
                 </Grid>
             </Border>

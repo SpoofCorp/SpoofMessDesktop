@@ -124,10 +124,11 @@ public class NavigationService(
     public DesingViewModel GetDesignViewModel(ObservableObject owner, Action close) =>
         GetAdditionalViewModel<DesingViewModel>(owner, close);
 
-    public ChatInfoViewModel GetChatInfoViewModel(ObservableObject owner, Action close, Chat chat)
+    public async Task<ChatInfoViewModel> GetChatInfoViewModel(ObservableObject owner, Action close, Chat chat)
     {
         ChatInfoViewModel viewModel = GetAdditionalViewModel<ChatInfoViewModel>(owner, close);
         viewModel.Chat = chat;
+        await viewModel.InitiailizeAsync();
         return viewModel;
     }
 

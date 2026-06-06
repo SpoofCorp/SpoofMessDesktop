@@ -3,15 +3,19 @@ using CommonObjects.Results;
 using SpoofMess.Models;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
+using System.Collections.Concurrent;
+using System.Windows.Forms;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
 public class ChatUserService(
     IChatUserApiService chatUserApiService,
-    IChatService chatService) : IChatUserService
+    IChatService chatService,
+    IUserService userService) : IChatUserService
 {
     private readonly IChatUserApiService _chatUserApiService = chatUserApiService;
     private readonly IChatService _chatService = chatService;
+    private readonly IUserService _userService = userService;
 
     public async Task SyncChats(DateTime after)
     {
@@ -29,5 +33,40 @@ public class ChatUserService(
     public async void ChatCreated(ChatUserDTO chatUserDTO)
     {
         await _chatService.AddChats([chatUserDTO]);
+    }
+
+    public async Task UploadManyMembers(Chat chat, CancellationToken cancellationToken = default)
+    {
+        User? user = chat.Users.OrderByDescending(x => x.WasOnline).FirstOrDefault() ?? new() { WasOnline = null };
+        Result<List<ChatMemberDTO>> members = await _chatUserApiService.GetMembersBefore(chat.Id, user.Login, user.WasOnline, cancellationToken);
+        if (!members)
+            return;
+        await AddUsers(chat, members.Body!, cancellationToken);
+    }
+
+    protected async Task AddUsers(Chat chat, List<ChatMemberDTO> members, CancellationToken cancellationToken = default)
+    {
+        ConcurrentBag<User> users = [];
+        await Parallel.ForEachAsync(members, cancellationToken, async (member, ct) =>
+        {
+            User? user = await _userService.Get(member.Login, cancellationToken);
+            user ??= new()
+            {
+                Avatar = new()
+                {
+                    AttachmentToken = member.AvatarAccessToken,
+                    Token = member.AvatarFileToken,
+                    Name = member.OriginalFileName
+                },
+                Login = member.Login,
+                Name = member.Name,
+                WasOnline = member.WasOnline
+            };
+            users.Add(user);
+        });
+        lock(chat.Users)
+            foreach (User user in users)
+                if (!chat.Users.Any(x => x.Login == user.Login))
+                    chat.Users.Add(user);
     }
 }

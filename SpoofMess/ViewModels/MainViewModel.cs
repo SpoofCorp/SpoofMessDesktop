@@ -100,7 +100,7 @@ public partial class MainViewModel(
     {
         try
         {
-            MessagesViewModel.SetGetChatInfo(() => AdditionalView = _navigationService.GetChatInfoViewModel(this, Close, MessagesViewModel.SelectedChat!));
+            MessagesViewModel.SetGetChatInfo(async () => AdditionalView = await _navigationService.GetChatInfoViewModel(this, Close, MessagesViewModel.SelectedChat!));
             _notificationApiService.OnUserUpdated += _userService.OnUserUpdated;
             ChatsViewModel.OnSelectionChatChanged += MessagesViewModel.OnSelectionChatChanged;
             ServiceRealizations.EventHandler.OnUserAvatarUpdated += _userService.AvatarUpdateHandler;

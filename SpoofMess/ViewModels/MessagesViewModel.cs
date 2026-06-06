@@ -43,9 +43,9 @@ public partial class MessagesViewModel(
     }
 
     [RelayCommand]
-    private async Task ScrollBottom()
+    private async Task ScrollToTop()
     {
-        _notificationService.ShowError("Гей");
+        _notificationService.ShowError("You scroll to top :3");
     }
 
     [RelayCommand]

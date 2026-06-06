@@ -35,6 +35,6 @@ public interface INavigationService : IInitializable
     public ProfileViewModel GetProfileViewModel(ObservableObject owner, Action close);
     public LanguageViewModel GetLanguageViewModel(ObservableObject owner, Action close);
     public DesingViewModel GetDesignViewModel(ObservableObject owner, Action close);
-    public ChatInfoViewModel GetChatInfoViewModel(ObservableObject owner, Action close, Chat chat);
+    public Task<ChatInfoViewModel> GetChatInfoViewModel(ObservableObject owner, Action close, Chat chat);
     public ChatCardViewModel GetChatCardViewModel(ObservableObject owner, Action close, Chat chat);
 }

@@ -8,4 +8,5 @@ public interface IChatUserService
     public Task SyncChats(DateTime after);
     public Task<bool> Join(Chat chat);
     public void ChatCreated(ChatUserDTO chatUserDTO);
+    public Task UploadManyMembers(Chat chat, CancellationToken cancellationToken = default);
 }

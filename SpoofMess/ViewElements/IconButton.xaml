@@ -16,8 +16,8 @@
         Command="{Binding ElementName=IconButtonView, Path=Command}">
         <Button.Content>
             <StackPanel>
-                <TextBlock HorizontalAlignment="Center" Text="{Binding ElementName=IconButtonView, Path=Icon}"/>
-                <TextBlock Text="{Binding ElementName=IconButtonView, Path=Text}"/>
+                <TextBlock FontSize="20" Style="{StaticResource AdditionalText}" HorizontalAlignment="Center" Text="{Binding ElementName=IconButtonView, Path=Icon}"/>
+                <TextBlock FontSize="18" Style="{StaticResource AdditionalText}" Text="{Binding ElementName=IconButtonView, Path=Text}"/>
             </StackPanel>
         </Button.Content>
     </Button>

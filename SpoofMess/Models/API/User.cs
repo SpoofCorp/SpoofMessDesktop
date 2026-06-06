@@ -8,12 +8,15 @@ public partial class User : ObservableObject
 {
     public Guid Id { get; set; }
     [ObservableProperty]
-    private FileObject? _avatar;
+    public partial FileObject? Avatar { get; set; }
     public ObservableCollection<FileObject> Avatars { get; set; } = [];
     [ObservableProperty]
-    private string? _name;
+    public partial string? Name { get; set; }
     [ObservableProperty]
-    private string _login = string.Empty;
+    public partial string Login { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial DateTime? WasOnline { get; set; }
 
     public void Update(User user)
     {
@@ -22,6 +25,7 @@ public partial class User : ObservableObject
         Avatars = user.Avatars;
         Name = user.Name;
         Login = user.Login;
+        WasOnline = user.WasOnline;
     }
     public void Update(UpdateUserInfo userInfo)
     {

@@ -37,4 +37,11 @@ public class ChatUserApiService(
 
     public async Task<Result> Join(JoinToChatRequest request, CancellationToken cancellationToken = default) =>
         await PostAsync("/join", request, cancellationToken);
+
+    public async Task<Result<List<ChatMemberDTO>>> GetMembersBefore(
+        Guid chatId,
+        string lastLogin,
+        DateTime? before,
+        CancellationToken cancellationToken = default) =>
+        await GetAsync<List<ChatMemberDTO>>($"/getChatMembers?chatId={chatId}&lastLogin={lastLogin}&before={before}", cancellationToken);
 }
