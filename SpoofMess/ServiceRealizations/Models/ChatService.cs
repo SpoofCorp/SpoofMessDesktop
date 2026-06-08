@@ -45,9 +45,9 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
         chat = chatResult.Body!.Set();
         if (ChatsStorage.TryAdd(id, chat) && saveToLocal)
             Add(chat);
-        else
-            ChatsStorage.TryGetValue(id, out chat);
-        await UploadAvatar(chat, chatResult.Body!);
+        else if (ChatsStorage.TryGetValue(id, out chat))
+            return chat;
+        await UploadAvatar(chat!, chatResult.Body!);
 
         return chat;
     }
@@ -60,7 +60,8 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
         {
             Token = chatDTO.AvatarToken,
             Id = chatDTO.AvatarId,
-            Name = chatDTO.OriginalAvatarFileName
+            Name = chatDTO.OriginalAvatarFileName,
+            Path = Path.Combine(_userInfo.SessionSettings.Directory, chatDTO.OriginalAvatarFileName ?? chatDTO.UniqueName)
         };
 
         await _chatAvatarService.UploadAvatar(chat);
