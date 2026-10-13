@@ -13,13 +13,13 @@ namespace SpoofMess.ViewModels;
 public partial class MainViewModel(
     INotificationService notificationService,
     INotificationApiService notificationApiService,
-    MessagesViewModel messagesViewModel,
+    MainMessagesViewModel messagesViewModel,
     INavigationService navigationService,
     StaticNotificationViewModel staticNotificationViewModel,
     IUserService userService,
     IAuthService authService,
     ChatsViewModel chatsViewModel,
-    UserInfo userInfo) : ObservableObject, IDisposable, IInitializable
+    UserInfo userInfo) : PlacementViewModel, IDisposable, IAsyncInitializable
 {
     private readonly CancellationTokenSource token = new();
     private readonly UserInfo _userInfo = userInfo;
@@ -45,38 +45,35 @@ public partial class MainViewModel(
     public ChatsViewModel ChatsViewModel { get; set; } = chatsViewModel;
 
     public MessagesViewModel MessagesViewModel { get; set; } = messagesViewModel;
-    public StaticNotificationViewModel StaticNotificationViewModel { get; set; }
-
-
-    [NotifyPropertyChangedFor(nameof(AdditionalVisibility))]
-    [ObservableProperty]
-    public partial AdditionalViewModel? AdditionalView { get; set; }
+    public StaticNotificationViewModel StaticNotificationViewModel { get; set; } = staticNotificationViewModel;
 
     [ObservableProperty]
     public partial Visibility SideMenuVisibility { get; set; } = Visibility.Collapsed;
-
-    public Visibility AdditionalVisibility => AdditionalView is null ? Visibility.Collapsed : Visibility.Visible;
+    public bool IsInitialized { get; set; }
 
     [RelayCommand]
     private void ShowProfile()
     {
-        AdditionalView = _navigationService.GetProfileViewModel(this, Close);
+        //_navigationService.SetProfileViewModel(this);
     }
 
     [RelayCommand]
     private void ShowSettings()
     {
-        AdditionalView = _navigationService.GetSettingsViewModel(this, Close);
+        _navigationService.SetSettingsViewModel(this);
     }
 
     [RelayCommand]
     private void ShowCreateGroup()
     {
-        AdditionalView = _navigationService.GetCreateGroupViewModel(this, Close);
+        _navigationService.SetCreateGroupViewModel(this);
     }
 
-    private void Close() =>
-        AdditionalView = null;
+    [RelayCommand]
+    private void ShowMemberCard(ChatUser chatUser)
+    {
+        _navigationService.SetChatMemberCard(this, chatUser);
+    }
 
     public async Task CloseWindow()
     {
@@ -85,8 +82,7 @@ public partial class MainViewModel(
             _navigationService.HideToTrayWindow();
             if (_userInfo.UnselectChat)
                 ChatsViewModel.SelectedChat = null;
-            AdditionalView?.CloseCommand.Execute(null);
-            AdditionalView = null;
+            BehindCloseAdditionalViewModel();
             SideMenuVisibility = Visibility.Collapsed;
         }
         else
@@ -96,16 +92,16 @@ public partial class MainViewModel(
         }
     }
 
-    public async void InitializeAsync()
+    public async Task InitializeAsync()
     {
         try
         {
-            MessagesViewModel.SetGetChatInfo(async () => AdditionalView = await _navigationService.GetChatInfoViewModel(this, Close, MessagesViewModel.SelectedChat!));
+            MessagesViewModel.SetGetChatInfo(async (chat) => await _navigationService.SetChatInfoViewModel(this, chat));
             _notificationApiService.OnUserUpdated += _userService.OnUserUpdated;
             ChatsViewModel.OnSelectionChatChanged += MessagesViewModel.OnSelectionChatChanged;
             ServiceRealizations.EventHandler.OnUserAvatarUpdated += _userService.AvatarUpdateHandler;
-            ChatsViewModel.InitializeAsync();
-            MessagesViewModel.InitializeAsync();
+            await Task.WhenAll(ChatsViewModel.InitializeAsync(), MessagesViewModel.InitializeAsync());
+            await _notificationApiService.InitializeAsync();
         }
         catch (Exception ex)
         {

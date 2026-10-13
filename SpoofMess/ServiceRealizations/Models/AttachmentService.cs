@@ -131,6 +131,8 @@ internal class AttachmentService(
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     vm.Files.Remove(model);
+                    if (vm.Files.Count == 0)
+                        message.Attachments.Remove(vm);
                 });
             }
         }
@@ -148,7 +150,10 @@ internal class AttachmentService(
         {
             Result<byte[]> accessFileToken = await SendAttachment(file, token);
             if (accessFileToken.Success)
+            {
                 attachments.Add(new(file.Id ?? [], accessFileToken.Body!, file.Name!, string.Empty, string.Empty, file.Size));
+                Debug.WriteLine(string.Join(", ", accessFileToken.Body!));
+            }
         });
         return Result<List<Attachment>>.OkResult([.. attachments]);
     }
@@ -239,7 +244,7 @@ internal class AttachmentService(
                 FileObject? file = null;
                 ObjectViewModel? viewModel = null;
 
-                foreach(ObjectViewModel objectViewModel in message.Attachments)
+                foreach (ObjectViewModel objectViewModel in message.Attachments)
                 {
                     file = objectViewModel.Files.FirstOrDefault(x => x.Id.SequenceEqual(attachment.Id));
                     if (file is not null)
@@ -276,5 +281,12 @@ internal class AttachmentService(
             ObjectViewModel fileView = GetViewModel(file);
             return message.Attachments.FirstOrDefault(x => x.GetType() == fileView.GetType()) ?? fileView;
         }
+    }
+
+    public Result AttachVoice(MessageModel message, FileObject fileObject)
+    {
+        fileObject.AttachmentMetadata = new VoiceMessageMetadata() { };
+        Add(fileObject, message);
+        return Result.OkResult();
     }
 }

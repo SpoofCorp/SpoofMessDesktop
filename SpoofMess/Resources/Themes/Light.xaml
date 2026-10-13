@@ -20,6 +20,8 @@
     <SolidColorBrush x:Key="PrimaryAccent" Color="#70B2FF"/>
     <SolidColorBrush x:Key="SecondAccent" Color="#4D9EFF"/>
     <SolidColorBrush x:Key="ThirdAccent" Color="#338BFF"/>
+    
+    <SolidColorBrush x:Key="SecondTransparent" Color="#33F5F7FA"/>
 
     <Color x:Key="ThirdWhiteColor">#E2E8F0</Color>
     <Color x:Key="SecondWhiteColor">#F5F7FA</Color>

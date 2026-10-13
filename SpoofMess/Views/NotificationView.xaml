@@ -38,15 +38,15 @@
                              Background="White"
                              BorderBrush="Gray" />
 
-                            <Image Source="{Binding Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
+                            <Image Source="{Binding Message.Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
                                 <Image.OpacityMask>
                                     <VisualBrush Visual="{x:Reference Mask}"/>
                                 </Image.OpacityMask>
                             </Image>
                         </Grid>
-                        <TextBlock Text="{Binding Text}" Grid.Row="2" Grid.Column="1" Style="{StaticResource AdditionalText}"/>
-                        <TextBlock Text="{Binding SentAt, StringFormat={}{0:hh:mm}}" Grid.Row="2" Grid.Column="2" Style="{StaticResource AdditionalText}"/>
-                        <TextBlock Text="{Binding User.Name}" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="1" Style="{StaticResource BaseText}"/>
+                        <TextBlock Text="{Binding Message.Text}" Grid.Row="2" Grid.Column="1" Style="{StaticResource AdditionalText}"/>
+                        <TextBlock Text="{Binding Message.SentAt, StringFormat={}{0:hh:mm}}" Grid.Row="2" Grid.Column="2" Style="{StaticResource AdditionalText}"/>
+                        <TextBlock Text="{Binding Message.User.Name}" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="1" Style="{StaticResource BaseText}"/>
                         <Button Grid.Row="1" Command="{Binding DataContext.HideCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding}" Style="{StaticResource MinimalCircleButton}" Content="❌" Grid.Column="2"/>
                     </Grid>
                 </DataTemplate>

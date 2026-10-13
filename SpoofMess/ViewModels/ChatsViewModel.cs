@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.Input;
 using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.Services;
@@ -14,7 +14,7 @@ public partial class ChatsViewModel(
     IChatUserService chatUserService,
     ISearchService searchService,
     INotificationApiService notificationApiService,
-    INavigationService navigationService) : ObservableObject, IInitializable, IDisposable
+    INavigationService navigationService) : PlacementViewModel, IAsyncInitializable, IDisposable
 {
     private readonly IChatService _chatService = chatService;
     private readonly IChatUserService _chatUserService = chatUserService;
@@ -22,7 +22,8 @@ public partial class ChatsViewModel(
     private readonly INotificationApiService _notificationApiService = notificationApiService;
     private readonly INavigationService _navigationService = navigationService;
 
-    public ObservableCollection<Chat> Chats { get; set; } = [];
+    public bool IsInitialized { get; set; }
+    public ConcurrentObservableCollection<Chat> Chats { get; set; } = [];
 
     public ObservableCollection<Chat> SearchResultsChats { get; set; } = [];
 
@@ -32,15 +33,9 @@ public partial class ChatsViewModel(
 
     public Visibility SearchResultsVisibility => string.IsNullOrEmpty(Query) ? Visibility.Collapsed : Visibility.Visible;
 
-    public Visibility AdditionalViewModelVisibility => AdditionalViewModel is null ? Visibility.Collapsed : Visibility.Visible;
-
-    [NotifyPropertyChangedFor(nameof(AdditionalViewModelVisibility))]
-    [ObservableProperty]
-    private AdditionalViewModel? _additionalViewModel;
-
     public SearchableMessageWithChat? SelectedSearchableMessage
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -51,7 +46,7 @@ public partial class ChatsViewModel(
 
     public Chat? SelectedChat
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -62,7 +57,7 @@ public partial class ChatsViewModel(
 
     public string Query
     {
-        get => field;
+        get;
         set
         {
             field = value;
@@ -75,14 +70,27 @@ public partial class ChatsViewModel(
 
     public Chat? SelectedSearchableEntity
     {
-        get => field;
+        get;
         set
         {
             field = value;
+            if (value is null)
+            {
+                OnPropertyChanged(nameof(SelectedSearchableEntity));
+                return;
+            }
+
+            field = null;
+            SelectChat(value);
             OnPropertyChanged(nameof(SelectedSearchableEntity));
             OnPropertyChanged(nameof(AdditionalViewModelVisibility));
-            SelectChat(value);
         }
+    }
+
+    [RelayCommand]
+    private void OpenInNewWindow(Chat chat)
+    {
+        _navigationService.OpenAdditionalWindow(chat);
     }
 
     private void GoToMessage(SearchableMessageWithChat? searchableMessageWithChat)
@@ -105,8 +113,10 @@ public partial class ChatsViewModel(
         await _searchService.SimpleSearch(SearchResultsChats, SearchResultsMessages, Query);
     }
 
-    public async void InitializeAsync()
+    public async Task InitializeAsync()
     {
+        if (IsInitialized)
+            return;
         _notificationApiService.OnChatCreated += _chatUserService.ChatCreated;
         _notificationApiService.OnChatUpdated += _chatService.Update;
         _notificationApiService.OnChatAvatarUpdated += _chatService.OnChatAvatarUpdated;
@@ -114,43 +124,35 @@ public partial class ChatsViewModel(
         _chatService.ChatAdded += ChatAdded;
         _chatService.ChatMoved += ChatMoved;
         await _chatUserService.SyncChats(DateTime.UtcNow.AddMonths(-10));
+        IsInitialized = true;
     }
 
     private async void SelectChat(Chat? searchableEntity)
     {
         if (searchableEntity is null) return;
-        AdditionalViewModel = _navigationService.GetChatCardViewModel(this, () => AdditionalViewModel = null, searchableEntity);
+        _navigationService.SetChatCardViewModel(this, searchableEntity);
     }
 
     private void ChatMoved(int arg1, int arg2)
     {
-        lock (Chats)
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Chat? selectedChat = SelectedChat;
-                Chats.Move(arg1, arg2);
-                SelectedChat = selectedChat;
-            });
-        }
+            Chat? selectedChat = SelectedChat;
+            Chats.Move(arg1, arg2);
+            SelectedChat = selectedChat;
+        });
     }
-
-    private void Close() =>
-        AdditionalViewModel = null;
 
     private void ChatAdded(Chat arg1, int? arg2)
     {
-        lock (Chats)
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (arg2 is null)
-                    Chats.Add(arg1);
-                else
-                    Chats.Insert(arg2.Value, arg1);
+            if (arg2 is null)
+                Chats.Add(arg1);
+            else
+                Chats.Insert(arg2.Value, arg1);
 
-            });
-        }
+        });
     }
 
     public void Dispose()

@@ -3,22 +3,25 @@ using Microsoft.Extensions.DependencyInjection;
 using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.Services;
-using SpoofMess.Services.Models;
 using SpoofMess.ViewModels;
 using SpoofMess.ViewModels.FileViewModels;
 using SpoofMess.ViewModels.Notifications;
 using SpoofMess.ViewModels.Settings;
 using SpoofMess.Views;
+using System.Collections.Concurrent;
 using System.Windows;
 
 namespace SpoofMess.ServiceRealizations;
 
 public class NavigationService(
         IServiceProvider serviceProvider,
-        NotificationInfoViewModel notificationInfoViewModel
+        NotificationInfoViewModel notificationInfoViewModel,
+        UserInfo userInfo,
+        IAppLifeCycleService appLifeCycleService
     ) : INavigationService
 {
     public bool IsActive { get; set; }
+    public bool IsInitialized { get; set; }
 
     public Window CurrentMainWindow
     {
@@ -43,9 +46,25 @@ public class NavigationService(
     protected NotificationView? NotificationWindow;
     protected Lock NotificationWindowLock = new();
     protected NotificationInfoViewModel _notificationInfoViewModel = notificationInfoViewModel;
+    private readonly UserInfo _userInfo = userInfo;
+    private readonly ConcurrentDictionary<string, AdditionalWindowWithDataContext> _windows = [];
 
     public StaticNotificationViewModel GetAudioService() =>
         _serviceProvider.GetRequiredService<StaticNotificationViewModel>();
+
+    public void OpenAdditionalWindow(Chat chat)
+    {
+        AdditionalWindowWithDataContext additionalWindowWithDataContext = _windows.GetOrAdd(chat.UniqueName, (key) =>
+        {
+            var dataContext = _serviceProvider.GetRequiredService<MessagesViewModel>();
+            dataContext.SelectedChat = chat;
+            AdditionalWindowWithDataContext additionalWindowWithDataContext = new(key, _serviceProvider.GetRequiredService<INavigationService>());
+            additionalWindowWithDataContext.SetDataContext(dataContext);
+            additionalWindowWithDataContext.SetWindow(new MinimalWindow());
+            return additionalWindowWithDataContext;
+        });
+        additionalWindowWithDataContext.Start();
+    }
 
     public void OpenWindow()
     {
@@ -56,6 +75,30 @@ public class NavigationService(
     public void CloseWindow()
     {
         CurrentMainWindow.Close();
+    }
+
+    public void CloseAdditionalWindow(string key)
+    {
+        _windows.TryRemove(key, out _);
+    }
+
+    public void OpenChatWindow(Chat chat)
+    {
+        Window window;
+        if (_userInfo.CloneWindows)
+        {
+
+        }
+        else
+        {
+            MessagesViewModel viewModel = _serviceProvider.GetRequiredService<MessagesViewModel>();
+            viewModel.SelectedChat = chat;
+            window = new()
+            {
+                DataContext = viewModel
+            };
+            window.Show();
+        }
     }
 
     public void ResizeWindow()
@@ -99,37 +142,42 @@ public class NavigationService(
     public FileViewModel GetFileViewModel(FileObject file) =>
         GetFileViewModel<FileViewModel>(file);
 
-    public SettingsViewModel GetSettingsViewModel(ObservableObject owner, Action close) =>
-        GetAdditionalViewModel<SettingsViewModel>(owner, close);
+    public void SetSettingsViewModel(IPlacementViewModel owner) =>
+        SetAdditionalViewModel<SettingsViewModel>(owner);
 
-    public ProfileViewModel GetProfileViewModel(ObservableObject owner, Action close) =>
-        GetAdditionalViewModel<ProfileViewModel>(owner, close);
+    public void SetProfileViewModel(IPlacementViewModel owner) =>
+        SetAdditionalViewModel<ProfileViewModel>(owner);
 
-
-    public AdvancedViewModel GetAdvancedViewModel(ObservableObject owner, Action close) =>
-        GetAdditionalViewModel<AdvancedViewModel>(owner, close);
+    public void SetAdvancedViewModel(IPlacementViewModel owner) =>
+        SetAdditionalViewModel<AdvancedViewModel>(owner);
 
     public ProfileViewModel GetProfileViewModel() =>
         _serviceProvider.GetRequiredService<ProfileViewModel>();
 
-    public CreateGroupViewModel GetCreateGroupViewModel(ObservableObject owner, Action close) =>
-        GetAdditionalViewModel<CreateGroupViewModel>(owner, close);
+    public void SetCreateGroupViewModel(IPlacementViewModel owner) =>
+        SetAdditionalViewModel<CreateGroupViewModel>(owner);
 
-    public LanguageViewModel GetLanguageViewModel(ObservableObject owner, Action close) =>
-        GetAdditionalViewModel<LanguageViewModel>(owner, close);
+    public void SetLanguageViewModel(IPlacementViewModel owner) =>
+        SetAdditionalViewModel<LanguageViewModel>(owner);
 
-    public SoundsAndNotificationsViewModel GetSoundsAndNotificationsViewModel(ObservableObject owner, Action close) =>
-        GetAdditionalViewModel<SoundsAndNotificationsViewModel>(owner, close);
+    public void SetSoundsAndNotificationsViewModel(IPlacementViewModel owner) =>
+        SetAdditionalViewModel<SoundsAndNotificationsViewModel>(owner);
 
-    public DesingViewModel GetDesignViewModel(ObservableObject owner, Action close) =>
-        GetAdditionalViewModel<DesingViewModel>(owner, close);
+    public void SetDesignViewModel(IPlacementViewModel owner) =>
+        SetAdditionalViewModel<DesingViewModel>(owner);
 
-    public async Task<ChatInfoViewModel> GetChatInfoViewModel(ObservableObject owner, Action close, Chat chat)
+    public void SetChatMemberCard(IPlacementViewModel owner, ChatUser chatUser)
     {
-        ChatInfoViewModel viewModel = GetAdditionalViewModel<ChatInfoViewModel>(owner, close);
+        ChatMemberCardViewModel viewModel = GetAdditionalViewModel<ChatMemberCardViewModel>(owner);
+        viewModel.ChatUser = chatUser;
+    }
+
+    public async Task SetChatInfoViewModel(IPlacementViewModel owner, Chat chat)
+    {
+        ChatInfoViewModel viewModel = _serviceProvider.GetRequiredService<ChatInfoViewModel>();
         viewModel.Chat = chat;
-        await viewModel.InitiailizeAsync();
-        return viewModel;
+        await viewModel.InitializeAsync();
+        owner.ShowAdditionalViewModel(viewModel);
     }
 
     public MusicViewModel GetMusicViewModel(FileObject file) =>
@@ -146,10 +194,16 @@ public class NavigationService(
         return imageViewModel;
     }
 
-    private TAdditionalViewModel GetAdditionalViewModel<TAdditionalViewModel>(ObservableObject owner, Action close) where TAdditionalViewModel : AdditionalViewModel
+    private void SetAdditionalViewModel<TAdditionalViewModel>(IPlacementViewModel owner) where TAdditionalViewModel : AdditionalViewModel
     {
         TAdditionalViewModel viewModel = GetViewModel<TAdditionalViewModel>();
-        viewModel.Initialize(owner, close);
+        owner.ShowAdditionalViewModel(viewModel);
+    }
+
+    private TAdditionalViewModel GetAdditionalViewModel<TAdditionalViewModel>(IPlacementViewModel owner) where TAdditionalViewModel : AdditionalViewModel
+    {
+        TAdditionalViewModel viewModel = GetViewModel<TAdditionalViewModel>();
+        owner.ShowAdditionalViewModel(viewModel);
         return viewModel;
     }
 
@@ -167,14 +221,15 @@ public class NavigationService(
     private TViewModel GetViewModel<TViewModel>() where TViewModel : ObservableObject
     {
         TViewModel viewModel = _serviceProvider.GetRequiredService<TViewModel>();
+        if (viewModel is IAsyncInitializable initializable)
+            initializable.InitializeAsync();
         return viewModel;
     }
 
-    public ChatCardViewModel GetChatCardViewModel(ObservableObject owner, Action close, Chat chat)
+    public void SetChatCardViewModel(IPlacementViewModel owner, Chat chat)
     {
-        ChatCardViewModel chatCardViewModel = new(chat, _serviceProvider.GetRequiredService<IChatService>(), _serviceProvider.GetRequiredService<IChatUserService>(), _serviceProvider.GetRequiredService<IMessageService>());
-        chatCardViewModel.Initialize(owner, close);
-        return chatCardViewModel;
+        ChatCardViewModel chatCardViewModel = GetAdditionalViewModel<ChatCardViewModel>(owner);
+        chatCardViewModel.Chat = chat;
     }
 
     public void ShowNotification(MessageModel message)
@@ -203,7 +258,8 @@ public class NavigationService(
     private void CurrentMainWindow_Activated(object? sender, EventArgs e) =>
         IsActive = true;
 
-    public void InitializeAsync()
+    public async Task InitializeAsync()
     {
+
     }
 }

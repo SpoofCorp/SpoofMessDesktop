@@ -35,7 +35,7 @@ public partial class DesingViewModel(UserInfo userInfo, IThemesService themesSer
     [ObservableProperty]
     public partial Visual Visual { get; set; } = userInfo.Visual;
 
-    public override void Initialize(ObservableObject ownerView, Action close)
+    public override void Initialize(IPlacementViewModel ownerView, Action close)
     {
         Theme = Themes.FirstOrDefault(x => x.Key == _userInfo.Theme.Key) ?? Themes.First();
         foreach (Theme theme in Themes)

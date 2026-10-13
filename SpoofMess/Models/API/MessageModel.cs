@@ -14,7 +14,7 @@ public partial class MessageModel : ObservableObject, IDisposable
 
     public DateTime SentAt
     {
-        get => field;
+        get;
         set
         {
             field = value.ToLocalTime();
@@ -24,24 +24,26 @@ public partial class MessageModel : ObservableObject, IDisposable
 
     [NotifyPropertyChangedFor(nameof(PreviewText))]
     [ObservableProperty]
-    private string? _text;
+    public partial string? Text { get; set; }
 
     [ObservableProperty]
-    private User? user;
+    public partial User? User { get; set; }
+
     [ObservableProperty]
-    private Chat? chat;
+    public partial Chat? Chat { get; set; }
 
     public Visibility CanChange => User?.Login == App.UserInfo.User.Login ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility HasAttachments => Attachments.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
     public string PreviewText
     {
         get
         {
-            if (!string.IsNullOrEmpty(Text))
-                return Text;
-            return string.Join(" ", Attachments.Select(x => x.Icon));
+            return $"{(Attachments.Count > 0 ? string.Join(" ", Attachments.Select(x => x.Icon)) : "")}{ Text ?? ""}";
         }
     }
+
     public MessageModel()
     {
         Attachments.CollectionChanged += Attachments_CollectionChanged;
@@ -54,19 +56,24 @@ public partial class MessageModel : ObservableObject, IDisposable
     {
         ServiceRealizations.EventHandler.NotifyDelete(this);
     }
+
     [RelayCommand]
     private void Edit()
     {
         ServiceRealizations.EventHandler.NotifyEdit(this);
     }
+
     [RelayCommand]
     private void Copy()
     {
         Clipboard.SetText(Text ?? "");
     }
 
-    private void Attachments_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) =>
+    private void Attachments_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
         OnPropertyChanged(nameof(PreviewText));
+        OnPropertyChanged(nameof(HasAttachments));
+    }
 
     public void Dispose()
     {

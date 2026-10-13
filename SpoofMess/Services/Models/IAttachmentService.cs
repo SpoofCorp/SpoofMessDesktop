@@ -7,6 +7,9 @@ namespace SpoofMess.Services.Models;
 
 public interface IAttachmentService
 {
+    public Result AttachVoice(
+        MessageModel message,
+        FileObject fileObject);
     public Result Attach(
         MessageModel message);
     public void Unattach(

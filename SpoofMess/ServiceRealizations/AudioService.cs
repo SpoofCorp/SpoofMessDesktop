@@ -14,6 +14,7 @@ public partial class AudioService : ObservableObject, IAudioService
     private AudioFileReader _reader = null!;
     private WaveOutEvent _outputDevice = null!;
     public bool IsPlayeed { get; set; }
+    public bool IsEnded { get; set; }
     public EventHandler<StoppedEventArgs> OutputDevice_PlaybackStopped { get; set; } = null!;
 
     public void Play(PlayableFileObject fileObject)
@@ -25,11 +26,12 @@ public partial class AudioService : ObservableObject, IAudioService
         if (_outputDevice is null)
         {
             _outputDevice = new();
-            _outputDevice.PlaybackStopped += OutputDevice_PlaybackStopped;
+            _outputDevice.PlaybackStopped += OnStoped;
         }
         else
-            _outputDevice.Stop();
+            Stop();
 
+        IsEnded = false;
         _reader?.Dispose();
         _reader = new(fileObject.Path);
         _outputDevice.Init(_reader);
@@ -43,15 +45,28 @@ public partial class AudioService : ObservableObject, IAudioService
         if (IsPlayeed)
             _outputDevice.Pause();
         else
+        {
+            if (IsEnded)
+            {
+                _reader.Position = 0;
+                IsEnded = false;
+            }
             _outputDevice.Play();
+        }
         PlayableFileObject.IsPlayed = IsPlayeed = !IsPlayeed;
     }
 
     public void Stop()
     {
         _outputDevice.Stop();
+        IsEnded = true;
         PlayableFileObject?.IsPlayed = IsPlayeed = false;
-        _outputDevice.PlaybackStopped -= OutputDevice_PlaybackStopped;
+    }
+
+    protected void OnStoped(object? sender, StoppedEventArgs args)
+    {
+        Stop();
+        OutputDevice_PlaybackStopped(sender, args);
     }
 
     public bool ItIsPlayeed(PlayableFileObject fileObject) =>

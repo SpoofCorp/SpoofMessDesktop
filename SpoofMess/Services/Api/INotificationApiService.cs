@@ -2,11 +2,12 @@
 using CommonObjects.Requests.Changes;
 using CommonObjects.Requests.Messages;
 using CommonObjects.Responses;
+using SpoofMess.Bases;
 using SpoofMess.Models;
 
 namespace SpoofMess.Services.Api;
 
-public interface INotificationApiService
+public interface INotificationApiService : IAsyncInitializable
 {
     public event Action<MessageDTO> OnMessageReceived;
 

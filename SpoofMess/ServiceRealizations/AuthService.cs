@@ -23,23 +23,33 @@ public class AuthService(
 {
     private DateTime ValidTo;
     private static readonly SemaphoreSlim semaphore = new(1, 1);
-    protected override string BaseUrl => "https://localhost:7217/api/v1/Entrance";
+    private static readonly SemaphoreSlim fileSemaphore = new(1, 1);
     private static string BackupPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SpoofMess", "SessionData.json");
+
+    public bool IsAuthorized { get; set; }
+
     private readonly IFileService _fileService = fileService;
     private readonly UserInfo UserInfo = userInfo;
 
-    public async Task<bool> Initialize()
+    public async Task<Result> Initialize()
     {
-        Stream? stream = _fileService.GetObjectFromFile(BackupPath);
+        Stream? stream = _fileService.GetReadStreamFromFile(BackupPath);
         if (stream is null)
-            return false;
-        UserInfo userInfo = await _serializer.Deserialize<UserInfo>(stream);
-        stream.Dispose();
+            return Result.ErrorResult("Stream is null");
+        UserInfo userInfo;
+        try
+        {
+            userInfo = await _serializer.Deserialize<UserInfo>(stream);
+        }
+        finally
+        {
+            await stream.DisposeAsync();
+        }
         UserInfo.Update(userInfo);
         if (UserInfo.Authorize is null)
-            return false;
+            return Result.ErrorResult("Empty authorize data");
 
-        return await Update();
+          return await Update();
     }
 
     public async Task<string?> GetAccess()
@@ -58,7 +68,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            throw new ApplicationException("", ex);
+            return null;
         }
         finally
         {
@@ -66,18 +76,21 @@ public class AuthService(
         }
     }
 
-    private async Task<bool> Update()
-    {
-        Result<UserAuthorizeResponse> result = await PostAsync<UpdateTokenRequest, UserAuthorizeResponse>(
-            "/UpdateToken",
+    private async Task<Result> Update()
+       {
+         Result<UserAuthorizeResponse> result = await PostAsync<UpdateTokenRequest, UserAuthorizeResponse>(
+            "api/v1/Entrance/UpdateToken",
             new UpdateTokenRequest()
             {
                 Token = UserInfo.Authorize!.RefreshToken
             });
-        if (result.Success)
+        if (result)
+        {
             await SetTokens(result.Body!);
+            IsAuthorized = true;
+        }
 
-        return result.Success;
+        return Result.From(result);
     }
 
     public async Task SetTokens(UserAuthorizeResponse response)
@@ -100,9 +113,28 @@ public class AuthService(
 
     public async Task Save()
     {
-        string path = Path.GetDirectoryName(BackupPath)!;
-        if (!Directory.Exists(path))
-            Directory.CreateDirectory(path);
-        File.WriteAllText(BackupPath, _serializer.Serialize(UserInfo));
+        await fileSemaphore.WaitAsync();
+        try
+        {
+            string path = Path.GetDirectoryName(BackupPath)!;
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            Stream? stream = _fileService.GetWriteStreamFromFile(BackupPath);
+            if (stream is null)
+                return;
+            try
+            {
+                await _serializer.Serialize(UserInfo, stream);
+                await stream.FlushAsync();
+            }
+            finally
+            {
+                await stream.DisposeAsync();
+            }
+        }
+        finally
+        {
+            fileSemaphore.Release();
+        }
     }
 }

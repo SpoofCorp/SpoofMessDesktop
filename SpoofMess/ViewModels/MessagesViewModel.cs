@@ -1,9 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommonObjects.Results;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SpoofMess.Bases;
 using SpoofMess.Models;
+using SpoofMess.ServiceRealizations;
 using SpoofMess.Services;
-using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using System.Windows;
 
@@ -13,15 +14,20 @@ public partial class MessagesViewModel(
     IMessageService messageService,
     INotificationService notificationService,
     IAttachmentService attachmentService,
-    INotificationApiService notificationApiService) : ObservableObject, IInitializable, IDisposable
+    FileAudioRecorderService fileAudioRecorderService) : ObservableObject, IAsyncInitializable, IDisposable
 {
-    private readonly INotificationService _notificationService = notificationService;
-    private readonly IAttachmentService _attachmentService = attachmentService;
-    private readonly IMessageService _messageService = messageService;
-    private readonly INotificationApiService _notificationApiService = notificationApiService;
-    private Action getChatInfo = null!; 
+    protected readonly INotificationService _notificationService = notificationService;
+    protected readonly IAttachmentService _attachmentService = attachmentService;
+    protected readonly FileAudioRecorderService _fileAudioRecorderService = fileAudioRecorderService;
+    protected readonly IMessageService _messageService = messageService;
+    [ObservableProperty]
+    public partial bool IsVoiceRecording { get; set; }
+    private Action<Chat> getChatInfo = null!;
+    public bool IsInitialized { get; set; }
     public Visibility SelectChatVisibility => SelectedChat is null ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility ChatMessagesVisibility => SelectedChat is null ? Visibility.Collapsed : Visibility.Visible;
 
+    [NotifyPropertyChangedFor(nameof(ChatMessagesVisibility))]
     [NotifyPropertyChangedFor(nameof(SelectChatVisibility))]
     [ObservableProperty]
     public partial Chat? SelectedChat { get; set; }
@@ -57,6 +63,25 @@ public partial class MessagesViewModel(
     }
 
     [RelayCommand]
+    private async Task StopVoiceRecord()
+    {
+        await _fileAudioRecorderService.Stop();
+        IsVoiceRecording = false;
+    }
+
+    [RelayCommand]
+    private async Task VoiceRecord()
+    {
+        if (SelectedChat is null) return;
+        IsVoiceRecording = true;
+        Result<FileObject> result = await _fileAudioRecorderService.RecordToFile();
+        if (!result)
+            return;
+
+        _attachmentService.AttachVoice(SelectedChat.CurrentMessage, result.Body!);
+    }
+
+    [RelayCommand]
     private void Unattach(FileObject fileObject)
     {
         if (SelectedChat is null) return;
@@ -74,32 +99,26 @@ public partial class MessagesViewModel(
     {
         IsOpen = false;
         if (SelectedChat is not null)
-            getChatInfo();
+            getChatInfo(SelectedChat);
     }
 
-    public async void InitializeAsync()
+    public virtual async Task InitializeAsync()
     {
-        _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
-        _notificationApiService.OnMessageEdited += _messageService.EditHandle;
-        _notificationApiService.OnMessageDeleted += _messageService.OnDelete;
-        ServiceRealizations.EventHandler.OnDelete += _messageService.DeleteLocal;
-        ServiceRealizations.EventHandler.OnEdit += _messageService.StartEdit;
-        await _messageService.LoadSkippedMesssages(DateTime.UtcNow.AddMonths(-10));
+        if (IsInitialized)
+            return;
+        _fileAudioRecorderService.InitializeAsync();
+        IsInitialized = true;
     }
 
-    public void SetGetChatInfo(Action func) =>
+    public void SetGetChatInfo(Action<Chat> func) =>
         getChatInfo = func;
 
     public void OnSelectionChatChanged(Chat? chat) =>
         SelectedChat = chat;
 
-    public void Dispose()
+    public virtual void Dispose()
     {
-        _notificationApiService.OnMessageReceived -= _messageService.UploadMessage;
-        _notificationApiService.OnMessageDeleted -= _messageService.OnDelete;
-        _notificationApiService.OnMessageEdited -= _messageService.EditHandle;
-        ServiceRealizations.EventHandler.OnDelete -= _messageService.DeleteLocal;
-        ServiceRealizations.EventHandler.OnEdit -= _messageService.StartEdit;
+        SelectedChat?.IsOpened = true;
         GC.SuppressFinalize(this);
     }
 }

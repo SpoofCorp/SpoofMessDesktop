@@ -13,15 +13,13 @@ internal class ChatAvatarApiService(
         client,
         serializer), IChatAvatarApiService
 {
-    protected override string BaseUrl => "https://localhost:7082/api/v2/ChatAvatar";
-
     public async Task<Result> Set(SetChatAvatarRequest request, CancellationToken token = default)
     {
-        return await PostAsync($"/Set", request, token);
+        return await PostAsync("api/v2/ChatAvatar/Set", request, token);
     }
     public async Task<Result<AvatarResponse>> Get(byte[] accessToken, CancellationToken token = default)
     {
-        return await PostAsync<byte[], AvatarResponse>("/Get", accessToken, token);
+        return await PostAsync<byte[], AvatarResponse>("api/v2/ChatAvatar/Get", accessToken, token);
     }
 
 }

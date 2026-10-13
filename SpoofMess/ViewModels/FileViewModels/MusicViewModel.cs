@@ -56,6 +56,6 @@ public partial class MusicViewModel : ObjectViewModel, IDisposable
     }
     public void OutputDevice_PlaybackStopped(object? sender, StoppedEventArgs e)
     {
-
+        CurrentFile?.IsPlayed = false;
     }
 }

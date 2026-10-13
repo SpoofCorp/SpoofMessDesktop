@@ -1,19 +1,27 @@
 ﻿using CommonObjects.Results;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Models;
 
 namespace SpoofMess.ViewModels;
 
-public partial class ChatInfoViewModel(IChatAvatarService chatAvatarService, INotificationService notificationService, IChatUserService chatUserService) : AdditionalViewModel, IAsyncInitializable
+public partial class ChatInfoViewModel(
+    IChatAvatarService chatAvatarService,
+    INotificationService notificationService,
+    INavigationService navigationService,
+    IChatUserService chatUserService) : PlacementAdditionalViewModel, IAsyncInitializable
 {
     private readonly IChatAvatarService _chatAvatarService = chatAvatarService;
     private readonly INotificationService _notificationService = notificationService;
+    private readonly INavigationService _navigationService = navigationService;
     private readonly IChatUserService _chatUserService = chatUserService;
 
     public Chat Chat { get; set; } = null!;
+
+    public bool IsInitialized { get; set; }
+
 
     [RelayCommand]
     private async Task SetAvatar()
@@ -28,15 +36,32 @@ public partial class ChatInfoViewModel(IChatAvatarService chatAvatarService, INo
     {
         await _chatUserService.UploadManyMembers(Chat);
     }
-
-    public override async void Initialize(ObservableObject ownerView, Action close)
+    [RelayCommand]
+    private async Task Mute()
     {
-        base.Initialize(ownerView, close);
+
+    }
+    [RelayCommand]
+    private async Task Ban()
+    {
+
+    }
+    [RelayCommand]
+    private async Task Kick()
+    {
+
     }
 
-    public async Task InitiailizeAsync()
+    public async Task InitializeAsync()
     {
         if (Chat.Users.Count == 0)
             await _chatUserService.UploadManyMembers(Chat);
+        IsInitialized = true;
+    }
+
+    [RelayCommand]
+    private void ShowMemberCard(ChatUser chatUser)
+    {
+        _navigationService.SetChatMemberCard(this, chatUser);
     }
 }

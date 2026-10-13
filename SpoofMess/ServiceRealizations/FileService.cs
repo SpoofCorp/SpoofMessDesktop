@@ -111,7 +111,7 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
         return GetFileInfo(GetOnce());
     }
 
-    private Result<FileObject> GetFileInfo(string? path)
+    public Result<FileObject> GetFileInfo(string? path)
     {
         if (path is null)
             return Result<FileObject>.BadRequest("Not selected");
@@ -144,10 +144,14 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
         return $"{size:0.##} {Units[unitIndex]}";
     }
 
-    public Stream? GetObjectFromFile(string filePath)
+    public Stream? GetReadStreamFromFile(string filePath)
     {
         if (File.Exists(filePath))
             return File.OpenRead(filePath);
         return null;
+    }
+    public Stream? GetWriteStreamFromFile(string filePath)
+    {
+        return new FileStream(filePath, FileMode.OpenOrCreate);
     }
 }

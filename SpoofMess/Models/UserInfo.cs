@@ -28,7 +28,7 @@ public partial class UserInfo : ObservableObject
     public partial bool ShowMessagesNotifications { get; set; }
 
     [ObservableProperty]
-    public partial bool ShowErrorNotifications { get; set; }
+    public partial bool ShowErrorNotifications { get; set; } = true;
 
     [ObservableProperty]
     public partial bool SearchMe { get; set; }
@@ -52,8 +52,10 @@ public partial class UserInfo : ObservableObject
     [ObservableProperty]
     public partial Theme Theme { get; set; } = new("Light");
     [ObservableProperty]
-    public partial Visual Visual { get; set; } = new("NewBase");
+    public partial Visual Visual { get; set; } = new("OldBase");
 
+    [ObservableProperty]
+    public partial bool CloneWindows { get; set; }
 
     public CultureInfo CurrentCultureInfo = new("en-US");
 
@@ -69,6 +71,7 @@ public partial class UserInfo : ObservableObject
         User.Update(userInfo.User);
         Authorize = userInfo.Authorize;
         SessionSettings = userInfo.SessionSettings;
+        CloneWindows = userInfo.CloneWindows;
         Height = userInfo.Height;
         Width = userInfo.Width;
         HideToTray = userInfo.HideToTray;

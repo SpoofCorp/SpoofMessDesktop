@@ -13,7 +13,7 @@ public partial class LanguageViewModel(UserInfo userInfo, IAuthService authServi
     [ObservableProperty]
     public partial Language Language { get; set; } = userInfo.Language;
 
-    public override void Initialize(ObservableObject ownerView, Action close)
+    public override void Initialize(IPlacementViewModel ownerView, Action close)
     {
         Language = Languages.FirstOrDefault(x => x.Key == _userInfo.Language.Key) ?? Languages.First();
         base.Initialize(ownerView, close);

@@ -15,7 +15,6 @@ public class EntryApiService(
     ) : ApiService(client, serializer), IEntryApiService
 {
     private readonly IAuthService _authService = authService;
-    protected override string BaseUrl => "https://localhost:7217/api/v1/Entrance";
 
     public Task<Result> Delete()
     {
@@ -25,20 +24,20 @@ public class EntryApiService(
     public async Task<Result<UserAuthorizeResponse>> Enter(UserAuthorizeRequest request)
     {
         Result<UserAuthorizeResponse> result = await PostAsync<UserAuthorizeRequest, UserAuthorizeResponse>(
-            $"/Enter",
+            "api/v1/Entrance/Enter",
             request);
         if(result.Success)
-            _authService.SetTokens(result.Body!);
+            await _authService.SetTokens(result.Body!);
         return result;
     }
 
     public async Task<Result<UserAuthorizeResponse>> Registration(RegistrationRequest request)
     {
         Result<UserAuthorizeResponse> result = await PostAsync<RegistrationRequest, UserAuthorizeResponse>(
-            $"/Registration",
+            "api/v1/Entrance/Registration",
             request);
         if (result.Success)
-            _authService.SetTokens(result.Body!);
+            await _authService.SetTokens(result.Body!);
         return result;
     }
 

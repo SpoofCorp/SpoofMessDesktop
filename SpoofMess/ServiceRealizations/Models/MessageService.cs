@@ -130,7 +130,6 @@ public class MessageService(
         MessageModel? message = chat.Messages.FirstOrDefault(x => x.Id == messageId);
         if (message is null)
             return;
-
         Application.Current.Dispatcher.Invoke(() =>
         {
             chat.Messages.Remove(message);
@@ -142,7 +141,8 @@ public class MessageService(
         Chat? chat = await _chatService.Get(message.ChatId);
         if (chat is null)
             return;
-        MessageModel? messageModel = chat.Messages.FirstOrDefault(x => x.Id == message.Id);
+        MessageModel? messageModel;
+        messageModel = chat.Messages.FirstOrDefault(x => x.Id == message.Id);
         if (messageModel is null)
             return;
         messageModel.Text = message.Text is null ? messageModel.Text : message.Text;
@@ -160,14 +160,14 @@ public class MessageService(
             prefixMessage = chat.Messages.FirstOrDefault(x => x.SentAt >= message.SentAt);
             if (prefixMessage is not null)
                 targetIndex = chat.Messages.IndexOf(prefixMessage);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (prefixMessage is null)
+                    chat.Messages.Add(message);
+                else
+                    chat.Messages.Insert(targetIndex, message);
+            });
         }
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            if (prefixMessage is null)
-                chat.Messages.Add(message);
-            else
-                chat.Messages.Insert(targetIndex, message);
-        });
         EventHandler.NotifyAdd(message);
     }
 

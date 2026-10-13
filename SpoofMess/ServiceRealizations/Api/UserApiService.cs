@@ -13,15 +13,13 @@ internal class UserApiService(
         client, 
         serializer), IUserApiService
 {
-    protected override string BaseUrl => "https://localhost:7082/api/v2/User";
-
     public async Task<Result> ChangeSettings(ChangeUserSettingsRequest request)
     {
-        return await PatchAsync($"/ChangeSettings", request);
+        return await PatchAsync("api/v2/User/ChangeSettings", request);
     }
 
     public async Task<Result<UserDTO>> GetByLogin(string login)
     {
-        return await GetAsync<UserDTO>($"/info?login={login}");
+        return await GetAsync<UserDTO>($"api/v2/User/info?login={login}");
     }
 }

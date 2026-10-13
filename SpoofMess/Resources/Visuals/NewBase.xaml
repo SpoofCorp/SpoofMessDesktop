@@ -7,17 +7,25 @@
     <sys:Double x:Key="MinButtonHeight">30</sys:Double>
     <sys:Double x:Key="Height1">30</sys:Double>
     <CornerRadius x:Key="Corner1">5</CornerRadius>
+    <CornerRadius x:Key="Corner1-5">0 4 4 0</CornerRadius>
     <CornerRadius x:Key="Corner2">10</CornerRadius>
     <CornerRadius x:Key="FunctionBlockBorderCorner">0</CornerRadius>
     <Thickness x:Key="Margin1">0 5</Thickness>
     <Thickness x:Key="MarginBase">0</Thickness>
+    <Thickness x:Key="MarginWithoutRight">0</Thickness>
+    <Thickness x:Key="MarginWithoutLeft">0</Thickness>
     <Thickness x:Key="MarginBottom">0</Thickness>
     <Thickness x:Key="MarginLeftTop">0</Thickness>
     <Thickness x:Key="MarginLeft">0</Thickness>
+    <Thickness x:Key="MarginHorizontal">0</Thickness>
     <Thickness x:Key="BorderThickness">0</Thickness>
     <Thickness x:Key="FunctionBlockBorderThickness">0 0 0 0.75</Thickness>
+    <Thickness x:Key="OpenTopThickness">0.75 0</Thickness>
+    <Thickness x:Key="OpenBottomThickness">0 0 0.75 0.75</Thickness>
+    <Thickness x:Key="CardMargin">0</Thickness>
     <CornerRadius x:Key="CardBorderRadius">0</CornerRadius>
-    <CornerRadius x:Key="HeaderCardBorderRadius">10 10 0 0</CornerRadius>
+    <CornerRadius x:Key="LeftCardBorderRadius">0</CornerRadius>
+    <CornerRadius x:Key="HeaderCardBorderRadius">0</CornerRadius>
     <CornerRadius x:Key="TopCorner">0</CornerRadius>
     <CornerRadius x:Key="DownCorner">0</CornerRadius>
 </ResourceDictionary>

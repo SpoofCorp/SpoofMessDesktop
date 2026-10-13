@@ -12,21 +12,16 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
     protected readonly ISerializer _serializer = serializer;
     private readonly HttpClient _client = client;
     private readonly CancellationTokenSource _cts = new();
-    protected abstract string BaseUrl { get; }
-
 
     protected virtual async Task<Result> DeleteAsync(string requestUrl, CancellationToken token = default)
     {
         try
         {
             HttpResponseMessage response = await _client.DeleteAsync(
-                    GetUrl(requestUrl),
+                    requestUrl,
                     token == default ? _cts.Token : token
                 );
-            return Result.Parse(
-                await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
-                (int)response.StatusCode
-            );
+            return await Parse(response, token);
         }
         catch
         {
@@ -35,18 +30,15 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
     }
 
 
-    protected virtual async Task<Result> GetAsync(string requestUrl,  CancellationToken token = default)
+    protected virtual async Task<Result> GetAsync(string requestUrl, CancellationToken token = default)
     {
         try
         {
             HttpResponseMessage response = await _client.GetAsync(
-                    GetUrl(requestUrl),
+                    requestUrl,
                     token == default ? _cts.Token : token
                 );
-            return Result.Parse(
-                await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
-                (int)response.StatusCode
-            );
+            return await Parse(response, token);
         }
         catch
         {
@@ -54,12 +46,12 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
         }
     }
 
-    protected virtual async Task<Result<TResult>> GetAsync<TResult>(string requestUrl,  CancellationToken token = default)
+    protected virtual async Task<Result<TResult>> GetAsync<TResult>(string requestUrl, CancellationToken token = default)
     {
         try
         {
             HttpResponseMessage response = await _client.GetAsync(
-                    GetUrl(requestUrl),
+                    requestUrl,
                     token == default ? _cts.Token : token
                 );
             return await Parse<TResult>(response, token);
@@ -70,7 +62,7 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
         }
     }
 
-    protected virtual async Task<Result> PostAsync<T>(string requestUrl, T obj,  CancellationToken token = default)
+    protected virtual async Task<Result> PostAsync<T>(string requestUrl, T obj, CancellationToken token = default)
     {
         return await PostAsync(
                 requestUrl: requestUrl,
@@ -82,12 +74,12 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
                 token: token == default ? _cts.Token : token
             );
     }
-    protected virtual async Task<Result<TResult>> PostAsync<T, TResult>(string requestUrl, T obj,  CancellationToken token = default)
+    protected virtual async Task<Result<TResult>> PostAsync<T, TResult>(string requestUrl, T obj, CancellationToken token = default)
     {
         try
         {
-            HttpResponseMessage response = await _client.PostAsync(
-                    GetUrl(requestUrl),
+             HttpResponseMessage response = await _client.PostAsync(
+                    requestUrl,
                     new StringContent(
                             _serializer.Serialize(obj),
                             Encoding.UTF8,
@@ -104,31 +96,28 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
     }
 
 
-    protected virtual async Task<Result> PostAsync(string requestUrl, HttpContent content,  CancellationToken token = default)
+    protected virtual async Task<Result> PostAsync(string requestUrl, HttpContent content, CancellationToken token = default)
     {
         try
         {
             HttpResponseMessage response = await _client.PostAsync(
-                    GetUrl(requestUrl),
+                    requestUrl,
                     content,
                     token == default ? _cts.Token : token
                 );
-            return Result.Parse(
-                        await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
-                        (int)response.StatusCode
-                    );
+            return await Parse(response, token);
         }
         catch
         {
             return Result.ErrorResult("");
         }
     }
-    protected virtual async Task<Result<TResult>> PostAsync<TResult>(string requestUrl, HttpContent content,  CancellationToken token = default)
+    protected virtual async Task<Result<TResult>> PostAsync<TResult>(string requestUrl, HttpContent content, CancellationToken token = default)
     {
         try
         {
             HttpResponseMessage response = await _client.PostAsync(
-                    GetUrl(requestUrl),
+                    requestUrl,
                     content,
                     token == default ? _cts.Token : token
                 );
@@ -144,28 +133,18 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
         try
         {
             HttpResponseMessage response = await _client.PatchAsJsonAsync(
-                    GetUrl(requestUrl),
+                    requestUrl,
                     obj,
                     token == default ? _cts.Token : token
-                ); 
-            return Result.Parse(
-                        await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
-                        (int)response.StatusCode
-                    );
+                );
+            return await Parse(response, token);
         }
         catch
         {
             return Result.ErrorResult("");
         }
     }
-
-    public void Dispose()
-    {
-        _cts.Cancel();
-        _client.Dispose();
-        GC.SuppressFinalize(this);
-    }
-    protected virtual async Task<Result<Stream>> PostStreamAsync<T>(string requestUrl, T obj,  CancellationToken token = default)
+    protected virtual async Task<Result<Stream>> PostStreamAsync<T>(string requestUrl, T obj, CancellationToken token = default)
     {
         return await PostStreamAsync(
                 requestUrl,
@@ -178,11 +157,11 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
             );
     }
 
-    protected virtual async Task<Result<Stream>> PostStreamAsync(string requestUrl, HttpContent content,  CancellationToken token = default)
+    protected virtual async Task<Result<Stream>> PostStreamAsync(string requestUrl, HttpContent content, CancellationToken token = default)
     {
         try
         {
-            HttpRequestMessage request = new(HttpMethod.Post, GetUrl(requestUrl))
+            HttpRequestMessage request = new(HttpMethod.Post, requestUrl)
             {
                 Content = content
             };
@@ -211,7 +190,7 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
 
     }
 
-    private async Task<Result<T>> Parse<T>(HttpResponseMessage response,  CancellationToken token = default)
+    private async Task<Result<T>> Parse<T>(HttpResponseMessage response, CancellationToken token = default)
     {
         if (response.IsSuccessStatusCode)
             return Result<T>.Parse(
@@ -228,5 +207,17 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
                 (int)response.StatusCode
             );
     }
-    protected string GetUrl(string url) => $"{BaseUrl}{url}";
+
+    private async Task<Result> Parse(HttpResponseMessage response, CancellationToken token = default) =>
+        Result.Parse(
+            await response.Content.ReadAsStringAsync(token == default ? _cts.Token : token),
+            (int)response.StatusCode
+        );
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _client.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

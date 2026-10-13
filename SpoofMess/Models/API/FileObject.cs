@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommonObjects.Requests.Attachments;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SpoofFileParser.FileMetadata;
 using SpoofMess.Enums;
 using System.Text.Json.Serialization;
@@ -8,24 +9,34 @@ namespace SpoofMess.Models;
 public partial class FileObject : ObservableObject
 {
     [ObservableProperty]
-    private double _downloadPercent;
+    public partial double DownloadPercent { get; set; }
     [ObservableProperty]
-    private string? _path;
+    public partial string? Path { get; set; }
+
     [ObservableProperty]
-    private string? _name;
+    public partial string? Name { get; set; }
+
     [ObservableProperty]
-    private long _size;
+    public partial long Size { get; set; }
     [ObservableProperty]
-    private short _extensionId;
+    public partial short ExtensionId { get; set; }
+
     [ObservableProperty]
-    public byte[] _thumbnail = [];
+    public partial byte[] Thumbnail { get; set; } = [];
+
     [ObservableProperty]
     [JsonIgnore]
-    private string _prettySize = string.Empty;
+    public partial string PrettySize { get; set; } = string.Empty;
+
     public byte[]? Id;
 
     public byte[]? Token;
+
     public byte[]? AttachmentToken;
+
     public IFileMetadata Metadata { get; set; } = null!;
+
+    public IAttachmentMetadata? AttachmentMetadata { get; set; }
+
     public FileCategory Category { get; set; }
 }

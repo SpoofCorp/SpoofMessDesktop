@@ -2,6 +2,7 @@
 using System.Windows.Input;
 
 namespace SpoofMess.Views;
+
 public partial class CentralView : Window
 {
     public CentralView()

@@ -14,7 +14,7 @@ public partial class Chat : ObservableObject
         CurrentMessage = new() { ChatId = Id };
     }
     [ObservableProperty]
-    private MessageModel _currentMessage;
+    public partial MessageModel CurrentMessage { get; set; }
 
     public Visibility EditedMessageVisibility => EditedMessage is null ? Visibility.Collapsed : Visibility.Visible;
 
@@ -53,14 +53,22 @@ public partial class Chat : ObservableObject
 
     public ObservableCollection<FileObject> Avatars { get; } = [];
 
-    public ObservableCollection<MessageModel> Messages { get; } = [];
+    public ConcurrentObservableCollection<MessageModel> Messages { get; } = [];
 
     public long RulesNumbers { get; set; }
 
+    public bool IsOpened { get; set; }
+
     public ObservableCollection<PermissionResult> Rules { get; set; } = [];
 
-    public ObservableCollection<User> Users { get; set; } = [];
+    public ObservableCollection<ChatUser> Users { get; set; } = [];
 
     [ObservableProperty]
     public partial int CountUsers { get; set; }
+
+    public Visibility ShowBan => Rules.Any(x => x.RuleId == (short)Permissions.Banning) ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility ShowKick => Rules.Any(x => x.RuleId == (short)Permissions.Kicking) ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility ShowMute => Rules.Any(x => x.RuleId == (short)Permissions.Muting) ? Visibility.Visible : Visibility.Collapsed;
 }

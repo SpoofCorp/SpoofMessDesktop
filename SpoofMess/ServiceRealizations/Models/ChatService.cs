@@ -11,16 +11,13 @@ using SpoofMess.Services.Models;
 using SpoofMess.Setters;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
 public class ChatService(IChatApiService chatApiService, IChatAvatarService chatAvatarService, IFileService fileService, UserInfo userInfo, ISerializer serializer) : IChatService
 {
-    private static Lock chatsLock = new();
     public ObservableCollection<Chat> Chats { get; set; } = [];
-    //public List<Chat> ChatsStorage { get; set; } = [];
     public ConcurrentDictionary<Guid, Chat> ChatsStorage { get; set; } = [];
 
     private readonly UserInfo _userInfo = userInfo;
@@ -69,31 +66,27 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
 
     public async Task AddChats(List<ChatUserDTO> chats)
     {
-        Chat newChat;
-        foreach (ChatUserDTO chat in chats)
+        await Parallel.ForEachAsync(chats, async (chat, cancellationToken) =>
         {
-            newChat = chat.Set();
+            Chat newChat = chat.Set();
             Add(newChat);
-            if (!ChatsStorage.TryAdd(newChat.Id, newChat))
+            if (!ChatsStorage.TryAdd(newChat.Id, newChat) || chat.AvatarFileToken is null)
                 return;
-            if (chat.AvatarFileToken is not null)
+            FileObject file = new()
             {
-                FileObject file = new()
-                {
-                    Id = chat.AvatarId,
-                    Token = chat.AvatarFileToken,
-                    AttachmentToken = chat.AvatarAccessToken,
-                    Category = Enums.FileCategory.Image,
-                    Name = chat.OriginalFileName,
-                    Path = Path.Combine(_userInfo.SessionSettings.Directory, chat.OriginalFileName ?? ""),
-                    Metadata = chat.Metadata is null ? new ImageMetadata() : _serializer.Deserialize<IFileMetadata>(chat.Metadata)
-                };
-                file.Size = file.Metadata.Size;
-                file.PrettySize = _fileService.ToPrettySize(file.Metadata.Size);
-                await _fileService.Save(file);
-                newChat.Avatar = file;
-            }
-        }
+                Id = chat.AvatarId,
+                Token = chat.AvatarFileToken,
+                AttachmentToken = chat.AvatarAccessToken,
+                Category = Enums.FileCategory.Image,
+                Name = chat.OriginalFileName,
+                Path = Path.Combine(_userInfo.SessionSettings.Directory, chat.OriginalFileName ?? ""),
+                Metadata = chat.Metadata is null ? new ImageMetadata() : _serializer.Deserialize<IFileMetadata>(chat.Metadata)
+            };
+            file.Size = file.Metadata.Size;
+            file.PrettySize = _fileService.ToPrettySize(file.Metadata.Size);
+            await _fileService.Save(file);
+            newChat.Avatar = file;
+        });
     }
 
     private void Add(Chat newChat)
@@ -102,7 +95,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
         DateTime timeNewChat = newChat.LastMessage is null ? newChat.CreatedAt : newChat.LastMessage.SentAt;
 
 
-        lock (chatsLock)
+        lock (Chats)
         {
             foreach (Chat chat in Chats)
             {
@@ -134,7 +127,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
             IsPublic = chat.IsPublic
         });
         if (result.Success)
-            lock (chatsLock)
+            lock (Chats)
                 Chats.Add(result.Body!.Set());
     }
 
@@ -155,13 +148,13 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
             return;
         DateTime timeCurrentChat = currentChat.LastMessage is null ? currentChat.CreatedAt : currentChat.LastMessage.SentAt;
         Chat? olderChat;
-        lock (chatsLock)
+        lock (Chats)
             olderChat = Chats.FirstOrDefault(x => x.LastMessage is null ? x.CreatedAt <= timeCurrentChat : x.LastMessage.SentAt <= timeCurrentChat);
         if (olderChat is null)
             return;
         else
         {
-            lock (chatsLock)
+            lock (Chats)
             {
                 int current = Chats.IndexOf(currentChat), old = Chats.IndexOf(olderChat);
                 if (current == -1)

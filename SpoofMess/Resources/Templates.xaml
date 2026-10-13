@@ -15,17 +15,17 @@
     </Style>
 
     <Style x:Key="ShadowBorder" TargetType="{x:Type Border}">
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect BlurRadius="20" Color="Black" Opacity="0.5" ShadowDepth="0" RenderingBias="Quality"/>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <Style x:Key="CardBorder" TargetType="{x:Type Border}" BasedOn="{StaticResource ShadowBorder}">
         <Setter Property="CornerRadius" Value="{DynamicResource CardBorderRadius}"/>
-        <Setter Property="Background" Value="{DynamicResource Primary}"/>
+        <Setter Property="Background" Value="{DynamicResource Second}"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+
+    <Style x:Key="GlassedCard" TargetType="{x:Type Border}" BasedOn="{StaticResource CardBorder}">
+        <Setter Property="Background" Value="{DynamicResource Second}"/>
+        <Setter Property="Opacity" Value="0.9"/>
     </Style>
 
     <Style x:Key="BoardBorder" TargetType="{x:Type Border}" BasedOn="{StaticResource ShadowBorder}">
@@ -40,7 +40,7 @@
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
-    <Style x:Key="HeaderBorder" TargetType="{x:Type Border}" BasedOn="{StaticResource ShadowBorder}">
+    <Style x:Key="HeaderBorder" TargetType="{x:Type Border}">
         <Setter Property="CornerRadius" Value="{DynamicResource HeaderCardBorderRadius}"/>
         <Setter Property="Background" Value="{DynamicResource Primary}"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -77,13 +77,13 @@
     </Style>
 
     <Style x:Key="MinimalListBox" TargetType="{x:Type ListBox}">
-        <Setter Property="BorderThickness" Value="{StaticResource FunctionBlockBorderThickness}"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Background" Value="{DynamicResource Third}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Four}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBox}">
-                    <Border ClipToBounds="True" x:Name="Bd" CornerRadius="{DynamicResource TopCorner}"  Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{StaticResource BorderThickness}" Padding="1" SnapsToDevicePixels="true">
+                    <Border ClipToBounds="True" x:Name="Bd" CornerRadius="{DynamicResource TopCorner}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{StaticResource BorderThickness}" Padding="1" SnapsToDevicePixels="true">
                         <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </ScrollViewer>
@@ -110,7 +110,7 @@
                     <Border BorderBrush="{TemplateBinding BorderBrush}" 
                           CornerRadius="{DynamicResource TopCorner}"
                           Padding="2 1"
-                          BorderThickness="0.75 0.75 0.75 0"
+                          BorderThickness="{DynamicResource OpenBottomThickness}"
                           Background="{TemplateBinding Background}">
                         <ItemsPresenter />
                     </Border>
@@ -123,12 +123,12 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBox">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                    <Border BorderBrush="{DynamicResource Four}" 
                           CornerRadius="{DynamicResource DownCorner}"
-                          Padding="2 1"
-                          BorderThickness="0.75 0 0.75 0.75"
+                          Padding="{DynamicResource HorizontalCardMargin}"
+                          BorderThickness="{DynamicResource OpenTopThickness}"
                           Background="{TemplateBinding Background}">
-                        <ItemsPresenter />
+                        <ItemsPresenter/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -137,7 +137,7 @@
 
     <Style x:Key="FunctionBlockBorder" TargetType="{x:Type Border}">
         <Setter Property="CornerRadius" Value="{DynamicResource FunctionBlockBorderCorner}"/>
-        <Setter Property="Background" Value="{DynamicResource Primary}"/>
+        <Setter Property="Background" Value="{DynamicResource Second}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Four}"/>
         <Setter Property="BorderThickness" Value="{DynamicResource FunctionBlockBorderThickness}"/>
     </Style>
@@ -162,12 +162,13 @@
 
     <Style x:Key="HeaderCardBlock" TargetType="ContentControl">
         <Setter Property="Background" Value="{DynamicResource Primary}"/>
+        <Setter Property="Background" Value="{DynamicResource Primary}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContentControl">
                     <Grid>
                         <Border Padding="10 0" Style="{StaticResource HeaderBorder}"/>
-                        <Border Padding="10 0" CornerRadius="{DynamicResource HeaderCardBorderRadius}" Background="{DynamicResource Primary}">
+                        <Border Padding="10 0" CornerRadius="{DynamicResource HeaderCardBorderRadius}">
                             <ContentPresenter Content="{TemplateBinding Content}"/>
                         </Border>
                     </Grid>
@@ -175,14 +176,96 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
     <Style x:Key="CardBlock" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid Margin="{DynamicResource MarginHorizontal}">
+                        <Border Padding="0" Margin="0" Style="{StaticResource CardBorder}"/>
+                        <Border Padding="0" Margin="0" CornerRadius="{DynamicResource CardBorderRadius}">
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GlassedCardBlock" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid Margin="{DynamicResource MarginHorizontal}">
+                        <Border Padding="0" Margin="0" Style="{StaticResource GlassedCard}"></Border>
+                        <Border Padding="0" Margin="0" BorderThickness="{DynamicResource FunctionBlockBorderThickness}" BorderBrush="{DynamicResource Four}" CornerRadius="{DynamicResource CardBorderRadius}">
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="LeftGlassedCardBlock" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid>
+                        <Border Padding="0" Margin="0" CornerRadius="{DynamicResource LeftCardBorderRadius}" Style="{StaticResource GlassedCard}"></Border>
+                        <Border Padding="0" Margin="0" CornerRadius="{DynamicResource LeftCardBorderRadius}">
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DashBoardBlock" TargetType="ContentControl">
+        <Setter Property="Background" Value="{DynamicResource Primary}"/>
+        <Setter Property="Margin" Value="{DynamicResource MarginHorizontal}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid>
+                        <Border CornerRadius="{DynamicResource CardBorderRadius}" Background="{DynamicResource Second}">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect BlurRadius="20" Color="Black" Opacity="0.3" ShadowDepth="6" RenderingBias="Quality" Direction="270"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                        <Border CornerRadius="{DynamicResource CardBorderRadius}">
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="ItemCardBlock" TargetType="ContentControl">
         <Setter Property="Background" Value="{DynamicResource Primary}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContentControl">
                     <Grid>
-                        <Border Style="{StaticResource CardBorder}" Background="{DynamicResource Second}"/>
-                        <Border CornerRadius="{DynamicResource CardBorderRadius}">
+                        <Border CornerRadius="{DynamicResource CardBorderRadius}" Background="{DynamicResource Second}">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect BlurRadius="20" Color="Black" Opacity="0.3" ShadowDepth="6" RenderingBias="Quality" Direction="270"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                        <Border CornerRadius="{DynamicResource CardBorderRadius}" Background="{DynamicResource Third}">
                             <ContentPresenter Content="{TemplateBinding Content}"/>
                         </Border>
                     </Grid>
@@ -202,7 +285,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
-                    <Border Margin="15" Background="{DynamicResource Third}" Style="{DynamicResource CardBorder}">
+                    <Border Margin="15" Background="{DynamicResource Third}" CornerRadius="7" Style="{DynamicResource CardBorder}">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="2"/>
                     </Border>
                 </ControlTemplate>
@@ -245,9 +328,12 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                    <Border x:Name="Bd" CornerRadius="{DynamicResource FunctionBlockBorderCorner}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Margin="0" SnapsToDevicePixels="true">
-                        <ContentPresenter HorizontalAlignment="Stretch" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                    </Border>
+                    <Grid Margin="{DynamicResource VerticalCardMargin}">
+                        <Border CornerRadius="{DynamicResource CardBorderRadius}" Background="{DynamicResource Primary}"/>
+                        <Border Padding="1 0" x:Name="Bd" BorderThickness="{DynamicResource BorderThickness}" BorderBrush="{DynamicResource Four}" CornerRadius="{DynamicResource CardBorderRadius}" Background="{DynamicResource Primary}">
+                            <ContentPresenter HorizontalAlignment="Stretch" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -454,6 +540,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource Second}"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Focusable" Value="False"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="1"/>
@@ -654,9 +741,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Border CornerRadius="{DynamicResource Corner1}" x:Name="templateRoot" Background="{DynamicResource Second}" BorderBrush="{DynamicResource PrimaryAccent}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
-                        <Border x:Name="splitBorder" BorderBrush="Transparent" BorderThickness="1" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
-                            <Path x:Name="arrow" Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z" Fill="{DynamicResource SecondBlack}" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
+                    <Border CornerRadius="{DynamicResource Corner1}" x:Name="templateRoot" Background="{DynamicResource Second}" BorderBrush="{DynamicResource PrimaryAccent}" Padding="0" Margin="0" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                        <Border CornerRadius="{DynamicResource Corner1-5}" Background="{DynamicResource Third}" x:Name="splitBorder" BorderBrush="Transparent" BorderThickness="0" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+                            <Path x:Name="arrow" Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z" Fill="{DynamicResource PrimaryBlack}" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -671,12 +758,22 @@
                             <Setter Property="Background" TargetName="splitBorder" Value="{DynamicResource Third}"/>
                             <Setter Property="BorderBrush" TargetName="splitBorder" Value="{DynamicResource Third}"/>
                         </MultiDataTrigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Fill" TargetName="arrow" Value="{DynamicResource PrimaryBlack}"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Fill" TargetName="arrow" Value="{DynamicResource Six}"/>
-                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition SourceName="splitBorder" Property="IsMouseOver" Value="true"/>
+                                <Condition Property="IsPressed" Value="true"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="splitBorder" Value="{DynamicResource Four}"/>
+                            <Setter Property="Fill" TargetName="arrow" Value="{DynamicResource DefaultTextColor}"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition SourceName="splitBorder" Property="IsMouseOver" Value="true"/>
+                                <Condition Property="IsPressed" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Fill" TargetName="arrow" Value="{DynamicResource SecondBlack}"/>
+                            <Setter Property="Background" TargetName="splitBorder" Value="{DynamicResource Four}"/>
+                        </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Fill" TargetName="arrow" Value="{DynamicResource DefaultTextColor}"/>
                         </Trigger>
@@ -928,7 +1025,7 @@
         <Setter Property="Height" Value="37"/>
         <Setter Property="MinWidth" Value="50"/>
         <Setter Property="Background" Value="{DynamicResource PrimaryAccent}"/>
-        <Setter Property="Foreground" Value="{DynamicResource Second}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ActiveTextColor}"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="Inter"/>
     </Style>
@@ -937,6 +1034,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource ActiveTextColor}"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Focusable" Value="False"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="1"/>
@@ -1043,9 +1141,41 @@
     <Style x:Key="RightFunctionButton" BasedOn="{StaticResource FunctionButton}" TargetType="{x:Type Button}">
         <Setter Property="HorizontalAlignment" Value="Right"/>
     </Style>
-    <Style x:Key="TextButton" BasedOn="{StaticResource MinimalButton}" TargetType="{x:Type Button}">
+    <Style x:Key="TextButton" TargetType="{x:Type Button}">
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryAccent}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FontSize" Value="25"/>
+        <Setter Property="MinWidth" Value="{StaticResource MinButtonWith}"/>
+        <Setter Property="MinHeight" Value="{StaticResource MinButtonHeight}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" x:Name="border" CornerRadius="{StaticResource Corner2}" SnapsToDevicePixels="true">
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsDefaulted" Value="true">
+                            <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{DynamicResource ActiveTextColor}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Foreground" Value="{DynamicResource DefaultTextColor}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     <Style x:Key="BaseText" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="18"/>

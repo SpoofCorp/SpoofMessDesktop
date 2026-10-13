@@ -25,10 +25,7 @@ public partial class CentralViewModel(UserInfo userInfo, INavigationService navi
     [RelayCommand]
     private void Close()
     {
-        if (View is MainViewModel mainViewModel)
-            mainViewModel?.CloseWindow();
-        else
-            _navigation.CloseWindow();
+        _navigation.CloseWindow();
     }
 
     [RelayCommand]

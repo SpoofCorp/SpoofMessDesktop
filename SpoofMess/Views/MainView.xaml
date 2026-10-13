@@ -9,12 +9,15 @@
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=False}">
-    <Grid Background="{DynamicResource Third}" RowDefinitions="auto *">
+    <Grid Background="{DynamicResource Primary}" RowDefinitions="auto *">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.45* " MinWidth="200"/>
+            <ColumnDefinition Width="0.45* " MinWidth="230" MaxWidth="500"/>
             <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        <Grid Visibility="Collapsed" Grid.ColumnSpan="3" Grid.RowSpan="2" Panel.ZIndex="0" ClipToBounds="True">
+            <Border Opacity="0.3" Background="{DynamicResource PrimaryBlack}"/>
+        </Grid>
         <ve:SideMenu Grid.RowSpan="2" Background="{DynamicResource Primary}" x:Name="SideMenu" IsOpen="{Binding SideMenuVisibility}" Panel.ZIndex="10" Grid.ColumnSpan="3">
             <StackPanel>
                 <ve:FunctionButton Click="Menu_Item_Click" Text="{DynamicResource Profile}" Alignment="Stretch" Icon="👤" Command="{Binding ShowProfileCommand}"/>
@@ -22,111 +25,110 @@
                 <ve:FunctionButton Click="Menu_Item_Click" Text="{DynamicResource Settings}" Alignment="Stretch" Icon="⚙️" Command="{Binding ShowSettingsCommand}"/>
             </StackPanel>
         </ve:SideMenu>
-        <Grid Grid.RowSpan="2" RowDefinitions="auto *">
-            <Border Height="50" Style="{StaticResource FunctionBlockBorderLeft}">
-                <DockPanel>
-                    <Button Focusable="False" Height="40" Width="40" Padding="0 0 0 5" VerticalAlignment="Center" DockPanel.Dock="Left" Content="≡" Style="{StaticResource MinimalCircleButton}" Click="Menu_Click"/>
-                    <ve:InputTextBox Holder="{DynamicResource SearchHolder}" Text="{Binding ChatsViewModel.Query}" DockPanel.Dock="Right" Margin="0 5 5 5"/>
-                </DockPanel>
-            </Border>
-            <ScrollViewer Style="{StaticResource ChatListScrollViewer}" SnapsToDevicePixels="True" Grid.Row="1">
-                <ListBox Style="{StaticResource ChatList}" Visibility="{Binding ChatsViewModel.ChatsVisibility}" ItemsSource="{Binding ChatsViewModel.Chats}" x:Name="ChatsList" SelectedItem="{Binding ChatsViewModel.SelectedChat}" MinWidth="100">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0 2.5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="7"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-
-                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.RowSpan="2" Width="45" Height="45">
-                                    <Border x:Name="Mask" 
-                                    BorderThickness="1" 
-                                    CornerRadius="50" 
-                                    Background="{DynamicResource Primary}"
-                                    BorderBrush="Transparent"/>
-                                    <Image Source="{Binding Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
-                                        <Image.OpacityMask>
-                                            <VisualBrush Visual="{x:Reference Mask}"/>
-                                        </Image.OpacityMask>
-                                    </Image>
-                                </Grid>
-                                <TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding Name}" Style="{DynamicResource BaseText}" FontSize="16" FontWeight="DemiBold"/>
-                                <TextBlock Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding LastMessage.PreviewText}" Style="{DynamicResource BaseText}" FontSize="12" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="50"/>
-                                <TextBlock Grid.Column="3" Padding="0 0 5 0" Grid.Row="0" Text="{Binding LastMessage.SentAt, StringFormat={}{0:HH:mm}}" Style="{DynamicResource AdditionalText}" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </ScrollViewer>
-            <ScrollViewer Style="{StaticResource ChatListScrollViewer}" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True" Visibility="{Binding ChatsViewModel.SearchResultsVisibility}" Grid.Row="1">
-                <Grid RowDefinitions="auto auto">
-                    <ListBox Style="{StaticResource TopNoScrollListBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="{DynamicResource Second}" ItemsSource="{Binding ChatsViewModel.SearchResultsChats}" SelectedItem="{Binding ChatsViewModel.SelectedSearchableEntity}" MinWidth="100">
+        <ContentControl Margin="{DynamicResource MarginWithoutRight}" Grid.RowSpan="2" Style="{StaticResource CardBlock}">
+            <Grid RowDefinitions="auto *">
+                <Border Height="51" Margin="0" BorderThickness="{DynamicResource OpenBottomThickness}" Style="{StaticResource FunctionBlockBorderLeft}">
+                    <DockPanel>
+                        <Button Focusable="False" Height="40" Width="40" Padding="0 0 0 5" VerticalAlignment="Center" DockPanel.Dock="Left" Content="≡" Style="{StaticResource MinimalCircleButton}" Click="Menu_Click"/>
+                        <ve:InputTextBox Holder="{DynamicResource SearchHolder}" Text="{Binding ChatsViewModel.Query}" DockPanel.Dock="Right" Margin="0 5 5 5"/>
+                    </DockPanel>
+                </Border>
+                <ScrollViewer SnapsToDevicePixels="True" Grid.Row="1">
+                    <ListBox Margin="0" Style="{StaticResource ChatList}" Visibility="{Binding ChatsViewModel.ChatsVisibility}" ItemsSource="{Binding ChatsViewModel.Chats}" Background="{DynamicResource Second}" BorderBrush="{DynamicResource Four}" BorderThickness="{DynamicResource BorderThickness}" x:Name="ChatsList" SelectedItem="{Binding ChatsViewModel.SelectedChat}" MinWidth="100" Padding="{DynamicResource CardMargin}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Height="55">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
+                                <Grid RowDefinitions="auto *" ColumnDefinitions="auto 7 * auto" Tag="{Binding DataContext, ElementName=ChatsList}">
 
-                                    <Grid VerticalAlignment="Top" Grid.Column="0" Grid.RowSpan="2" Width="40" Height="40">
+                                    <Grid.ContextMenu>
+                                        <ContextMenu DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}" Style="{StaticResource BaseContextMenu}">
+                                            <MenuItem Style="{StaticResource MinimalMenuItem}" Header="Open in new window" Command="{Binding ChatsViewModel.OpenInNewWindowCommand}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                        </ContextMenu>
+                                    </Grid.ContextMenu>
+                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.RowSpan="2" Width="45" Height="45">
                                         <Border x:Name="Mask" 
                                             BorderThickness="1" 
-                                            CornerRadius="40" 
-                                            Background="White"
-                                            BorderBrush="Gray"/>
+                                            CornerRadius="50" 
+                                            Background="{DynamicResource Primary}"
+                                            BorderBrush="Transparent"/>
                                         <Image Source="{Binding Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
                                             <Image.OpacityMask>
                                                 <VisualBrush Visual="{x:Reference Mask}"/>
                                             </Image.OpacityMask>
                                         </Image>
                                     </Grid>
-                                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Style="{DynamicResource BaseText}" FontWeight="DemiBold"/>
+                                    <TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding Name}" Style="{DynamicResource BaseText}" FontSize="16" FontWeight="DemiBold"/>
+                                    <TextBlock Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding LastMessage.PreviewText}" Style="{DynamicResource BaseText}" FontSize="12" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="50"/>
+                                    <TextBlock Grid.Column="3" Padding="0 0 5 0" Grid.Row="0" Text="{Binding LastMessage.SentAt, StringFormat={}{0:HH:mm}}" Style="{DynamicResource AdditionalText}" />
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <ListBox Style="{StaticResource BottomNoScrollListBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1" Background="{DynamicResource Second}" ItemsSource="{Binding ChatsViewModel.SearchResultsMessages}" SelectedItem="{Binding ChatsViewModel.SelectedSearchableMessage}" MinWidth="100">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid ColumnDefinitions="auto * auto" RowDefinitions="auto *">
+                </ScrollViewer>
+                <ScrollViewer Margin="0" Style="{StaticResource ChatListScrollViewer}" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True" Visibility="{Binding ChatsViewModel.SearchResultsVisibility}" Grid.Row="1">
+                    <Border Background="{DynamicResource Primary}" CornerRadius="{DynamicResource DownCorner}">
+                        <Grid RowDefinitions="auto *">
+                            <ListBox Background="Transparent" Style="{StaticResource TopNoScrollListBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ItemsSource="{Binding ChatsViewModel.SearchResultsChats}" SelectedItem="{Binding ChatsViewModel.SelectedSearchableEntity, Mode=TwoWay}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Height="55">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto"/>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
 
-                                    <Grid VerticalAlignment="Top" Grid.Column="0" Grid.RowSpan="2" Width="40" Height="40">
-                                        <Border x:Name="Mask" 
-                                            BorderThickness="1" 
-                                            CornerRadius="40" 
-                                            Background="White"
-                                            BorderBrush="Gray"/>
-                                        <Image Source="{Binding Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
-                                            <Image.OpacityMask>
-                                                <VisualBrush Visual="{x:Reference Mask}"/>
-                                            </Image.OpacityMask>
-                                        </Image>
-                                    </Grid>
-                                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Chat.Name}" FontSize="16" Style="{StaticResource BaseText}" FontWeight="DemiBold"/>
-                                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Text}" Style="{StaticResource BaseText}" FontSize="14" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="50"/>
-                                    <TextBlock VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Text="{Binding SentAt, StringFormat={}{0:hh:MM}}" Style="{StaticResource AdditionalText}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-            </ScrollViewer>
-        </Grid>
+                                            <Grid VerticalAlignment="Top" Grid.Column="0" Grid.RowSpan="2" Width="40" Height="40">
+                                                <Border x:Name="Mask" 
+                                                    BorderThickness="1" 
+                                                    CornerRadius="40" 
+                                                    Background="White"
+                                                    BorderBrush="Gray"/>
+                                                <Image Source="{Binding Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
+                                                    <Image.OpacityMask>
+                                                        <VisualBrush Visual="{x:Reference Mask}"/>
+                                                    </Image.OpacityMask>
+                                                </Image>
+                                            </Grid>
+                                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Style="{DynamicResource BaseText}" FontWeight="DemiBold"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <ListBox Margin="0" Style="{StaticResource BottomNoScrollListBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1" Background="Transparent" ItemsSource="{Binding ChatsViewModel.SearchResultsMessages}" SelectedItem="{Binding ChatsViewModel.SelectedSearchableMessage}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="auto * auto" RowDefinitions="auto *">
+
+                                            <Grid VerticalAlignment="Top" Grid.Column="0" Grid.RowSpan="2" Width="40" Height="40">
+                                                <Border x:Name="Mask" 
+                                                    BorderThickness="1" 
+                                                    CornerRadius="40" 
+                                                    Background="White"
+                                                    BorderBrush="Gray"/>
+                                                <Image Source="{Binding Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
+                                                    <Image.OpacityMask>
+                                                        <VisualBrush Visual="{x:Reference Mask}"/>
+                                                    </Image.OpacityMask>
+                                                </Image>
+                                            </Grid>
+                                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Chat.Name}" FontSize="16" Style="{StaticResource BaseText}" FontWeight="DemiBold"/>
+                                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Text}" Style="{StaticResource BaseText}" FontSize="14" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="50"/>
+                                            <TextBlock VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Text="{Binding SentAt, StringFormat={}{0:hh:MM}}" Style="{StaticResource AdditionalText}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </ScrollViewer>
+            </Grid>
+        </ContentControl>
         <GridSplitter Grid.Row="1" Focusable="False" Grid.Column="1" BorderThickness="0" Background="Transparent" Panel.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="2"/>
-        <Grid RowDefinitions="auto *" Background="{DynamicResource Third}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+        <Grid RowDefinitions="auto *" Background="Transparent" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
             <ContentPresenter Content="{Binding StaticNotificationViewModel}"/>
             <ContentPresenter Grid.Row="1" Content="{Binding MessagesViewModel}"/>
         </Grid>
@@ -193,13 +195,13 @@
                 </Border>
             </Grid>
         </Grid>
-        <Grid Visibility="{Binding AdditionalVisibility}" x:Name="AdditionalContainer" Grid.RowSpan="2" Grid.ColumnSpan="3" Panel.ZIndex="10">
-            <Rectangle Fill="{DynamicResource ShadowColor}" Tag="{Binding AdditionalView}" PreviewMouseLeftButtonDown="Rectangle_PreviewMouseLeftButtonDown">
+        <Grid Visibility="{Binding AdditionalViewModelVisibility}" x:Name="AdditionalContainer" Grid.RowSpan="2" Grid.ColumnSpan="3" Panel.ZIndex="10">
+            <Rectangle Fill="{DynamicResource ShadowColor}" Tag="{Binding AdditionalViewModel}" PreviewMouseLeftButtonDown="Rectangle_PreviewMouseLeftButtonDown">
                 <Rectangle.Style>
                     <Style TargetType="{x:Type Rectangle}">
                         <Setter Property="Opacity" Value="0"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding AdditionalVisibility}" Value="Collapsed">
+                            <DataTrigger Binding="{Binding AdditionalViewModelVisibility}" Value="Collapsed">
                                 <DataTrigger.EnterActions>
                                     <BeginStoryboard>
                                         <Storyboard>
@@ -234,10 +236,10 @@
                     </Style>
                 </Rectangle.Style>
             </Rectangle>
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding AdditionalView, Mode=TwoWay}" MouseDown="Border_MouseDown" Background="Transparent">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding AdditionalViewModel, Mode=TwoWay}" MouseDown="Border_MouseDown" Background="Transparent">
                 <Border Style="{DynamicResource CardBorder}" CornerRadius="10" Margin="0"/>
-                <Border x:Name="Container" MouseDown="ContentPresenter_MouseDown" Padding="0" Background="{DynamicResource Primary}" CornerRadius="10">
-                    <ContentPresenter MouseDown="ContentPresenter_MouseDown" Content="{Binding AdditionalView}"/>
+                <Border x:Name="Container" MouseDown="ContentPresenter_MouseDown" Padding="0" Background="{DynamicResource Third}" CornerRadius="{DynamicResource CardBorderRadius}">
+                    <ContentPresenter MouseDown="ContentPresenter_MouseDown" Content="{Binding AdditionalViewModel}"/>
                 </Border>
             </Grid>
         </Grid>

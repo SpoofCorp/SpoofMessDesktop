@@ -12,8 +12,6 @@ internal class AttachmentApiService(
         client,
         serializer), IAttachmentApiService
 {
-    protected override string BaseUrl => "https://localhost:7146/api/Attachment";
-
     public async Task<Result<FileMetadata>> GetToken(byte[] token) =>
-        await PostAsync<byte[], FileMetadata>($"/get-token", token);
+        await PostAsync<byte[], FileMetadata>("api/Attachment/get-token", token);
 }

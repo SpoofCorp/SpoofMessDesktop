@@ -25,11 +25,14 @@ public interface IFileService
 
     public Result<FileObject> GetFileInfo();
 
+    public Result<FileObject> GetFileInfo(string? path);
+
     public Result<List<FileObject>> GetFilesInfo();
 
     public MultipartFormDataContent? GetStream(string? path);
 
     public string ToPrettySize(long bytes);
 
-    public Stream? GetObjectFromFile(string filePath);
+    public Stream? GetWriteStreamFromFile(string filePath);
+    public Stream? GetReadStreamFromFile(string filePath);
 }

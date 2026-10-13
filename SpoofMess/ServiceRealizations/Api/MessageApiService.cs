@@ -1,7 +1,6 @@
 ﻿using AdditionalHelpers.Services;
 using CommonObjects.DTO;
 using CommonObjects.Results;
-using SpoofMess.Models;
 using SpoofMess.Services.Api;
 using System.Net.Http;
 
@@ -15,20 +14,18 @@ public class MessageApiService(
         serializer
         ), IMessageApiService
 {
-    protected override string BaseUrl => "https://localhost:7146/api/Message";
-
     public async Task<Result<List<MessageDTO>>> GetSkippedMessages(DateTime after, int take = 50, CancellationToken token = default)
     {
-        return await GetAsync<List<MessageDTO>>($"/get-skiped?after={after:yyyy-MM-ddTHH:mm:ssZ}&take={take}", token);
+        return await GetAsync<List<MessageDTO>>($"api/Message/get-skiped?after={after:yyyy-MM-ddTHH:mm:ssZ}&take={take}", token);
     }
 
     public async Task<Result<List<MessageDTO>>> GetBeforeMessages(Guid chatId, DateTime after, int take = 50, CancellationToken token = default)
     {
-        return await GetAsync<List<MessageDTO>>($"/get-before?chatId={chatId}&after={after:yyyy-MM-ddTHH:mm:ssZ}&take={take}", token);
+        return await GetAsync<List<MessageDTO>>($"api/Message/get-before?chatId={chatId}&after={after:yyyy-MM-ddTHH:mm:ssZ}&take={take}", token);
     }
 
     public async Task<Result> Delete(Guid messageId, Guid chatId, CancellationToken token = default)
     {
-        return await DeleteAsync($"/delete?messageId={messageId}&chatId={chatId}", token);
+        return await DeleteAsync($"api/Message/delete?messageId={messageId}&chatId={chatId}", token);
     }
 }

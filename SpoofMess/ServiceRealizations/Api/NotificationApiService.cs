@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
+using System.Diagnostics;
 
 namespace SpoofMess.ServiceRealizations.Api;
 
@@ -21,9 +22,11 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
     public event Action<ChangeChatSettingsRequest> OnChatUpdated = null!;
     public event Action<ChatAvatarResponse> OnChatAvatarUpdated = null!;
     public event Action<ChatUserDTO> OnChatCreated = null!;
+    private readonly SemaphoreSlim _initializeSemaphore = new(1, 1);
 
     private readonly CancellationTokenSource _cts = new();
 
+    public bool IsInitialized { get; set; }
 
     public NotificationApiService(
             IAuthService authService
@@ -31,32 +34,44 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
     {
         _authService = authService;
         _connection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:7146/chat", options =>
+            .WithUrl($"https://localhost:443/sms/chat", options =>
             {
                 options.AccessTokenProvider = () => _authService.GetAccess();
+
             })
             .WithAutomaticReconnect()
             .Build();
-        //It's so bad
-        InitializeAsync();
     }
 
-    private async void InitializeAsync()
+    public async Task InitializeAsync()
     {
-        await _connection.StartAsync();
-        _connection.On<ChatUserDTO>("chat-user-created", (chatUserDTO) =>
+        if (IsInitialized)
+            return;
+        await _initializeSemaphore.WaitAsync();
+        try
         {
-            OnChatCreated?.Invoke(chatUserDTO);
-        });
-        _connection.On<MessageDTO>("new-message", (message) => OnMessageReceived?.Invoke(message));
-        _connection.On<Guid, Guid>("delete-message", (messageId, chatId) => OnMessageDeleted?.Invoke(messageId, chatId));
-        _connection.On<EditMessageResponse>("edited-message", (message) =>
+            if (IsInitialized)
+                return;
+
+            _connection.On("chat-user-created", OnChatCreated);
+            _connection.On("new-message", OnMessageReceived);
+            _connection.On("delete-message", OnMessageDeleted);
+            _connection.On("edited-message", OnMessageEdited);
+            _connection.On("user-updated", OnUserUpdated);
+            _connection.On("chat-updated", OnChatUpdated);
+            _connection.On("chat-avatar-updated", OnChatAvatarUpdated);
+
+            await _connection.StartAsync();
+        }
+        catch(Exception ex)
         {
-            OnMessageEdited?.Invoke(message);
-        });
-        _connection.On("user-updated", OnUserUpdated);
-        _connection.On("chat-updated", OnChatUpdated);
-        _connection.On("chat-avatar-updated", OnChatAvatarUpdated);
+            Debug.WriteLine(ex.Message);
+        }
+        finally
+        {
+            IsInitialized = true;
+            _initializeSemaphore.Release();
+        }
     }
 
     public async Task SendMessage(CreateMessageRequest message)
@@ -70,8 +85,10 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        _initializeSemaphore.Dispose();
         await _cts.CancelAsync();
         await _connection.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 
     public async Task<bool> DeleteMessage(MessageModel message)

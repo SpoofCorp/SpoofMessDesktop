@@ -53,4 +53,11 @@
 
     <sys:String x:Key="CountMembers">{0} members</sys:String>
     <sys:String x:Key="CountSubs">{0} subscribers</sys:String>
+
+    <sys:String x:Key="Mute">Mute</sys:String>
+    <sys:String x:Key="Kick">Kick</sys:String>
+    <sys:String x:Key="Ban">Ban</sys:String>
+    <sys:String x:Key="More">More</sys:String>
+    <sys:String x:Key="AddMember">Add member</sys:String>
+    <sys:String x:Key="MemberCard">Member card</sys:String>
 </ResourceDictionary>

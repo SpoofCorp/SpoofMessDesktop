@@ -4,7 +4,6 @@ using SpoofMess.Models;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
 using System.Collections.Concurrent;
-using System.Windows.Forms;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
@@ -37,8 +36,8 @@ public class ChatUserService(
 
     public async Task UploadManyMembers(Chat chat, CancellationToken cancellationToken = default)
     {
-        User? user = chat.Users.OrderByDescending(x => x.WasOnline).FirstOrDefault() ?? new() { WasOnline = null };
-        Result<List<ChatMemberDTO>> members = await _chatUserApiService.GetMembersBefore(chat.Id, user.Login, user.WasOnline, cancellationToken);
+        ChatUser? member = chat.Users.OrderByDescending(x => x.User.WasOnline).FirstOrDefault() ?? new() { User = new() { WasOnline = null } };
+        Result<List<ChatMemberDTO>> members = await _chatUserApiService.GetMembersBefore(chat.Id, member.User.Login, member.User.WasOnline, cancellationToken);
         if (!members)
             return;
         await AddUsers(chat, members.Body!, cancellationToken);
@@ -64,9 +63,9 @@ public class ChatUserService(
             };
             users.Add(user);
         });
-        lock(chat.Users)
+        lock (chat.Users)
             foreach (User user in users)
-                if (!chat.Users.Any(x => x.Login == user.Login))
-                    chat.Users.Add(user);
+                if (!chat.Users.Any(x => x.User.Login == user.Login))
+                    chat.Users.Add(new() { Chat = chat, User = user });
     }
 }

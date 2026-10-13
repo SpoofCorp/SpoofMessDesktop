@@ -53,4 +53,12 @@
 
     <sys:String x:Key="CountMembers">{0} участников</sys:String>
     <sys:String x:Key="CountSubs">{0} подписчиков</sys:String>
+
+
+    <sys:String x:Key="Mute">Заглушить</sys:String>
+    <sys:String x:Key="Kick">Выгнать</sys:String>
+    <sys:String x:Key="Ban">Бан</sys:String>
+    <sys:String x:Key="More">Ещё</sys:String>
+    <sys:String x:Key="AddMember">Добавить участника</sys:String>
+    <sys:String x:Key="MemberCard">Карточка участника</sys:String>
 </ResourceDictionary>

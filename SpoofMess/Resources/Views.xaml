@@ -75,7 +75,7 @@
                         </Style.Triggers>
                     </Style>
                 </Grid.Style>
-                <ContentControl Style="{StaticResource HeaderCardBlock}">
+                <ContentControl Panel.ZIndex="10" Style="{StaticResource HeaderCardBlock}">
                     <DockPanel>
                         <Button Width="30" Height="30" FontSize="18" Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
                         <Button Width="30" Height="30" FontSize="18" Style="{DynamicResource MinimalButton}" Content="➖" DockPanel.Dock="Right"/>
@@ -197,8 +197,8 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Height="50" Style="{DynamicResource FunctionBlockBorderCenterWithPadding}" ClipToBounds="True">
-                <Grid RowDefinitions="auto auto" ColumnDefinitions="* auto">
+            <ContentControl Padding="5" Margin="{DynamicResource MarginWithoutLeft}" Visibility="{Binding ChatMessagesVisibility, TargetNullValue=Collapsed, FallbackValue=Collapsed}" Grid.Row="0" Height="50" Panel.ZIndex="1" Style="{StaticResource GlassedCardBlock}">
+                <Grid Margin="7 0 0 0" RowDefinitions="auto auto" ColumnDefinitions="* auto">
                     <ContentControl Focusable="False" Grid.Column="1" Grid.RowSpan="2">
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
@@ -232,8 +232,8 @@
                     <TextBlock Text="{Binding SelectedChat.Name}" Style="{DynamicResource BaseText}" Padding="5 0" FontWeight="DemiBold"/>
                     <Label Style="{DynamicResource AdditionalLabelText}" Margin="2 0 0 0" Grid.Row="1" Padding="5 0" FontWeight="DemiBold" Content="{Binding SelectedChat.CountUsers}" ContentStringFormat="{DynamicResource CountMembers}" />
                 </Grid>
-            </Border>
-            <ItemsControl root:ScrollHelper.ScrollToItem="{Binding SelectedChat.TargetMessage, Mode=TwoWay}" Focusable="False" Grid.Row="1" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" x:Name="MessagesList">
+            </ContentControl>
+            <ItemsControl root:ScrollHelper.ScrollToItem="{Binding SelectedChat.TargetMessage, Mode=TwoWay}" Focusable="False" Grid.RowSpan="4" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" Panel.ZIndex="0" x:Name="MessagesList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="50 *" RowDefinitions="* auto auto" MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
@@ -254,15 +254,35 @@
                                  Background="White"
                                  BorderBrush="Gray" />
 
-                                <Image Source="{Binding User.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
+                                <Image Cursor="Hand" Source="{Binding User.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
                                     <Image.OpacityMask>
                                         <VisualBrush Visual="{x:Reference Mask}"/>
                                     </Image.OpacityMask>
                                 </Image>
                             </Grid>
-                            <Border Padding="10 0" Grid.Column="1" CornerRadius="10" Background="{DynamicResource Primary}" Margin="0 2">
-                                <Grid ColumnDefinitions="* auto" RowDefinitions="* auto auto" MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
-                                    <TextBlock Focusable="False" Grid.Row="0" Grid.Column="0" FontWeight="DemiBold" Text="{Binding User.Name}" Style="{DynamicResource BaseText}" Margin="0"/>
+                            <Border Padding="10 0" Grid.Column="1" CornerRadius="10" Background="{DynamicResource Second}" Margin="0 2">
+                                <Grid ColumnDefinitions="* auto" RowDefinitions="auto * auto auto" MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
+                                    <TextBlock HorizontalAlignment="Left" Text="{Binding User.Name}">
+                                        <TextBlock.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick"/>
+                                        </TextBlock.InputBindings>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource PrimaryText}">
+                                                <Style.Triggers>
+                                                    <MultiTrigger>
+                                                        <MultiTrigger.Conditions>
+                                                            <Condition Property="IsMouseOver" Value="True"/>
+                                                        </MultiTrigger.Conditions>
+                                                        <MultiTrigger.Setters>
+                                                            <Setter Property="Cursor" Value="Hand"/>
+                                                            <Setter Property="TextDecorations" Value="Underline"/>
+                                                        </MultiTrigger.Setters>
+                                                    </MultiTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
                                     <ItemsControl Focusable="False" ItemsSource="{Binding Attachments}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                                         <ItemsControl.ItemContainerStyle>
                                             <Style TargetType="ContentPresenter">
@@ -270,8 +290,8 @@
                                             </Style>
                                         </ItemsControl.ItemContainerStyle>
                                     </ItemsControl>
-                                    <TextBox Focusable="True" IsReadOnly="True" BorderThickness="0" Background="Transparent" Height="auto" FontSize="16" Grid.Row="2" Grid.Column="0" Text="{Binding Text}" TextWrapping="WrapWithOverflow" Foreground="{DynamicResource ActiveTextColor}"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Style="{DynamicResource AdditionalText}" Text="{Binding SentAt, StringFormat={}{0:HH:mm}}">
+                                    <TextBox HorizontalAlignment="Left" Focusable="True" IsReadOnly="True" BorderThickness="0" Background="Transparent" Height="auto" FontSize="16" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Text="{Binding Text}" TextWrapping="WrapWithOverflow" Foreground="{DynamicResource ActiveTextColor}"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Padding="10 15 0 0" VerticalAlignment="Bottom" Style="{DynamicResource AdditionalText}" Text="{Binding SentAt, StringFormat={}{0:HH:mm}}">
                                         <TextBlock.ToolTip>
                                             <ToolTip Content="{Binding SentAt, StringFormat={}{0:g}}">
                                             </ToolTip>
@@ -290,57 +310,114 @@
                 <ItemsControl.Template>
                     <ControlTemplate TargetType="ItemsControl">
                         <ScrollViewer Focusable="False" x:Name="MessageScroll" CanContentScroll="False" root:ScrollHelper.VerticalOffset="{Binding SelectedChat.Position}">
-                            <ItemsPresenter Focusable="False"/>
+                            <ItemsPresenter Margin="0 55" Focusable="False"/>
                         </ScrollViewer>
                     </ControlTemplate>
                 </ItemsControl.Template>
             </ItemsControl>
-            <DockPanel Focusable="False" Grid.Row="2" Background="{DynamicResource Second}">
-                <Button Command="{Binding StopEditCommand}" Visibility="{Binding SelectedChat.EditedMessageVisibility}" Focusable="False" Padding="5" FontSize="20" Style="{StaticResource MinimalCircleButton}" Content="❌" DockPanel.Dock="Right" VerticalAlignment="Top"/>
-                <ItemsControl Focusable="False" DockPanel.Dock="Left" ItemsSource="{Binding SelectedChat.CurrentMessage.Attachments}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ItemsControl Focusable="False" ItemsSource="{Binding Files}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Focusable="False" ColumnDefinitions="* auto" RowDefinitions="* auto auto"  MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
-                                            <Image Grid.ColumnSpan="2"/>
-                                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}"/>
-                                            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Size}"/>
-                                            <Button Focusable="False" Width="40" Height="40" Padding="5" FontSize="14" Style="{StaticResource MinimalCircleButton}" Content="❌" Command="{Binding DataContext.UnattachCommand, RelativeSource={RelativeSource AncestorType=ItemsControl, AncestorLevel=2}}" CommandParameter="{Binding}" Grid.Column="1"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel Orientation="Horizontal"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.Template>
-                        <ControlTemplate TargetType="ItemsControl">
-                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                                <ItemsPresenter/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ItemsControl.Template>
-                </ItemsControl>
-            </DockPanel>
-            <Border ClipToBounds="True" Grid.Row="3" Style="{DynamicResource FunctionBlockBorderCenter}">
-                <DockPanel>
-                    <Button Focusable="False" DockPanel.Dock="Right" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" IsDefault="True" Content="✉️" Command="{Binding SendCommand}"/>
-                    <Button Focusable="False" DockPanel.Dock="Right" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" Content="📎" Command="{Binding AttachCommand}"/>
-                    <ve:InputTextBox MaxHeight="200" TextWrapping="Wrap" Holder="{DynamicResource MessageHolder}" Text="{Binding SelectedChat.CurrentMessage.Text}" AcceptsReturn="True"/>
-                </DockPanel>
-            </Border>
-            <Grid Visibility="{Binding SelectChatVisibility}" Grid.RowSpan="4" Background="{DynamicResource Third}">
+            <ContentControl Visibility="{Binding SelectedChat.CurrentMessage.HasAttachments}" Style="{StaticResource GlassedCardBlock}" Focusable="False" Grid.Row="2">
+                <Grid ColumnDefinitions="* auto">
+                    <ItemsControl Grid.ColumnSpan="2" Focusable="False" DockPanel.Dock="Left" ItemsSource="{Binding SelectedChat.CurrentMessage.Attachments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ItemsControl Padding="2 5" Focusable="False" ItemsSource="{Binding Files}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <ContentControl Margin="{DynamicResource MarginHorizontal}" Style="{StaticResource ItemCardBlock}">
+                                                <Grid Margin="{DynamicResource MarginHorizontal}" Focusable="False" ColumnDefinitions="* auto" RowDefinitions="* auto auto"  MinWidth="150" MaxWidth="150" HorizontalAlignment="Left">
+                                                    <Image Source="{Binding _thumbnail}"/>
+                                                    <TextBlock TextTrimming="CharacterEllipsis" Style="{DynamicResource AdditionalText}" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Name}"/>
+                                                    <TextBlock Style="{DynamicResource AdditionalText}" Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding PrettySize}"/>
+                                                    <Button Focusable="False" Width="40" Height="40" Padding="5" FontSize="14" Style="{StaticResource MinimalCircleButton}" Content="❌" Command="{Binding DataContext.UnattachCommand, RelativeSource={RelativeSource AncestorType=ItemsControl, AncestorLevel=2}}" CommandParameter="{Binding}" Grid.Column="1"/>
+                                                </Grid>
+                                            </ContentControl>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel Margin="0 0 40 0" Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.Template>
+                            <ControlTemplate TargetType="ItemsControl">
+                                <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                    </ItemsControl>
+                    <ContentControl Grid.Column="1" Style="{StaticResource LeftGlassedCardBlock}">
+                        <Button Command="{Binding StopEditCommand}" Visibility="{Binding SelectedChat.EditedMessageVisibility, TargetNullValue=Collapsed, FallbackValue=Collapsed}" Focusable="False" Padding="5" FontSize="20" Style="{StaticResource MinimalCircleButton}" Content="❌" VerticalAlignment="Top"/>
+                    </ContentControl>
+                </Grid>
+            </ContentControl>
+            <ContentControl Visibility="{Binding ChatMessagesVisibility, TargetNullValue=Collapsed, FallbackValue=Collapsed}" Margin="{DynamicResource MarginWithoutLeft}" Style="{StaticResource GlassedCardBlock}" Grid.Row="3" >
+                <ContentControl.Template>
+                    <ControlTemplate TargetType="ContentControl">
+                        <Grid Margin="{DynamicResource MarginHorizontal}">
+                            <Border Padding="0" Margin="0" Style="{StaticResource GlassedCard}"></Border>
+                            <Border Padding="0" Margin="0" CornerRadius="{DynamicResource CardBorderRadius}">
+                                <Grid ColumnDefinitions="* auto auto auto auto">
+                                    <Button Focusable="False" Grid.Column="3" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" IsDefault="True" Content="✉️" Command="{Binding SendCommand}"/>
+                                    <Button Focusable="False" Grid.Column="1" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" Content="📎" Command="{Binding AttachCommand}"/>
+                                    <Button Focusable="False" Grid.Column="2" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" x:Name="StartRecordButton" Content="🎙️" Command="{Binding VoiceRecordCommand}"/>
+                                    <Button Visibility="Collapsed" Focusable="False" Grid.Column="2" Width="40" Height="40" VerticalAlignment="Bottom" Style="{StaticResource MinimalCircleButton}" x:Name="StopRecordButton" Content="⏹️" Command="{Binding StopVoiceRecordCommand}"/>
+                                    <ve:InputTextBox Margin="0" Grid.Column="0" MaxHeight="200" TextWrapping="Wrap" Holder="{DynamicResource MessageHolder}" Text="{Binding SelectedChat.CurrentMessage.Text}" AcceptsReturn="True"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsVoiceRecording}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StartRecordButton" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Collapsed}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopRecordButton" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Visible}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimation Storyboard.TargetName="StartRecordButton" 
+                                                 Storyboard.TargetProperty="Opacity" 
+                                                 From="1" To="0" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="StopRecordButton" 
+                                                 Storyboard.TargetProperty="Opacity" From="0"
+                                                 To="1" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StopRecordButton" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Collapsed}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="StartRecordButton" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Visible}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimation Storyboard.TargetName="StartRecordButton" 
+                                                 Storyboard.TargetProperty="Opacity" 
+                                                 From="0" To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="StopRecordButton" 
+                                                 Storyboard.TargetProperty="Opacity" 
+                                                 To="0" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </ContentControl.Template>
+            </ContentControl>
+            <Grid Panel.ZIndex="-4" Visibility="{Binding SelectChatVisibility}" Grid.RowSpan="4" Background="Transparent">
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Border Style="{StaticResource CardBorder}" Background="{DynamicResource Second}"/>
                     <TextBlock Text="{DynamicResource SelectChatHolder}" Padding="10 3" Style="{DynamicResource PrimaryText}"/>
@@ -351,26 +428,203 @@
 
     <DataTemplate DataType="{x:Type vm:ChatInfoViewModel}">
         <Grid RowDefinitions="auto auto">
-            <Border VerticalAlignment="Top" Padding="15 5 5 0">
-                <Button HorizontalAlignment="Right" Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
-            </Border>
+            <Grid Visibility="{Binding MainVisibility}">
+                <Border VerticalAlignment="Top" Padding="15 5 5 0">
+                    <Button HorizontalAlignment="Right" Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
+                </Border>
 
-            <Border Margin="0 20 0 0" Grid.RowSpan="2">
-                <Grid RowDefinitions="auto auto auto 10 auto" MinWidth="200">
+                <Border Margin="0 20 0 0" Grid.RowSpan="2">
+                    <Grid RowDefinitions="auto auto auto 10 auto" MinWidth="200">
 
-                    <ContentControl Width="70" Height="70">
+                        <ContentControl Width="70" Height="70">
+                            <ContentControl.Style>
+                                <Style TargetType="{x:Type ContentControl}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ContentControl}">
+                                                <Grid>
+                                                    <Ellipse>
+                                                        <Ellipse.Fill>
+                                                            <ImageBrush ImageSource="{Binding Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill"/>
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                    <Button Margin="-1 0 0 -1" Cursor="Hand" x:Name="SetAvatarButton" Visibility="Collapsed" Background="{DynamicResource Four}" Opacity="0.4" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}" Command="{Binding SetAvatarCommand}"/>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="SetAvatarButton" Property="Visibility" Value="Visible"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
+                        <TextBlock TextAlignment="Center" Style="{StaticResource HeaderText}" Text="{Binding Chat.Name}" Grid.Row="1"/>
+                        <ContentControl Style="{StaticResource DashBoardBlock}" Grid.Row="2">
+                            <StackPanel Orientation="Horizontal">
+                                <ve:IconButton Icon="🔕" Text="{DynamicResource Mute}"/>
+                                <ve:IconButton Icon="⚙️" Text="{DynamicResource Settings}"/>
+                                <ve:IconButton Icon="🚪" Text="Leave"/>
+                                <ContentControl Focusable="False" Grid.Column="1" Grid.RowSpan="2">
+                                    <ContentControl.Style>
+                                        <Style TargetType="{x:Type ContentControl}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Grid>
+                                                            <ToggleButton 
+                                                Focusable="False"
+                                                Style="{StaticResource MinimalToggleButton}" 
+                                                Padding="10 0"
+                                                IsChecked="{Binding IsOpen, Mode=TwoWay}"
+                                                Width="auto"
+                                                x:Name="More"
+                                                FontWeight="Bold">
+                                                                <ToggleButton.Content>
+                                                                    <StackPanel>
+                                                                        <TextBlock FontSize="20" Style="{StaticResource AdditionalText}" HorizontalAlignment="Center" Text="…"/>
+                                                                        <TextBlock FontSize="18" Style="{StaticResource AdditionalText}" Text="{DynamicResource More}"/>
+                                                                    </StackPanel>
+                                                                </ToggleButton.Content>
+                                                            </ToggleButton>
+                                                            <Popup
+                                                                IsOpen="{Binding IsChecked, ElementName=More, Mode=TwoWay}"
+                                                                PlacementTarget="{Binding ElementName=More}" 
+                                                                Placement="Left"
+                                                                PlacementRectangle="65 35 0 0"
+                                                                StaysOpen="False"
+                                                                AllowsTransparency="True">
+                                                                <Border Padding="10">
+                                                                    <Border Style="{StaticResource CardBorder}" Background="{DynamicResource Second}">
+                                                                        <StackPanel>
+                                                                            <ve:FunctionButton Text="{DynamicResource AddMember}" Icon="" Command="{Binding ShowChatInfoCommand}"/>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                </Border>
+                                                            </Popup>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                            </StackPanel>
+                        </ContentControl>
+                        <ContentControl Style="{StaticResource CardBlock}" Grid.Row="4" Margin="{DynamicResource MarginBottom}">
+                            <Grid>
+                                <Grid Visibility="{Binding MainVisibility}" RowDefinitions="auto *">
+                                    <TextBlock Text="Участники" Style="{StaticResource PrimaryText}" Margin="10 5 0 0"/>
+                                    <ItemsControl Grid.Row="1" root:ScrollHelper.ScrollBottomCommand="{Binding ScrollToBottomCommand}" Focusable="False" ItemsSource="{Binding Chat.Users}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ContentControl Style="{StaticResource ItemCardBlock}">
+                                                    <Button Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ItemsControl}, TargetNullValue=Null}" Command="{Binding DataContext.ShowMemberCardCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" HorizontalContentAlignment="Left" Style="{StaticResource MinimalButton}">
+                                                        <Button.ContextMenu>
+                                                            <ContextMenu Style="{DynamicResource BaseContextMenu}">
+                                                                <MenuItem Visibility="{Binding Chat.ShowKick}" Header="{DynamicResource Kick}" Style="{DynamicResource MinimalMenuItem}" Command="{Binding PlacementTarget.Tag.KickCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}"/>
+                                                                <MenuItem Visibility="{Binding Chat.ShowBan}" Header="{DynamicResource Ban}" Style="{DynamicResource MinimalMenuItem}" Command="{Binding PlacementTarget.Tag.BanCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}"/>
+                                                                <MenuItem Visibility="{Binding Chat.ShowMute}" Header="{DynamicResource Mute}" Style="{DynamicResource MinimalMenuItem}" Command="{Binding PlacementTarget.Tag.MuteCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}"/>
+                                                                <MenuItem Header="{DynamicResource MemberCard}" Style="{DynamicResource MinimalMenuItem}" Command="{Binding PlacementTarget.Tag.ShowMemberCardCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}"/>
+                                                            </ContextMenu>
+                                                        </Button.ContextMenu>
+                                                        <Button.Content>
+                                                            <Grid Margin="5 10" RowDefinitions="auto auto" ColumnDefinitions="auto *">
+                                                                <Grid Margin="0 0 5 0" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Width="40" Height="40">
+                                                                    <Border x:Name="Mask" 
+                                                                         BorderThickness="1" 
+                                                                         CornerRadius="40" 
+                                                                         Background="White"
+                                                                         BorderBrush="Gray" />
+
+                                                                    <Image Source="{Binding User.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
+                                                                        <Image.OpacityMask>
+                                                                            <VisualBrush Visual="{x:Reference Mask}"/>
+                                                                        </Image.OpacityMask>
+                                                                    </Image>
+                                                                </Grid>
+                                                                <TextBlock Margin="0" Style="{StaticResource BaseText}" Text="{Binding User.Name}" Grid.Column="1"/>
+                                                                <TextBlock Margin="0" Style="{StaticResource AdditionalText}" Text="{Binding User.WasOnline, TargetNullValue=Недавно, StringFormat={}{0:dd.MM.yyyy}}" Grid.Column="1" Grid.Row="1"/>
+                                                            </Grid>
+                                                        </Button.Content>
+                                                    </Button>
+                                                </ContentControl>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.Template>
+                                            <ControlTemplate TargetType="ItemsControl">
+                                                <ScrollViewer Focusable="False" CanContentScroll="False">
+                                                    <ItemsPresenter Margin="0 5 0 0" Focusable="False"/>
+                                                </ScrollViewer>
+                                            </ControlTemplate>
+                                        </ItemsControl.Template>
+                                    </ItemsControl>
+                                </Grid>
+                                <ContentPresenter Content="{Binding AdditionalViewModel}" Visibility="{Binding AdditionalViewModelVisibility}"/>
+                            </Grid>
+                        </ContentControl>
+                    </Grid>
+                </Border>
+            </Grid>
+            <ContentPresenter Content="{Binding AdditionalViewModel}" Visibility="{Binding DataContext.AdditionalViewModelVisibility, RelativeSource={RelativeSource AncestorType=Grid}}" Grid.Row="1"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:ChatMemberCardViewModel}">
+        <Grid RowDefinitions="auto 5 auto">
+            <ContentControl Style="{StaticResource HeaderCardBlock}">
+                <DockPanel>
+                    <Button Width="30" Height="30" FontSize="18" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
+                    <TextBlock Text="{DynamicResource Profile}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </ContentControl>
+            <ContentControl Margin="{DynamicResource MarginBottom}" Grid.Row="2" Style="{StaticResource CardBlock}">
+                <Grid Margin="{DynamicResource MarginBase}" MinWidth="200" ColumnDefinitions="auto auto" RowDefinitions="auto *">
+                    <Grid Grid.RowSpan="2" Margin="0 0 5 0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="70" Height="70">
+                        <Border x:Name="Mask" 
+                            BorderThickness="1" 
+                            CornerRadius="35" 
+                            Background="White"
+                            BorderBrush="Gray" />
+
+                        <Image Source="{Binding ChatUser.User.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
+                            <Image.OpacityMask>
+                                <VisualBrush Visual="{x:Reference Mask}"/>
+                            </Image.OpacityMask>
+                        </Image>
+                    </Grid>
+                    <TextBlock Style="{StaticResource BaseText}" Margin="{DynamicResource MarginLeftTop}" Padding="0" Text="{Binding ChatUser.User.Name}" Grid.Column="1"/>
+                    <TextBlock Style="{StaticResource AdditionalText}" Margin="{DynamicResource MarginHorizontal}" Padding="0" Text="{Binding ChatUser.User.WasOnline, TargetNullValue=Давно}" Grid.Column="1" Grid.Row="1"/>
+                </Grid>
+            </ContentControl>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:CreateGroupViewModel}">
+        <Grid RowDefinitions="auto 5 auto">
+            <ContentControl Style="{StaticResource HeaderCardBlock}">
+                <DockPanel>
+                    <Button Width="30" Height="30" FontSize="18" Style="{DynamicResource MinimalButton}" Content="❌" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
+                    <TextBlock Text="{DynamicResource NewGroup}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </ContentControl>
+            <ContentControl Grid.Row="2" Margin="{DynamicResource MarginBottom}" Style="{StaticResource CardBlock}">
+                <Grid Margin="{DynamicResource MarginBase}" ColumnDefinitions="auto 20 *" RowDefinitions="auto auto auto auto" Width="300">
+                    <ContentControl Grid.RowSpan="2" Width="70" Height="70">
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type ContentControl}">
                                             <Grid>
-                                                <Ellipse>
+                                                <Ellipse Margin="1">
                                                     <Ellipse.Fill>
                                                         <ImageBrush ImageSource="{Binding Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill"/>
                                                     </Ellipse.Fill>
                                                 </Ellipse>
-                                                <Button Margin="-1 0 0 -1" Cursor="Hand" x:Name="SetAvatarButton" Visibility="Collapsed" Background="{DynamicResource Four}" Opacity="0.4" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}" Command="{Binding SetAvatarCommand}"/>
+                                                <Button Margin="-1 0 0 0 " x:Name="SetAvatarButton" Visibility="Collapsed" Background="{DynamicResource Four}" Opacity="0.4" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}" Command="{Binding SetAvatarCommand}"/>
                                             </Grid>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
@@ -383,86 +637,13 @@
                             </Style>
                         </ContentControl.Style>
                     </ContentControl>
-                    <TextBlock TextAlignment="Center" Style="{StaticResource HeaderText}" Text="{Binding Chat.Name}" Grid.Row="1"/>
-                    <ContentControl Style="{StaticResource CardBlock}" Grid.Row="2">
-                        <StackPanel Orientation="Horizontal">
-                            <ve:IconButton Icon="🔕" Text="Mute"/>
-                            <ve:IconButton Icon="⚙️" Text="Settings"/>
-                            <ve:IconButton Icon="🚪" Text="Leave"/>
-                            <ve:IconButton Icon="…" Text="More"/>
-                        </StackPanel>
-                    </ContentControl>
-                    <ItemsControl Grid.Row="4" root:ScrollHelper.ScrollBottomCommand="{Binding ScrollToBottomCommand}" Focusable="False" ItemsSource="{Binding Chat.Users}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <ContentControl Margin="2.5" Style="{StaticResource CardBlock}">
-                                    <Grid Margin="5 10" RowDefinitions="auto auto" ColumnDefinitions="auto *">
-                                        <Grid Margin="0 0 5 0" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Width="40" Height="40">
-                                            <Border x:Name="Mask" 
-                                                 BorderThickness="1" 
-                                                 CornerRadius="40" 
-                                                 Background="White"
-                                                 BorderBrush="Gray" />
-
-                                            <Image Source="{Binding User.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill">
-                                                <Image.OpacityMask>
-                                                    <VisualBrush Visual="{x:Reference Mask}"/>
-                                                </Image.OpacityMask>
-                                            </Image>
-                                        </Grid>
-                                        <TextBlock Margin="0" Style="{StaticResource BaseText}" Text="{Binding Name}" Grid.Column="1"/>
-                                        <TextBlock Margin="0" Style="{StaticResource AdditionalText}" Text="{Binding WasOnline, TargetNullValue=Недавно, StringFormat={}{0:dd.MM.yyyy}}" Grid.Column="1" Grid.Row="1"/>
-                                    </Grid>
-                                </ContentControl>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.Template>
-                            <ControlTemplate TargetType="ItemsControl">
-                                <ScrollViewer Focusable="False" CanContentScroll="False">
-                                    <ItemsPresenter Focusable="False"/>
-                                </ScrollViewer>
-                            </ControlTemplate>
-                        </ItemsControl.Template>
-                    </ItemsControl>
+                    <ve:InputTextBox Holder="{DynamicResource Name}" Grid.Column="2" Grid.Row="0" Text="{Binding Chat.Name}"/>
+                    <ve:InputTextBox Holder="{DynamicResource UniqueName}" Grid.Column="2" Grid.Row="1" x:Name="UniqueName" Text="{Binding Chat.UniqueName}"/>
+                    <ve:Switch Text="{DynamicResource Public}" Grid.Column="2" Grid.Row="2"  FontSize="25" IsChecked="{Binding Chat.IsPublic}"/>
+                    <Button Grid.Column="2" Grid.Row="3" Content="{DynamicResource Create}" Command="{Binding CreateCommand}" Style="{DynamicResource FunctionButton}"/>
                 </Grid>
-            </Border>
+            </ContentControl>
         </Grid>
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vm:CreateGroupViewModel}">
-        <Border Padding="10 10">
-            <Grid ColumnDefinitions="auto 20 *" RowDefinitions="auto auto auto auto" Width="300">
-                <ContentControl Grid.RowSpan="2" Width="70" Height="70">
-                    <ContentControl.Style>
-                        <Style TargetType="{x:Type ContentControl}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ContentControl}">
-                                        <Grid>
-                                            <Ellipse Margin="1">
-                                                <Ellipse.Fill>
-                                                    <ImageBrush ImageSource="{Binding Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill"/>
-                                                </Ellipse.Fill>
-                                            </Ellipse>
-                                            <Button Margin="-1 0 0 0 " x:Name="SetAvatarButton" Visibility="Collapsed" Background="{DynamicResource Four}" Opacity="0.4" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}" Command="{Binding SetAvatarCommand}"/>
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="SetAvatarButton" Property="Visibility" Value="Visible"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
-                <ve:InputTextBox Holder="{DynamicResource Name}" Grid.Column="2" Grid.Row="0" Text="{Binding Chat.Name}"/>
-                <ve:InputTextBox Holder="{DynamicResource UniqueName}" Grid.Column="2" Grid.Row="1" x:Name="UniqueName" Text="{Binding Chat.UniqueName}"/>
-                <ve:Switch Text="{DynamicResource Public}" Grid.Column="2" Grid.Row="2"  FontSize="25" IsChecked="{Binding Chat.IsPublic}"/>
-                <Button Grid.Column="2" Grid.Row="3" Content="{DynamicResource Create}" Command="{Binding CreateCommand}" Style="{DynamicResource FunctionButton}"/>
-            </Grid>
-        </Border>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:AuthorizationViewModel}">
@@ -481,9 +662,8 @@
 
     <DataTemplate DataType="{x:Type vm:RegistrationViewModel}">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Border Style="{StaticResource CardBorder}"/>
-            <Border CornerRadius="10" Background="White" Padding="10 20">
-                <Grid RowDefinitions="auto auto auto auto auto auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
+            <ContentControl Style="{StaticResource CardBlock}">
+                <Grid RowDefinitions="auto auto auto auto auto auto" Margin="10 20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
                     <TextBlock Text="{DynamicResource Registration}" Style="{StaticResource HeaderText}"/>
                     <uc:InputTextBox Holder="{DynamicResource Login}" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
                     <uc:InputTextBox Holder="{DynamicResource Name}" Grid.Row="2" Text="{Binding UserInfo.User.Name}"/>
@@ -491,7 +671,7 @@
                     <Button Content="{DynamicResource Register}" Command="{Binding RegistrationCommand}" Grid.Row="4" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
                     <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="{DynamicResource RegistrationQuestion}" Grid.Row="5" CommandText="{DynamicResource LogIn}" Command="{Binding ChangeViewCommand}"/>
                 </Grid>
-            </Border>
+            </ContentControl>
         </Grid>
     </DataTemplate>
 
@@ -519,12 +699,12 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="auto *" RowDefinitions="auto auto" >
-                        <Button Width="50" Height="50" Padding="5" Margin="5 0 10 0" Focusable="False" Grid.RowSpan="2" Command="{Binding DataContext.PlayResumeCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding}">
+                        <Button Width="50" Height="50" Padding="5" Margin="5 0 10 0" Focusable="False" Grid.RowSpan="2" Command="{Binding DataContext.PlayResumeCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" Cursor="Hand" CommandParameter="{Binding}">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource CircleButton}" TargetType="{x:Type Button}">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="10.5 10 8 10">
+                                            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="8.5 10 8 10">
                                                 <Path Fill="{DynamicResource ActiveTextColor}" Data="M 0,0 H 7 V 20 H 0 Z M 13,0 H 20 V 20 H 13 Z" />
                                             </Viewbox>
                                         </Setter.Value>
@@ -533,7 +713,7 @@
                                         <DataTrigger Binding="{Binding IsPlayed}" Value="False">
                                             <Setter Property="Content">
                                                 <Setter.Value>
-                                                    <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="12 10 7 10">
+                                                    <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="11 10 7 10">
                                                         <Path Fill="{DynamicResource ActiveTextColor}" Data="M 0,0 L 20,10 L 0,20 Z" />
                                                     </Viewbox>
                                                 </Setter.Value>
@@ -572,7 +752,7 @@
             <ContentControl Style="{StaticResource HeaderCardBlock}">
                 <DockPanel>
                     <Button Width="30" Height="30" FontSize="18" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
-                        <TextBlock Text="{DynamicResource Advanced}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{DynamicResource Advanced}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
             </ContentControl>
             <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
@@ -592,7 +772,7 @@
                     <TextBlock Text="{DynamicResource Profile}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
                 </DockPanel>
             </ContentControl>
-            <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
+            <ContentControl Margin="{DynamicResource MarginBottom}" Grid.Row="2" Style="{StaticResource CardBlock}">
                 <StackPanel>
                     <ve:Switch IsChecked="{Binding Edit.SearchMe}" Text="{DynamicResource SearchMe}" Margin="0 5"/>
                     <ve:Switch IsChecked="{Binding Edit.ShowMe}" Text="{DynamicResource ShowMe}" Margin="0 5"/>
@@ -646,7 +826,7 @@
 
     <DataTemplate DataType="{x:Type st:DesingViewModel}">
         <Grid RowDefinitions="auto 5 auto 10 auto">
-            <ContentControl Style="{StaticResource HeaderCardBlock}">
+            <ContentControl Panel.ZIndex="10" Style="{StaticResource HeaderCardBlock}">
                 <DockPanel>
                     <Button Width="30" Height="30" FontSize="18" Margin="0 0 5 0" Style="{DynamicResource MinimalButton}" Content="⬅️" DockPanel.Dock="Left" Command="{Binding CloseCommand}"/>
                     <TextBlock Text="{DynamicResource Design}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>

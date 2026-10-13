@@ -26,6 +26,12 @@
     <Compile Update="Views\CreateGroupView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\MainViewTest.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\MinimalWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\NotificationInfoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

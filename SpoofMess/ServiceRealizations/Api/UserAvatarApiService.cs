@@ -13,15 +13,13 @@ internal class UserAvatarApiService(
         client,
         serializer), IUserAvatarApiService
 {
-    protected override string BaseUrl => "https://localhost:7082/api/v2/UserAvatar";
-
     public async Task<Result<AvatarResponse>> Get(byte[] accessToken, CancellationToken token = default)
     {
-        return await PostAsync<byte[], AvatarResponse>("/Get", accessToken, token);
+        return await PostAsync<byte[], AvatarResponse>("api/v2/UserAvatar/Get", accessToken, token);
     }
 
     public async Task<Result> Set(SesUserAvatarRequest request, CancellationToken token = default)
     {
-        return await PostAsync($"/Set", request, token);
+        return await PostAsync("api/v2/UserAvatar/Set", request, token);
     }
 }

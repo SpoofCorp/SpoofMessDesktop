@@ -1,10 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace SpoofMess.ViewModels;
+﻿namespace SpoofMess.ViewModels;
 
 internal partial class EntryViewModel(
-    ) : ObservableObject
+    ) : PlacementViewModel
 {
-    [ObservableProperty]
-    public partial object ViewModel { get; set; } = null!;
 }

@@ -8,13 +8,10 @@ using System.Windows;
 namespace SpoofMess.ViewModels;
 
 public partial class SettingsViewModel(
-    UserInfo userInfo, 
+    UserInfo userInfo,
     IUserAvatarService userAvatarService,
-    INavigationService navigationService) : AdditionalViewModel
+    INavigationService navigationService) : PlacementAdditionalViewModel
 {
-    [ObservableProperty]
-    public partial AdditionalViewModel? AdditionalViewModel { get; set; }
-
     public UserInfo UserInfo { get; set; } = userInfo;
     private readonly INavigationService _navigationService = navigationService;
     private readonly IUserAvatarService _userAvatarService = userAvatarService;
@@ -24,13 +21,13 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private void Profile()
     {
-        SetAdditionalViewModel(_navigationService.GetProfileViewModel(this, CloseAdditional));
+        _navigationService.SetProfileViewModel(this);
     }
 
     [RelayCommand]
     private void Notifications()
     {
-        SetAdditionalViewModel(_navigationService.GetSoundsAndNotificationsViewModel(this, CloseAdditional));
+        _navigationService.SetSoundsAndNotificationsViewModel(this);
     }
 
     [RelayCommand]
@@ -42,19 +39,19 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private void Language()
     {
-        SetAdditionalViewModel(_navigationService.GetLanguageViewModel(this, CloseAdditional));
+        _navigationService.SetLanguageViewModel(this);
     }
 
     [RelayCommand]
     private void Advanced()
     {
-        SetAdditionalViewModel(_navigationService.GetAdvancedViewModel(this, CloseAdditional));
+        _navigationService.SetAdvancedViewModel(this);
     }
 
     [RelayCommand]
     private void Design()
     {
-        SetAdditionalViewModel(_navigationService.GetDesignViewModel(this, CloseAdditional));
+        _navigationService.SetDesignViewModel(this);
     }
 
     [RelayCommand]
@@ -63,21 +60,21 @@ public partial class SettingsViewModel(
         await _userAvatarService.Set();
     }
 
-    private async void CloseAdditional()
-    {
-        MainViewVisibility = Visibility.Visible;
-        AdditionalViewModel = null;
-    }
-
-    private void SetAdditionalViewModel(AdditionalViewModel viewModel)
-    {
-        AdditionalViewModel = viewModel;
-        MainViewVisibility = Visibility.Collapsed;
-    }
-
     public override void OnClose()
     {
         AdditionalViewModel?.OnClose();
         AdditionalViewModel = null;
+    }
+
+    public override void ShowAdditionalViewModel(AdditionalViewModel additionalViewModel)
+    {
+        MainViewVisibility = Visibility.Collapsed;
+        base.ShowAdditionalViewModel(additionalViewModel);
+    }
+
+    protected override void CloseAdditionalViewModel()
+    {
+        MainViewVisibility = Visibility.Visible;
+        base.CloseAdditionalViewModel();
     }
 }

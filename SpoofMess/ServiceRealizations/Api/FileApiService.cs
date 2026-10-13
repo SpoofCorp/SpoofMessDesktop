@@ -8,42 +8,40 @@ using System.Net.Http;
 namespace SpoofMess.ServiceRealizations.Api;
 
 public class FileApiService(
-    HttpClient client, 
+    HttpClient client,
     ISerializer serializer) : ApiService(
         client, 
         serializer), IFileApiService
 {
-    protected override string BaseUrl => "https://localhost:7138/api/v3/File";
-
     public async Task<Result> Save()
     {
         throw new NotImplementedException();
     }
     public async Task<Result<Stream>> Upload(byte[] token, CancellationToken ct = default)
     {
-        return await PostStreamAsync("/upload", token, ct);
+        return await PostStreamAsync("api/v3/File/upload", token, ct);
     }
 
 
     public async Task<Result> ExistsL1L2(FingerprintExistL1L2 l1L2, CancellationToken token = default)
     {
-        return await PostAsync("/first-check", l1L2, token);
+        return await PostAsync("api/v3/File/first-check", l1L2, token);
     }
 
     public async Task<Result<byte[]>> ExistsL3(FingerprintExistL3 l3, CancellationToken token = default)
     {
-        return await PostAsync<FingerprintExistL3, byte[]>("/full-check", l3, token);
+        return await PostAsync<FingerprintExistL3, byte[]>("api/v3/File/full-check", l3, token);
     }
 
     public async Task<Result<byte[]>> Save(MultipartFormDataContent content, CancellationToken token = default)
     {
-        return await PostAsync<byte[]>("/save", content, token);
+        return await PostAsync<byte[]>("api/v3/File/save", content, token);
     }
 
 
     public async Task<Result<CommonObjects.DTO.FileMetadata>> GetToken(Guid fileId, CancellationToken token = default)
     {
-        return await GetAsync<CommonObjects.DTO.FileMetadata>($"/get?fileId={fileId}", token);
+        return await GetAsync<CommonObjects.DTO.FileMetadata>($"api/v3/File/get?fileId={fileId}", token);
     }
 
 }

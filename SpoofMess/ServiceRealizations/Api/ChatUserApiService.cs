@@ -12,7 +12,6 @@ public class ChatUserApiService(
     ISerializer serializer
     ) : ApiService(client, serializer), IChatUserApiService
 {
-    protected override string BaseUrl => "https://localhost:7082/api/ChatUser";
 
     public Task<ChatDTO> GetChat(Guid id)
     {
@@ -23,7 +22,7 @@ public class ChatUserApiService(
     {
         try
         {
-            Result<List<ChatUserDTO>> result = await GetAsync<List<ChatUserDTO>>($"/get-chats?after={after:yyyy-MM-ddTHH:mm:ssZ}");
+            Result<List<ChatUserDTO>> result = await GetAsync<List<ChatUserDTO>>($"api/ChatUser/get-chats?after={after:yyyy-MM-ddTHH:mm:ssZ}");
             if (result.Success)
                 return result;
             //Need show exception
@@ -36,12 +35,12 @@ public class ChatUserApiService(
     }
 
     public async Task<Result> Join(JoinToChatRequest request, CancellationToken cancellationToken = default) =>
-        await PostAsync("/join", request, cancellationToken);
+        await PostAsync("api/ChatUser/join", request, cancellationToken);
 
     public async Task<Result<List<ChatMemberDTO>>> GetMembersBefore(
         Guid chatId,
         string lastLogin,
         DateTime? before,
         CancellationToken cancellationToken = default) =>
-        await GetAsync<List<ChatMemberDTO>>($"/getChatMembers?chatId={chatId}&lastLogin={lastLogin}&before={before}", cancellationToken);
+        await GetAsync<List<ChatMemberDTO>>($"api/ChatUser/getChatMembers?chatId={chatId}&lastLogin={lastLogin}&before={before}", cancellationToken);
 }

@@ -12,17 +12,15 @@ class ChatApiService(
     ISerializer serializer
     ) : ApiService(client, serializer), IChatApiService
 {
-    protected override string BaseUrl => "https://localhost:7082/api/v2/Chat";
-
     public async Task<Result<ChatDTO>> GetChat(Guid id)
     {
-        Result<ChatDTO> result = await GetAsync<ChatDTO>($"/get?chatId={id}");
+        Result<ChatDTO> result = await GetAsync<ChatDTO>($"api/v2/Chat/get?chatId={id}");
         return result;
     }
 
     public async Task<Result<ChatDTO>> Create(CreateChatRequest chat, CancellationToken token)
     {
-        Result<ChatDTO> chatResult = await PostAsync<CreateChatRequest, ChatDTO>("/CreateChat", chat, token);
+        Result<ChatDTO> chatResult = await PostAsync<CreateChatRequest, ChatDTO>("api/v2/Chat/CreateChat", chat, token);
 
         return chatResult;
     }

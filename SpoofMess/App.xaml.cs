@@ -18,13 +18,16 @@ using SpoofMess.ViewModels.Settings;
 using SpoofMess.Views;
 using System.IO;
 using System.Windows;
+using SpoofMess.Models.HttpClientExtensions;
+using System.Net.Http;
 
 namespace SpoofMess;
 
 public partial class App : Application
 {
+    private IAppLifeCycleService _appLifiCycleServiceuthService = null!;
     private IServiceProvider _serviceProvider = null!;
-    internal static UserInfo UserInfo = null!; 
+    internal static UserInfo UserInfo = null!;
     protected override async void OnStartup(StartupEventArgs e)
     {
         FrameworkElement.LanguageProperty.OverrideMetadata(
@@ -35,36 +38,50 @@ public partial class App : Application
         ServiceCollection services = new();
 
         services.AddTransient<AuthHandler>();
-        services.AddHttpClient<IEntryApiService, EntryApiService>();
-        services.AddHttpClient<IChatAvatarApiService, ChatAvatarApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
-        services.AddHttpClient<IAttachmentApiService, AttachmentApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
-        services.AddHttpClient<IChatApiService, ChatApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
-        services.AddHttpClient<IChatUserApiService, ChatUserApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
-        services.AddHttpClient<IUserApiService, UserApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
-        services.AddHttpClient<IMessageApiService, MessageApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
-        services.AddHttpClient<IFileApiService, FileApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
-        services.AddHttpClient<IUserAvatarApiService, UserAvatarApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
-        services.AddHttpClient<ISearchApiService, SearchApiService>()
-            .AddHttpMessageHandler<AuthHandler>();
+        services.AddHttpClient<IEntryApiService, EntryApiService>(client =>
+        {
+            client.BaseAddress = new("https://localhost:443/ses/");
+        });
+        services.AddSSSCustomApi<IChatAvatarApiService, ChatAvatarApiService>();
+        services.AddSSSCustomApi<IChatApiService, ChatApiService>();
+        services.AddSSSCustomApi<IChatUserApiService, ChatUserApiService>();
+        services.AddSSSCustomApi<IUserApiService, UserApiService>();
+        services.AddSMSCustomApi<IAttachmentApiService, AttachmentApiService>();
+        services.AddSMSCustomApi<IMessageApiService, MessageApiService>();
+
+        services.AddSFSCustomApi<IFileApiService, FileApiService>();
+        services.AddSSSCustomApi<IUserAvatarApiService, UserAvatarApiService>();
+        services.AddSMSCustomApi<ISearchApiService, SearchApiService>();
 
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ISerializer, JsonSerializerService>();
         services.AddSingleton<IDownloadService, DownloadService>();
+        services.AddSingleton<FileAudioRecorderService>();
+
+        /*services.AddSingleton(new UrlSettings()
+        {
+            BaseUrlSES = "https://localhost:5000",
+            BaseUrlSFS = "https://localhost:5003",
+            BaseUrlSMS = "https://localhost:5002",
+            BaseUrlSSS = "https://localhost:5001",
+        });*/
+
+        /*services.AddSingleton(new UrlSettings()
+        {
+            BaseUrlSES = "https://192.168.0.54:5000",
+            BaseUrlSFS = "https://192.168.0.54:5003",
+            BaseUrlSMS = "https://192.168.0.54:5002",
+            BaseUrlSSS = "https://192.168.0.54:5001",
+        });*/
 
         services.AddTransient<EntryViewModel>();
+        services.AddTransient<ChatCardViewModel>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<AdvancedViewModel>();
         services.AddTransient<SoundsAndNotificationsViewModel>();
         services.AddTransient<CreateGroupViewModel>();
         services.AddTransient<ProfileViewModel>();
+        services.AddTransient<ChatMemberCardViewModel>();
         services.AddSingleton<StaticNotificationViewModel>();
         ParserFactory factory = new(
             new()
@@ -101,7 +118,11 @@ public partial class App : Application
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddTransient<IThemesService, ThemesService>();
 
-        services.AddSingleton<IAuthService, AuthService>();
+        services.AddHttpClient<IAuthService, AuthService>(client =>
+        {
+            client.BaseAddress = new("https://localhost:443/ses/");
+        }).AddAsKeyed(ServiceLifetime.Singleton);
+        services.AddSingleton<IAppLifeCycleService, AppLifeCycleService>();
 
         services.AddSingleton<UserInfo>();
 
@@ -117,32 +138,21 @@ public partial class App : Application
         services.AddTransient<MusicViewModel>();
         services.AddSingleton<CentralViewModel>();
         services.AddSingleton<ChatsViewModel>();
-        services.AddSingleton<MessagesViewModel>();
+        services.AddTransient<MessagesViewModel>();
+        services.AddSingleton<MainMessagesViewModel>();
         services.AddSingleton<NotificationInfoViewModel>();
 
-        services.AddTransient<MainView>();
+        services.AddTransient<MainViewTest>();
+        services.AddTransient<MinimalWindow>();
         services.AddSingleton<CentralView>();
         IServiceProvider tempProvider = services.BuildServiceProvider();
-        
+
         ISerializer serializer = tempProvider.GetRequiredService<ISerializer>();
         services.AddSingleton<IFileClassifier>(new FileClassifier(factory, await serializer.Deserialize<ExtensionRoadMap[]>(File.OpenRead("startup\\FileExtensions.json"))));
         _serviceProvider = services.BuildServiceProvider();
 
-        IAuthService authService = _serviceProvider.GetRequiredService<IAuthService>();
-        StaticNotificationViewModel staticNotificationViewModel = _serviceProvider.GetRequiredService<StaticNotificationViewModel>();
-        staticNotificationViewModel.ViewModel = new MusicNotification(_serviceProvider.GetRequiredService<IAudioService>());
-        IUserService userService = _serviceProvider.GetRequiredService<IUserService>();
-        INotificationService notificationService = _serviceProvider.GetRequiredService<INotificationService>();
-        INavigationService navigationService = _serviceProvider.GetRequiredService<INavigationService>();
-        notificationService.InitializeAsync();
-        navigationService.InitializeAsync();
-        if (await authService.Initialize())
-        {
-            await userService.SyncAccount();
-            navigationService!.ShowCentralViewWithMain();
-        }
-        else
-            navigationService!.ShowCentralViewWithAuthorization();
+        _appLifiCycleServiceuthService = _serviceProvider.GetRequiredService<IAppLifeCycleService>();
+        await _appLifiCycleServiceuthService.OnStartupAsync();
         UserInfo = _serviceProvider.GetRequiredService<UserInfo>();
         IThemesService themesServices = _serviceProvider.GetRequiredService<IThemesService>();
         themesServices.Initialize();
@@ -151,6 +161,7 @@ public partial class App : Application
 
     protected override async void OnExit(ExitEventArgs e)
     {
+        await _appLifiCycleServiceuthService.OnExitAsync();
         base.OnExit(e);
         Current.Shutdown(0);
     }
