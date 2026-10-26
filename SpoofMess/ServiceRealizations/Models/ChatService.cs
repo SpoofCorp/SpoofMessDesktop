@@ -29,6 +29,9 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
     public event Action<Chat, int?> ChatAdded = null!;
 
     public event Action<int, int> ChatMoved = null!;
+    private readonly SemaphoreSlim _chatLock = new(1, 1);
+
+
     public async Task<Chat?> Get(Guid id, bool saveToLocal = true)
     {
         if (ChatsStorage.TryGetValue(id, out Chat? chat))
@@ -36,17 +39,35 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
             return chat;
         }
 
-        Result<ChatDTO> chatResult = await _chatApiService.GetChat(id);
-        if (!chatResult)
-            return null;
-        chat = chatResult.Body!.Set();
-        if (ChatsStorage.TryAdd(id, chat) && saveToLocal)
-            Add(chat);
-        else if (ChatsStorage.TryGetValue(id, out chat))
-            return chat;
-        await UploadAvatar(chat!, chatResult.Body!);
+        await _chatLock.WaitAsync();
+        try
+        {
+            if (ChatsStorage.TryGetValue(id, out chat))
+            {
+                return chat;
+            }
 
-        return chat;
+            Result<ChatDTO> chatResult = await _chatApiService.GetChat(id);
+            if (!chatResult || chatResult.Body is null)
+                return null;
+
+            chat = chatResult.Body.Set();
+
+            if (ChatsStorage.TryAdd(id, chat))
+            {
+                if (saveToLocal)
+                {
+                    Add(chat);
+                }
+            }
+
+            await UploadAvatar(chat, chatResult.Body);
+            return chat;
+        }
+        finally
+        {
+            _chatLock.Release();
+        }
     }
 
     private async Task UploadAvatar(Chat chat, ChatDTO chatDTO)
@@ -84,7 +105,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
             };
             file.Size = file.Metadata.Size;
             file.PrettySize = _fileService.ToPrettySize(file.Metadata.Size);
-            await _fileService.Save(file);
+            await _fileService.Save(file, cancellationToken);
             newChat.Avatar = file;
         });
     }
@@ -94,9 +115,10 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
         Chat? olderChat = null;
         DateTime timeNewChat = newChat.LastMessage is null ? newChat.CreatedAt : newChat.LastMessage.SentAt;
 
-
         lock (Chats)
         {
+            if (Chats.Any(x => x.UniqueName == newChat.UniqueName))
+                return;
             foreach (Chat chat in Chats)
             {
                 if (chat.LastMessage is null ? chat.CreatedAt <= timeNewChat : chat.LastMessage.SentAt <= timeNewChat)
@@ -113,7 +135,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
                 index = Chats.IndexOf(olderChat);
                 Chats.Insert(index!.Value, newChat);
             }
-            ChatAdded(newChat, index);
+            ChatAdded?.Invoke(newChat, index);
         }
     }
 
@@ -127,8 +149,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
             IsPublic = chat.IsPublic
         });
         if (result.Success)
-            lock (Chats)
-                Chats.Add(result.Body!.Set());
+            Add(result.Body!.Set());
     }
 
     public async void Update(ChangeChatSettingsRequest request)

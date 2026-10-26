@@ -145,6 +145,8 @@ public partial class ChatsViewModel(
 
     private void ChatAdded(Chat arg1, int? arg2)
     {
+        if (Chats.Any(x => x.UniqueName == arg1.UniqueName))
+            return;
         Application.Current.Dispatcher.Invoke(() =>
         {
             if (arg2 is null)
