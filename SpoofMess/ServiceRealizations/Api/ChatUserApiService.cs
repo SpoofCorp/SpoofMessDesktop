@@ -20,18 +20,11 @@ public class ChatUserApiService(
 
     public async Task<Result<List<ChatUserDTO>>> GetChats(DateTime after)
     {
-        try
-        {
-            Result<List<ChatUserDTO>> result = await GetAsync<List<ChatUserDTO>>($"api/ChatUser/get-chats?after={after:yyyy-MM-ddTHH:mm:ssZ}");
-            if (result.Success)
-                return result;
-            //Need show exception
+        Result<List<ChatUserDTO>> result = await GetAsync<List<ChatUserDTO>>($"api/ChatUser/get-chats?after={after:yyyy-MM-ddTHH:mm:ssZ}");
+        if (result.Success)
             return result;
-        }
-        catch (Exception ex)
-        {
-            return Result<List<ChatUserDTO>>.ErrorResult("");
-        }
+        //Need show exception
+        return result;
     }
 
     public async Task<Result> Join(JoinToChatRequest request, CancellationToken cancellationToken = default) =>
