@@ -14,7 +14,7 @@ public partial class ProfileViewModel : AdditionalViewModel
     {
         _actualUserInfo = userInfo;
         Edit = new();
-        Edit.Update(userInfo);
+        Edit.Init(userInfo);
         _userApiService = userApiService;
     }
 
@@ -24,7 +24,14 @@ public partial class ProfileViewModel : AdditionalViewModel
         {
             Result result = await _userApiService.ChangeSettings(request);
             if (result.Success)
-                _actualUserInfo.Update(Edit);
+                _actualUserInfo.Update(new(
+                    ForwardMessage: request.ForwardMessage,
+                    InviteMe: request.InviteMe,
+                    MonthsBeforeDelete: request.MonthsBeforeDelete,
+                    UserUpdateModel: new(Name: request.Name),
+                    SearchMe: request.SearchMe,
+                    ShowMe: request.ShowMe
+                ));
         }
         base.OnClose();
     }

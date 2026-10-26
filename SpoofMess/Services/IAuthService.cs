@@ -1,5 +1,6 @@
 ﻿using CommonObjects.Responses;
 using CommonObjects.Results;
+using SpoofMess.Models.UpdateModels;
 
 namespace SpoofMess.Services;
 
@@ -10,4 +11,5 @@ public interface IAuthService
     public Task<string?> GetAccess();
     public Task SetTokens(UserAuthorizeResponse response);
     public Task Save();
+    public Task Update(UserInfoUpdateModel changes);
 }

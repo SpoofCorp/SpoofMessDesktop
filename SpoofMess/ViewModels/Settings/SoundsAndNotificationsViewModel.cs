@@ -1,5 +1,6 @@
 ﻿using CommonObjects.Requests.Changes;
 using SpoofMess.Models;
+using SpoofMess.Models.UpdateModels;
 using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.Settings;
@@ -15,7 +16,7 @@ public partial class SoundsAndNotificationsViewModel : AdditionalViewModel
         _authService = authService;
         _actualUserInfo = userInfo;
         Edit = new();
-        Edit.Update(userInfo);
+        Edit.Init(userInfo);
     }
 
     public override async void OnClose()
@@ -23,7 +24,14 @@ public partial class SoundsAndNotificationsViewModel : AdditionalViewModel
         if (_actualUserInfo.Change(Edit, out ChangeUserSettingsRequest request))
         {
             await _authService.Save();
-            _actualUserInfo.Update(Edit);
+            _actualUserInfo.Update(new UserInfoUpdateModel(
+                    ForwardMessage: request.ForwardMessage,
+                    InviteMe: request.InviteMe,
+                    MonthsBeforeDelete: request.MonthsBeforeDelete,
+                    UserUpdateModel: new(Name: request.Name),
+                    SearchMe: request.SearchMe,
+                    ShowMe: request.ShowMe
+            ));
         }
         base.OnClose();
     }

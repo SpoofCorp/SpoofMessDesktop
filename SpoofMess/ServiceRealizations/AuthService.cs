@@ -2,7 +2,9 @@
 using CommonObjects.Requests;
 using CommonObjects.Responses;
 using CommonObjects.Results;
+using SpoofMess.Bases;
 using SpoofMess.Models;
+using SpoofMess.Models.UpdateModels;
 using SpoofMess.ServiceRealizations.Api;
 using SpoofMess.Services;
 using System.IdentityModel.Tokens.Jwt;
@@ -27,6 +29,7 @@ public class AuthService(
     private static string BackupPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SpoofMess", "SessionData.json");
 
     public bool IsAuthorized { get; set; }
+    public bool IsInitialized { get; set; }
 
     private readonly IFileService _fileService = fileService;
     private readonly UserInfo UserInfo = userInfo;
@@ -45,11 +48,11 @@ public class AuthService(
         {
             await stream.DisposeAsync();
         }
-        UserInfo.Update(userInfo);
+        UserInfo.Init(userInfo);
         if (UserInfo.Authorize is null)
             return Result.ErrorResult("Empty authorize data");
 
-          return await Update();
+        return await Update();
     }
 
     public async Task<string?> GetAccess()
@@ -77,13 +80,13 @@ public class AuthService(
     }
 
     private async Task<Result> Update()
-       {
-         Result<UserAuthorizeResponse> result = await PostAsync<UpdateTokenRequest, UserAuthorizeResponse>(
-            "api/v1/Entrance/UpdateToken",
-            new UpdateTokenRequest()
-            {
-                Token = UserInfo.Authorize!.RefreshToken
-            });
+    {
+        Result<UserAuthorizeResponse> result = await PostAsync<UpdateTokenRequest, UserAuthorizeResponse>(
+           "api/v1/Entrance/UpdateToken",
+           new UpdateTokenRequest()
+           {
+               Token = UserInfo.Authorize!.RefreshToken
+           });
         if (result)
         {
             await SetTokens(result.Body!);
@@ -97,7 +100,6 @@ public class AuthService(
     {
         UserInfo.Authorize = response;
         await Save();
-
         JwtSecurityTokenHandler jwt = new();
         JwtSecurityToken token = jwt.ReadJwtToken(UserInfo.Authorize.AccessToken);
         ValidTo = token.ValidTo;
@@ -109,6 +111,12 @@ public class AuthService(
             return false;
 
         return ValidTo >= DateTime.UtcNow.AddSeconds(15);
+    }
+
+    public async Task Update(UserInfoUpdateModel changes)
+    {
+        UserInfo.Update(changes);
+        await Save();
     }
 
     public async Task Save()

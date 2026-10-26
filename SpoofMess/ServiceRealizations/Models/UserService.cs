@@ -2,6 +2,7 @@
 using CommonObjects.Responses;
 using CommonObjects.Results;
 using SpoofMess.Models;
+using SpoofMess.Models.UpdateModels;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
@@ -92,7 +93,7 @@ public class UserService(
         User? user = await Get(_userInfo.User.Login, cancellationToken);
         if (user is null)
             return;
-        _userInfo.User.Update(user);
+        _userInfo.User.Update(new UserUpdateModel(user));
     }
 
     public async void AvatarUpdateHandler(FileObject avatar, User user)

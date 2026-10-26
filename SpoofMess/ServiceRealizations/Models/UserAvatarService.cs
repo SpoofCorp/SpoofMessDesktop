@@ -14,11 +14,13 @@ public class UserAvatarService(
     IFileService fileService,
     IFileApiService fileApiService,
     IFingerprintService fingerprintService,
+    IAuthService authService,
     IUserAvatarApiService userAvatarApiService) : IUserAvatarService
 {
     private readonly IFileService _fileService = fileService;
     private readonly IFileApiService _fileApiService = fileApiService;
     private readonly IUserAvatarApiService _userAvatarApiService = userAvatarApiService;
+    private readonly IAuthService _authService = authService;
     private readonly IFingerprintService _fingerprintService = fingerprintService;
     private readonly UserInfo _userInfo = userInfo;
 
@@ -53,11 +55,15 @@ public class UserAvatarService(
                 fileResult.Body.Name ?? "",
                 fileResult.Body.Size)));
 
-        if(result.Success)
-            _userInfo.User.Avatar = new() 
+        if (result.Success)
+        {
+            _userInfo.User.Avatar = new()
             {
                 Path = fileResult.Body.Path
             };
+
+            await _authService.Update(new(UserUpdateModel: new(Avatar: _userInfo.User.Avatar)));
+        }
 
         return result;
     }
