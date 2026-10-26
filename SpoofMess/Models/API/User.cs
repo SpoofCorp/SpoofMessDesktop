@@ -1,5 +1,7 @@
 ﻿using CommonObjects.DTO;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.VisualBasic.ApplicationServices;
+using SpoofMess.Models.UpdateModels;
 using System.Collections.ObjectModel;
 
 namespace SpoofMess.Models;
@@ -18,7 +20,16 @@ public partial class User : ObservableObject
     [ObservableProperty]
     public partial DateTime? WasOnline { get; set; }
 
-    public void Update(User user)
+    public void Update(UserUpdateModel user)
+    {
+        Id = user.Id ?? Id;
+        Avatar = user.Avatar ?? Avatar;
+        Avatars = user.Avatars ?? Avatars;
+        Name = user.Name ?? Name;
+        Login = user.Login ?? Login;
+        WasOnline = user.WasOnline ?? WasOnline;
+    }
+    public void Init(User user)
     {
         Id = user.Id;
         Avatar = user.Avatar;

@@ -1,6 +1,8 @@
 ﻿using CommonObjects.Requests.Changes;
 using CommonObjects.Responses;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.VisualBasic.ApplicationServices;
+using SpoofMess.Models.UpdateModels;
 using System.Globalization;
 using System.Text.Json.Serialization;
 using System.Windows;
@@ -65,10 +67,36 @@ public partial class UserInfo : ObservableObject
 
     public User User { get; set; } = new();
 
-    public void Update(UserInfo userInfo)
+    public bool Update(UserInfoUpdateModel userInfoUpdateModel)
+    {
+        int hash = GetHashCode();
+        Authorize = userInfoUpdateModel.Authorize ?? Authorize;
+        SessionSettings = userInfoUpdateModel.SessionSettings ?? SessionSettings;
+        CloneWindows = userInfoUpdateModel.CloneWindows ?? CloneWindows;
+        Height = userInfoUpdateModel.Height ?? Height;
+        Width = userInfoUpdateModel.Width ?? Width;
+        HideToTray = userInfoUpdateModel.HideToTray ?? HideToTray;
+        UnselectChat = userInfoUpdateModel.UnselectChat ?? UnselectChat;
+        SearchMe = userInfoUpdateModel.SearchMe ?? SearchMe;
+        ShowMe = userInfoUpdateModel.ShowMe ?? ShowMe;
+        ForwardMessage = userInfoUpdateModel.ForwardMessage ?? ForwardMessage;
+        InviteMe = userInfoUpdateModel.InviteMe ?? InviteMe;
+        MonthsBeforeDelete = userInfoUpdateModel.MonthsBeforeDelete ?? MonthsBeforeDelete;
+        Language = userInfoUpdateModel.Language ?? Language;
+        Theme = userInfoUpdateModel.Theme ?? Theme;
+        Visual = userInfoUpdateModel.Visual ?? Visual;
+        ShowMessagesNotifications = userInfoUpdateModel.ShowMessagesNotifications ?? ShowMessagesNotifications;
+        ShowErrorNotifications = userInfoUpdateModel.ShowErrorNotifications ?? ShowErrorNotifications;
+        EditedName = userInfoUpdateModel.EditedName ?? User.Name ?? string.Empty;
+        if (userInfoUpdateModel.UserUpdateModel is not null)
+            User.Update(userInfoUpdateModel.UserUpdateModel);
+        return hash != GetHashCode();
+    }
+
+    public void Init(UserInfo userInfo)
     {
         EditedName = userInfo.User.Name ?? string.Empty;
-        User.Update(userInfo.User);
+        User.Init(userInfo.User);
         Authorize = userInfo.Authorize;
         SessionSettings = userInfo.SessionSettings;
         CloneWindows = userInfo.CloneWindows;
