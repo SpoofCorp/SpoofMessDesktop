@@ -1,11 +1,11 @@
 # SpoofMessDesktop
 ## What is it?
 A desktop(Windows) client for [SpoofMess]("https://github.com/Pychka/SpoofMess")
-| Authorization View | Main View |
+| Login View | Main View |
 |:---:|:---:|
-| <img src="Data/AuthorizeView.png" width="300"> | <img src="Data/MainView.png" width="300"> |
+| <img src="Data/LoginView.png" width="300"> | <img src="Data/MainView.png" width="300"> |
 ## Core Features
-Now you can:
+Available now:
 - Authorize/registration in app;
 - Sync your chats + messages;
 - Send text messages;
@@ -16,7 +16,7 @@ Now you can:
     - Other files(now just only their size and name are displayed).
 
 ## Roadmap
-Soon you can:
+Coming soon:
 - create chats with any types;
 - manage your chats:
     - settings;
