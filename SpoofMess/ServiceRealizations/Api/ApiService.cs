@@ -28,14 +28,14 @@ public abstract class ApiService(HttpClient client, ISerializer serializer) : ID
     protected virtual async Task<Result> PostAsync<T>(string requestUrl, T obj, CancellationToken token = default) =>
         await PostAsync(
             requestUrl,
-            GetJsonContent(obj),
+            content: GetJsonContent(obj),
             token: token
         );
 
     protected virtual async Task<Result<TResult>> PostAsync<T, TResult>(string requestUrl, T obj, CancellationToken token = default) =>
         await PostAsync<TResult>(
             requestUrl,
-            GetJsonContent(obj),
+            content: GetJsonContent(obj),
             token: token
         );
 
