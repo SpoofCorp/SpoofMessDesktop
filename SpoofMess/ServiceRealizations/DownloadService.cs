@@ -75,7 +75,6 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
                     progress.Raise((double)totalRead / totalBytes * 100);
             }
         }
-        FileExtension extension = _fileClassifier.GetExtension(file.Path);
 
         progress.Raise(100);
         input.Dispose();

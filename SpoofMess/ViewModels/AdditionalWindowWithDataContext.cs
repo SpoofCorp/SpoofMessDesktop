@@ -36,7 +36,7 @@ public partial class AdditionalWindowWithDataContext(string key, INavigationServ
             Window.Focus();
             return;
         }
-        if (DataContext is IInitializable initializable)
+        if (DataContext is IAsyncInitializable initializable)
             initializable.InitializeAsync();
         Window.Show();
         isStarted = true;

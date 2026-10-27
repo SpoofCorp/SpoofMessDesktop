@@ -54,7 +54,7 @@ public partial class MainViewModel(
     [RelayCommand]
     private void ShowProfile()
     {
-        //_navigationService.SetProfileViewModel(this);
+        _navigationService.SetProfileViewModel(this);
     }
 
     [RelayCommand]

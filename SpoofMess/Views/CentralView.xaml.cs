@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using SpoofMess.ViewModels;
+using System.Windows;
 using System.Windows.Input;
 
 namespace SpoofMess.Views;
@@ -12,7 +13,9 @@ public partial class CentralView : Window
 
     private void Close_Click(object sender, RoutedEventArgs e)
     {
-        Application.Current.Shutdown(0);
+        NotifyIcon.Dispose();
+        if (DataContext is CentralViewModel cvm)
+            cvm.CloseCommand.Execute(default);
     }
 
     private void DockPanel_PreviewMouseDown(object sender, MouseButtonEventArgs e)

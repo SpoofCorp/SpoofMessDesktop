@@ -214,6 +214,8 @@ public class NavigationService(
         CurrentMainWindow.DataContext = _currentViewModel;
         _currentViewModel.View = GetViewModel<TViewModel>();
         CurrentMainWindow.Show();
+        if (_currentViewModel.View is IAsyncInitializable asyncInitializable)
+            asyncInitializable.InitializeAsync();
         if (_currentViewModel.View is IInitializable initializable)
             initializable.InitializeAsync();
     }

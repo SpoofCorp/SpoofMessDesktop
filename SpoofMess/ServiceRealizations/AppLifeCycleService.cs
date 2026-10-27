@@ -5,10 +5,12 @@ using SpoofMess.Services.Models;
 
 namespace SpoofMess.ServiceRealizations;
 
-public class AppLifeCycleService(UserInfo userInfo, IAuthService authService, IServiceProvider serviceProvider) : IAppLifeCycleService, IDisposable
+public class AppLifeCycleService(
+    IAuthService authService,
+    IServiceProvider serviceProvider
+) : IAppLifeCycleService, IDisposable
 {
     protected CancellationTokenSource _cts = new();
-    private readonly UserInfo _userInfo = userInfo;
     private readonly IAuthService _authService = authService;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
