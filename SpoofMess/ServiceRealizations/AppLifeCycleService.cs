@@ -25,7 +25,7 @@ public class AppLifeCycleService(
         IUserService userService = _serviceProvider.GetRequiredService<IUserService>();
         INotificationService notificationService = _serviceProvider.GetRequiredService<INotificationService>();
         INavigationService navigationService = _serviceProvider.GetRequiredService<INavigationService>();
-        notificationService.InitializeAsync();
+        notificationService.Initialize();
         await navigationService.InitializeAsync();
         if (await _authService.Initialize())
         {

@@ -127,13 +127,16 @@ public class MessageService(
         Chat? chat = await _chatService.Get(chatId);
         if (chat is null)
             return;
-        MessageModel? message = chat.Messages.FirstOrDefault(x => x.Id == messageId);
-        if (message is null)
-            return;
-        Application.Current.Dispatcher.Invoke(() =>
+        lock (chat.Messages)
         {
-            chat.Messages.Remove(message);
-        });
+            MessageModel? message = chat.Messages.FirstOrDefault(x => x.Id == messageId);
+            if (message is null)
+                return;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                chat.Messages.Remove(message);
+            });
+        }
     }
 
     public async void EditHandle(EditMessageResponse message)

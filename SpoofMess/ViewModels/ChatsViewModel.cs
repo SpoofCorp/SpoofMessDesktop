@@ -14,15 +14,13 @@ public partial class ChatsViewModel(
     IChatUserService chatUserService,
     ISearchService searchService,
     INotificationApiService notificationApiService,
-    INavigationService navigationService) : PlacementViewModel, IAsyncInitializable, IDisposable
+    INavigationService navigationService) : PlacementViewModel, IAsyncInitializable
 {
     private readonly IChatService _chatService = chatService;
     private readonly IChatUserService _chatUserService = chatUserService;
     private readonly ISearchService _searchService = searchService;
     private readonly INotificationApiService _notificationApiService = notificationApiService;
     private readonly INavigationService _navigationService = navigationService;
-
-    public bool IsInitialized { get; set; }
     public ConcurrentObservableCollection<Chat> Chats { get; set; } = [];
 
     public ObservableCollection<Chat> SearchResultsChats { get; set; } = [];
@@ -113,10 +111,8 @@ public partial class ChatsViewModel(
         await _searchService.SimpleSearch(SearchResultsChats, SearchResultsMessages, Query);
     }
 
-    public async Task InitializeAsync()
+    protected override async Task InitializeAsync(bool initialize)
     {
-        if (IsInitialized)
-            return;
         _notificationApiService.OnChatCreated += _chatUserService.ChatCreated;
         _notificationApiService.OnChatUpdated += _chatService.Update;
         _notificationApiService.OnChatAvatarUpdated += _chatService.OnChatAvatarUpdated;
@@ -124,7 +120,7 @@ public partial class ChatsViewModel(
         _chatService.ChatAdded += ChatAdded;
         _chatService.ChatMoved += ChatMoved;
         await _chatUserService.SyncChats(DateTime.UtcNow.AddMonths(-10));
-        IsInitialized = true;
+        await base.InitializeAsync(initialize);
     }
 
     private async void SelectChat(Chat? searchableEntity)
@@ -157,7 +153,7 @@ public partial class ChatsViewModel(
         });
     }
 
-    public void Dispose()
+    protected override async ValueTask DisposeAsync(bool disposing)
     {
         ServiceRealizations.EventHandler.OnAdd -= _chatService.OnMessageAdded;
         _notificationApiService.OnChatAvatarUpdated -= _chatService.OnChatAvatarUpdated;
@@ -165,7 +161,7 @@ public partial class ChatsViewModel(
         _notificationApiService.OnChatCreated -= _chatUserService.ChatCreated;
         _chatService.ChatAdded -= ChatAdded;
         _chatService.ChatMoved -= ChatMoved;
-        GC.SuppressFinalize(this);
+        await base.DisposeAsync(disposing);
     }
 
     public void SetChat(Chat chat) =>

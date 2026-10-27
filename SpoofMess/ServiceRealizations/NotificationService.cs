@@ -13,10 +13,16 @@ public class NotificationService(UserInfo userInfo, CentralViewModel centralView
     private readonly CentralViewModel _centralViewModel = centralViewModel;
     private readonly INavigationService _navigationService = navigationService;
     private static readonly SemaphoreSlim _semaphore = new(1, 1);
+    public bool IsInitialized { get; set; }
 
-    public void InitializeAsync()
+    public void Initialize()
     {
+        if (IsInitialized)
+        {
+            throw new ApplicationException("It's been initialized");
+        }
         EventHandler.OnAdd += ShowNewMessageNotification;
+        IsInitialized = true;
     }
 
     public void ShowMessageBox(Notification notification)

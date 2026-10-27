@@ -214,17 +214,15 @@ public class NavigationService(
         CurrentMainWindow.DataContext = _currentViewModel;
         _currentViewModel.View = GetViewModel<TViewModel>();
         CurrentMainWindow.Show();
-        if (_currentViewModel.View is IAsyncInitializable asyncInitializable)
-            asyncInitializable.InitializeAsync();
-        if (_currentViewModel.View is IInitializable initializable)
-            initializable.InitializeAsync();
     }
 
     private TViewModel GetViewModel<TViewModel>() where TViewModel : ObservableObject
     {
         TViewModel viewModel = _serviceProvider.GetRequiredService<TViewModel>();
-        if (viewModel is IAsyncInitializable initializable)
-            initializable.InitializeAsync();
+        if (viewModel is IAsyncInitializable asyncInitializable)
+            asyncInitializable.InitializeAsync();
+        if (viewModel is IInitializable initializable)
+            initializable.Initialize();
         return viewModel;
     }
 

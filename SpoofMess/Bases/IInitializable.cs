@@ -2,5 +2,6 @@
 
 public interface IInitializable
 {
-    public void InitializeAsync();
+    public bool IsInitialized { get; set; }
+    public void Initialize();
 }

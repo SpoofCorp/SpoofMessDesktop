@@ -19,7 +19,7 @@ public partial class MainViewModel(
     IUserService userService,
     IAuthService authService,
     ChatsViewModel chatsViewModel,
-    UserInfo userInfo) : PlacementViewModel, IDisposable, IAsyncInitializable
+    UserInfo userInfo) : PlacementViewModel, IAsyncInitializable
 {
     private readonly CancellationTokenSource token = new();
     private readonly UserInfo _userInfo = userInfo;
@@ -49,7 +49,6 @@ public partial class MainViewModel(
 
     [ObservableProperty]
     public partial Visibility SideMenuVisibility { get; set; } = Visibility.Collapsed;
-    public bool IsInitialized { get; set; }
 
     [RelayCommand]
     private void ShowProfile()
@@ -92,7 +91,7 @@ public partial class MainViewModel(
         }
     }
 
-    public async Task InitializeAsync()
+    protected override async Task InitializeAsync(bool initialize)
     {
         try
         {
@@ -102,6 +101,7 @@ public partial class MainViewModel(
             ServiceRealizations.EventHandler.OnUserAvatarUpdated += _userService.AvatarUpdateHandler;
             await Task.WhenAll(ChatsViewModel.InitializeAsync(), MessagesViewModel.InitializeAsync());
             await _notificationApiService.InitializeAsync();
+            await base.InitializeAsync(initialize);
         }
         catch (Exception ex)
         {
@@ -109,12 +109,12 @@ public partial class MainViewModel(
         }
     }
 
-    public void Dispose()
+    protected override async ValueTask DisposeAsync(bool disposing)
     {
         token.Cancel();
         _notificationApiService.OnUserUpdated -= _userService.OnUserUpdated;
         ServiceRealizations.EventHandler.OnUserAvatarUpdated -= _userService.AvatarUpdateHandler;
         ChatsViewModel.OnSelectionChatChanged -= MessagesViewModel.OnSelectionChatChanged;
-        GC.SuppressFinalize(this);
+        await base.DisposeAsync(disposing);
     }
 }

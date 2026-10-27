@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SpoofMess.Bases;
 
 namespace SpoofMess.ViewModels;
 
-public abstract partial class AdditionalViewModel : ObservableObject
+public abstract partial class AdditionalViewModel : BaseViewModel
 {
     public AdditionalViewModel? Predecessor;
     protected IPlacementViewModel _placement = null!;

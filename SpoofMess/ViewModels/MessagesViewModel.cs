@@ -14,7 +14,7 @@ public partial class MessagesViewModel(
     IMessageService messageService,
     INotificationService notificationService,
     IAttachmentService attachmentService,
-    FileAudioRecorderService fileAudioRecorderService) : ObservableObject, IAsyncInitializable, IDisposable
+    FileAudioRecorderService fileAudioRecorderService) : BaseViewModel
 {
     protected readonly INotificationService _notificationService = notificationService;
     protected readonly IAttachmentService _attachmentService = attachmentService;
@@ -23,7 +23,6 @@ public partial class MessagesViewModel(
     [ObservableProperty]
     public partial bool IsVoiceRecording { get; set; }
     private Action<Chat> getChatInfo = null!;
-    public bool IsInitialized { get; set; }
     public Visibility SelectChatVisibility => SelectedChat is null ? Visibility.Visible : Visibility.Collapsed;
     public Visibility ChatMessagesVisibility => SelectedChat is null ? Visibility.Collapsed : Visibility.Visible;
 
@@ -102,12 +101,10 @@ public partial class MessagesViewModel(
             getChatInfo(SelectedChat);
     }
 
-    public virtual async Task InitializeAsync()
+    protected override async Task InitializeAsync(bool initialize)
     {
-        if (IsInitialized)
-            return;
-        _fileAudioRecorderService.InitializeAsync();
-        IsInitialized = true;
+        _fileAudioRecorderService.Initialize();
+        await base.InitializeAsync(initialize);
     }
 
     public void SetGetChatInfo(Action<Chat> func) =>
@@ -116,9 +113,9 @@ public partial class MessagesViewModel(
     public void OnSelectionChatChanged(Chat? chat) =>
         SelectedChat = chat;
 
-    public virtual void Dispose()
+    protected override async ValueTask DisposeAsync(bool disposing)
     {
         SelectedChat?.IsOpened = true;
-        GC.SuppressFinalize(this);
+        await base.DisposeAsync(disposing);
     }
 }

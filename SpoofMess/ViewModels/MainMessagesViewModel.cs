@@ -16,23 +16,26 @@ public partial class MainMessagesViewModel(
 
     public override async Task InitializeAsync()
     {
+        await base.InitializeAsync();
         _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
         _notificationApiService.OnMessageEdited += _messageService.EditHandle;
         _notificationApiService.OnMessageDeleted += _messageService.OnDelete;
         ServiceRealizations.EventHandler.OnDelete += _messageService.DeleteLocal;
         ServiceRealizations.EventHandler.OnEdit += _messageService.StartEdit;
         await _messageService.LoadSkippedMesssages(DateTime.UtcNow.AddMonths(-10));
-        await base.InitializeAsync();
+        IsInitialized = true;
     }
 
-    public override void Dispose()
+    protected override async ValueTask DisposeAsync(bool disposing)
     {
-        _notificationApiService.OnMessageReceived -= _messageService.UploadMessage;
-        _notificationApiService.OnMessageDeleted -= _messageService.OnDelete;
-        _notificationApiService.OnMessageEdited -= _messageService.EditHandle;
-        ServiceRealizations.EventHandler.OnDelete -= _messageService.DeleteLocal;
-        ServiceRealizations.EventHandler.OnEdit -= _messageService.StartEdit;
-        GC.SuppressFinalize(this);
-        base.Dispose();
+        if (disposing)
+        {
+            _notificationApiService.OnMessageReceived -= _messageService.UploadMessage;
+            _notificationApiService.OnMessageDeleted -= _messageService.OnDelete;
+            _notificationApiService.OnMessageEdited -= _messageService.EditHandle;
+            ServiceRealizations.EventHandler.OnDelete -= _messageService.DeleteLocal;
+            ServiceRealizations.EventHandler.OnEdit -= _messageService.StartEdit;
+        }
+        await base.DisposeAsync(disposing);
     }
 }

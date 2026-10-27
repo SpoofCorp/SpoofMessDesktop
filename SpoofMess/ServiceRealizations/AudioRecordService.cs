@@ -9,8 +9,15 @@ public partial class AudioRecorderService : IAudioRecordService, IInitializable,
 {
     protected static readonly WaveFormat waveFormat = new(44100, 16, 1);
     protected WaveInEvent waveIn = null!;
-    public virtual void InitializeAsync()
+
+    public bool IsInitialized { get; set; }
+
+    public virtual void Initialize()
     {
+        if (IsInitialized)
+        {
+            throw new ApplicationException("It's been initialized");
+        }
         MediaFoundationApi.Startup();
 
         waveIn = new()
@@ -21,7 +28,7 @@ public partial class AudioRecorderService : IAudioRecordService, IInitializable,
         waveIn.DataAvailable += WaveInDataAvailable;
 
         waveIn.RecordingStopped += OnRecordingStopped;
-
+        IsInitialized = true;
     }
 
     protected virtual void WaveInDataAvailable(object? sender, WaveInEventArgs e)

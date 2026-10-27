@@ -11,7 +11,7 @@ public partial class ChatInfoViewModel(
     IChatAvatarService chatAvatarService,
     INotificationService notificationService,
     INavigationService navigationService,
-    IChatUserService chatUserService) : PlacementAdditionalViewModel, IAsyncInitializable
+    IChatUserService chatUserService) : PlacementAdditionalViewModel
 {
     private readonly IChatAvatarService _chatAvatarService = chatAvatarService;
     private readonly INotificationService _notificationService = notificationService;
@@ -19,8 +19,6 @@ public partial class ChatInfoViewModel(
     private readonly IChatUserService _chatUserService = chatUserService;
 
     public Chat Chat { get; set; } = null!;
-
-    public bool IsInitialized { get; set; }
 
 
     [RelayCommand]
@@ -52,11 +50,11 @@ public partial class ChatInfoViewModel(
 
     }
 
-    public async Task InitializeAsync()
+    protected override async Task InitializeAsync(bool initialize)
     {
         if (Chat.Users.Count == 0)
             await _chatUserService.UploadManyMembers(Chat);
-        IsInitialized = true;
+        await base.InitializeAsync(initialize);
     }
 
     [RelayCommand]
