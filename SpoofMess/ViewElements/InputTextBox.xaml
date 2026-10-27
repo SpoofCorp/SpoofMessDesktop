@@ -17,7 +17,6 @@
             Background="Transparent"/>
         <TextBox
             Margin="0"
-            BorderBrush="Transparent"
             Height="auto"
             VerticalScrollBarVisibility="Auto" 
             TextWrapping="{Binding ElementName=InputTextBoxView, Path=TextWrapping}" 

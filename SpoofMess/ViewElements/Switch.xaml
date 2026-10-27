@@ -13,7 +13,7 @@
                     <Border Focusable="False" Width="50" Height="20" x:Name="BackBorder" Style="{StaticResource CardBorder}" CornerRadius="{DynamicResource Corner2}" Background="{StaticResource Third}"/>
 
                     <Border Focusable="False" x:Name="Boulder" Width="30" Height="30" CornerRadius="15" 
-                            Background="{DynamicResource Primary}" BorderThickness="1"
+                            Background="{DynamicResource Second}" BorderBrush="{DynamicResource Third}" 
                             HorizontalAlignment="Left" IsHitTestVisible="False">
                         <Border.RenderTransform>
                             <TranslateTransform x:Name="BallTransform" X="-1.1"/>
@@ -35,7 +35,7 @@
                                                 To="{StaticResource SecondAccentColor}" Duration="0:0:0.2"/>
                                 <ColorAnimation Storyboard.TargetName="Boulder" 
                                                 Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
-                                                To="{StaticResource ThirdAccentColor}" Duration="0:0:0.2"/>
+                                                To="{StaticResource PrimaryAccentColor}" Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
@@ -50,7 +50,7 @@
                                                 To="{StaticResource ThirdWhiteColor}" Duration="0:0:0.2"/>
                                 <ColorAnimation Storyboard.TargetName="Boulder" 
                                                 Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
-                                                To="{StaticResource PrimaryWhiteColor}" Duration="0:0:0.2"/>
+                                                To="{StaticResource SecondWhiteColor}" Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.ExitActions>
