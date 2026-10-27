@@ -2,7 +2,6 @@
 using CommonObjects.Requests;
 using CommonObjects.Responses;
 using CommonObjects.Results;
-using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.Models.UpdateModels;
 using SpoofMess.ServiceRealizations.Api;
@@ -10,6 +9,7 @@ using SpoofMess.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 
 namespace SpoofMess.ServiceRealizations;
 
@@ -43,6 +43,10 @@ public class AuthService(
         try
         {
             userInfo = await _serializer.Deserialize<UserInfo>(stream);
+        }
+        catch(JsonException)
+        {
+            return Result.ErrorResult("Session data has broken");
         }
         finally
         {
@@ -125,19 +129,26 @@ public class AuthService(
         try
         {
             string path = Path.GetDirectoryName(BackupPath)!;
+            string tempPath = $"{BackupPath}.tmp";
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-            Stream? stream = _fileService.GetWriteStreamFromFile(BackupPath);
-            if (stream is null)
-                return;
+            Stream? stream = null;
             try
             {
+                stream = _fileService.GetWriteStreamFromFile(tempPath);
+                if (stream is null)
+                    return;
                 await _serializer.Serialize(UserInfo, stream);
                 await stream.FlushAsync();
+                await stream.DisposeAsync();
+                stream = null;
+                if (File.Exists(tempPath))
+                    File.Move(tempPath, BackupPath, true);
             }
             finally
             {
-                await stream.DisposeAsync();
+                if (stream is not null)
+                    await stream.DisposeAsync();
             }
         }
         finally
