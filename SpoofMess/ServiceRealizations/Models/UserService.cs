@@ -28,24 +28,22 @@ public class UserService(
 
     private ConcurrentDictionary<string, User> Users { get; set; } = [];
 
-    public async Task<User?> Get(string login, CancellationToken cancellationToken = default)
+    public async Task<User?> Get(string login, bool update = false, CancellationToken cancellationToken = default)
     {
-        if (login == _userInfo.User.Login && !Users.TryAdd(login, _userInfo.User))
+        if (!update && login == _userInfo.User.Login && !Users.TryAdd(login, _userInfo.User))
             return _userInfo.User;
 
-        return await UploadQueue(login, cancellationToken);
+        return await UploadQueue(login, update, cancellationToken);
     }
 
-    private async Task<User?> UploadQueue(string login, CancellationToken cancellationToken = default)
+    private async Task<User?> UploadQueue(string login, bool update, CancellationToken cancellationToken = default)
     {
         SemaphoreSlim semaphore = _locks.GetOrAdd(login, _ => new SemaphoreSlim(1, 1));
         await semaphore.WaitAsync(cancellationToken);
         try
         {
-            if (Users.TryGetValue(login, out User? user))
-            {
+            if (!update && Users.TryGetValue(login, out User? user))
                 return user;
-            }
 
             Result<UserDTO> result = await _userApiService.GetByLogin(login);
             if (result.Success)
@@ -90,7 +88,7 @@ public class UserService(
 
     public async Task SyncAccount(CancellationToken cancellationToken = default)
     {
-        User? user = await Get(_userInfo.User.Login, cancellationToken);
+        User? user = await Get(_userInfo.User.Login, true, cancellationToken);
         if (user is null)
             return;
         _userInfo.User.Update(new UserUpdateModel(user));

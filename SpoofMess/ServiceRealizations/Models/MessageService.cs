@@ -176,7 +176,7 @@ public class MessageService(
 
         Task userTask = Task.Run(async () =>
         {
-            User? user = await _userService.Get(message.User!.Login, cancelationToken);
+            User? user = await _userService.Get(message.User!.Login, cancellationToken: cancelationToken);
             if (user is null)
                 return;
             user.Name = messageDTO.SenderName;

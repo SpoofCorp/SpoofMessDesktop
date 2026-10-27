@@ -48,7 +48,7 @@ public class ChatUserService(
         ConcurrentBag<User> users = [];
         await Parallel.ForEachAsync(members, cancellationToken, async (member, ct) =>
         {
-            User? user = await _userService.Get(member.Login, cancellationToken);
+            User? user = await _userService.Get(member.Login, cancellationToken: cancellationToken);
             user ??= new()
             {
                 Avatar = new()

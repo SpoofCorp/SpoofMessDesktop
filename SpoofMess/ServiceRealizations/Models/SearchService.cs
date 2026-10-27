@@ -40,7 +40,7 @@ public class SearchService(
             {
                 if(searchableEntity.Type == SearchType.User)
                 {
-                    User? user = await _userService.Get(searchableEntity.UniqueName, cancaletionToken);
+                    User? user = await _userService.Get(searchableEntity.UniqueName, cancellationToken: cancaletionToken);
                     if (user is null)
                         return;
                     
