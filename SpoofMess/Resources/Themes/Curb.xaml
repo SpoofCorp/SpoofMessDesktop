@@ -6,6 +6,7 @@
 
     <SolidColorBrush x:Key="DefaultTextColor" Color="#9EA4B0"/>
     <SolidColorBrush x:Key="ActiveTextColor" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="FunctionTextColor" Color="#F5F7FA"/>
 
     <SolidColorBrush x:Key="PrimaryBlack" Color="#161719"/>
     <SolidColorBrush x:Key="SecondBlack" Color="#1E1F22"/>

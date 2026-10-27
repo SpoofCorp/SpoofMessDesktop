@@ -1,6 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:Double x:Key="BaseFontSize">25</sys:Double>
+    
     <Thickness x:Key="MarginVertical">0 5</Thickness>
     <sys:Double x:Key="Width1">200</sys:Double>
     <sys:Double x:Key="MinButtonWith">30</sys:Double>

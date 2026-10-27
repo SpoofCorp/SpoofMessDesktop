@@ -137,12 +137,12 @@
                 </ContentControl>
                 <ContentControl Style="{StaticResource CardBlock}" Grid.Row="4">
                     <StackPanel>
-                        <ve:FunctionButton Text="{DynamicResource Profile}" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
+                        <ve:FunctionButton Margin="0 5 0 0" Text="{DynamicResource Profile}" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource NotificationsAndSounds}" Icon="🔔" Alignment="Stretch" Command="{Binding NotificationsCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource PrivacySecurity}" Icon="🔒" Alignment="Stretch" Command="{Binding PrivacyCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource Advanced}" Icon="🌡️" Alignment="Stretch" Command="{Binding AdvancedCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource Language}" Icon="🈵" Alignment="Stretch" Command="{Binding LanguageCommand}"/>
-                        <ve:FunctionButton Text="{DynamicResource Design}" Icon="🖼️" Alignment="Stretch" Command="{Binding DesignCommand}"/>
+                        <ve:FunctionButton Margin="0 0 0 5" Text="{DynamicResource Design}" Icon="🖼️" Alignment="Stretch" Command="{Binding DesignCommand}"/>
                     </StackPanel>
                 </ContentControl>
             </Grid>
@@ -214,7 +214,7 @@
                                                     StaysOpen="False"
                                                     AllowsTransparency="True">
                                                     <Border Padding="10">
-                                                        <Border Style="{StaticResource CardBorder}" Background="{DynamicResource Second}">
+                                                        <Border Style="{StaticResource ShadowBorder}" Background="{DynamicResource Second}">
                                                             <StackPanel>
                                                                 <ve:FunctionButton Text="{DynamicResource Info}" Icon="ℹ️" Command="{Binding ShowChatInfoCommand}"/>
                                                                 <ve:FunctionButton Text="{DynamicResource Settings}" Icon="⚙️"/>
@@ -497,7 +497,7 @@
                                                                 StaysOpen="False"
                                                                 AllowsTransparency="True">
                                                                 <Border Padding="10">
-                                                                    <Border Style="{StaticResource CardBorder}" Background="{DynamicResource Second}">
+                                                                    <Border Style="{StaticResource ShadowBorder}" Background="{DynamicResource Second}">
                                                                         <StackPanel>
                                                                             <ve:FunctionButton Text="{DynamicResource AddMember}" Icon="" Command="{Binding ShowChatInfoCommand}"/>
                                                                         </StackPanel>
@@ -520,7 +520,7 @@
                                     <ItemsControl Grid.Row="1" root:ScrollHelper.ScrollBottomCommand="{Binding ScrollToBottomCommand}" Focusable="False" ItemsSource="{Binding Chat.Users}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <ContentControl Style="{StaticResource ItemCardBlock}">
+                                                <ContentControl Margin="10 5" Style="{StaticResource ItemCardBlock}">
                                                     <Button Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ItemsControl}, TargetNullValue=Null}" Command="{Binding DataContext.ShowMemberCardCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" HorizontalContentAlignment="Left" Style="{StaticResource MinimalButton}">
                                                         <Button.ContextMenu>
                                                             <ContextMenu Style="{DynamicResource BaseContextMenu}">
@@ -546,7 +546,7 @@
                                                                     </Image>
                                                                 </Grid>
                                                                 <TextBlock Margin="0" Style="{StaticResource BaseText}" Text="{Binding User.Name}" Grid.Column="1"/>
-                                                                <TextBlock Margin="0" Style="{StaticResource AdditionalText}" Text="{Binding User.WasOnline, TargetNullValue=Недавно, StringFormat={}{0:dd.MM.yyyy}}" Grid.Column="1" Grid.Row="1"/>
+                                                                <TextBlock Margin="0" Style="{StaticResource AdditionalText}" Text="{Binding User.WasOnline, TargetNullValue=Давно, StringFormat={}{0:dd.MM.yyyy}}" Grid.Column="1" Grid.Row="1"/>
                                                             </Grid>
                                                         </Button.Content>
                                                     </Button>
@@ -562,13 +562,13 @@
                                         </ItemsControl.Template>
                                     </ItemsControl>
                                 </Grid>
-                                <ContentPresenter Content="{Binding AdditionalViewModel}" Visibility="{Binding AdditionalViewModelVisibility}"/>
+                                <ContentPresenter Content="{Binding AdditionalViewModel}" Visibility="{Binding DataContext.AdditionalViewModelVisibility, RelativeSource={RelativeSource AncestorType=Grid}}"/>
                             </Grid>
                         </ContentControl>
                     </Grid>
                 </Border>
             </Grid>
-            <ContentPresenter Content="{Binding AdditionalViewModel}" Visibility="{Binding DataContext.AdditionalViewModelVisibility, RelativeSource={RelativeSource AncestorType=Grid}}" Grid.Row="1"/>
+            <ContentPresenter MinWidth="300" MinHeight="100" Content="{Binding AdditionalViewModel}" Visibility="{Binding DataContext.AdditionalViewModelVisibility, RelativeSource={RelativeSource AncestorType=Grid}}" Grid.Row="1"/>
         </Grid>
     </DataTemplate>
 
@@ -637,10 +637,10 @@
                             </Style>
                         </ContentControl.Style>
                     </ContentControl>
-                    <ve:InputTextBox Holder="{DynamicResource Name}" Grid.Column="2" Grid.Row="0" Text="{Binding Chat.Name}"/>
-                    <ve:InputTextBox Holder="{DynamicResource UniqueName}" Grid.Column="2" Grid.Row="1" x:Name="UniqueName" Text="{Binding Chat.UniqueName}"/>
-                    <ve:Switch Text="{DynamicResource Public}" Grid.Column="2" Grid.Row="2"  FontSize="25" IsChecked="{Binding Chat.IsPublic}"/>
-                    <Button Grid.Column="2" Grid.Row="3" Content="{DynamicResource Create}" Command="{Binding CreateCommand}" Style="{DynamicResource FunctionButton}"/>
+                    <ve:InputTextBox Margin="0 10 0 5" Holder="{DynamicResource Name}" Grid.Column="2" Grid.Row="0" Text="{Binding Chat.Name}"/>
+                    <ve:InputTextBox Margin="0 10 0 5" Holder="{DynamicResource UniqueName}" Grid.Column="2" Grid.Row="1" x:Name="UniqueName" Text="{Binding Chat.UniqueName}"/>
+                    <ve:Switch Margin="0 10 0 5" Text="{DynamicResource Public}" Grid.Column="2" Grid.Row="2"  FontSize="25" IsChecked="{Binding Chat.IsPublic}"/>
+                    <Button Margin="0 10 0 5" Grid.Column="2" Grid.Row="3" Content="{DynamicResource Create}" Command="{Binding CreateCommand}" Style="{DynamicResource FunctionButton}"/>
                 </Grid>
             </ContentControl>
         </Grid>
@@ -649,12 +649,12 @@
     <DataTemplate DataType="{x:Type vm:AuthorizationViewModel}">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <ContentControl Style="{StaticResource CardBlock}">
-                <Grid Margin="10 20" RowDefinitions="auto auto auto auto auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
+                <Grid Margin="10 20" RowDefinitions="auto 10 auto 15 auto 10 auto auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
                     <TextBlock Text="{DynamicResource LogIn}" Style="{StaticResource HeaderText}" Grid.ColumnSpan="2"/>
-                    <uc:InputTextBox Holder="{DynamicResource Login}" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
-                    <uc:InputPasswordBox WithShowing="Visible" Holder="{DynamicResource Password}" Grid.Row="2" Text="{Binding UserInfo.Password}"/>
-                    <Button Content="{DynamicResource LogIn}" Command="{Binding EnterCommand}" Grid.Row="3" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
-                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="{DynamicResource LogInQuestion}" Grid.Row="4" CommandText="{DynamicResource Registration}" Command="{Binding ChangeViewCommand}"/>
+                    <uc:InputTextBox Holder="{DynamicResource Login}" Grid.Row="2" Text="{Binding UserInfo.User.Login}"/>
+                    <uc:InputPasswordBox WithShowing="Visible" Holder="{DynamicResource Password}" Grid.Row="4" Text="{Binding UserInfo.Password}"/>
+                    <Button Content="{DynamicResource LogIn}" Command="{Binding EnterCommand}" Grid.Row="6" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="{DynamicResource LogInQuestion}" Grid.Row="7" CommandText="{DynamicResource Registration}" Command="{Binding ChangeViewCommand}"/>
                 </Grid>
             </ContentControl>
         </Grid>
@@ -663,13 +663,13 @@
     <DataTemplate DataType="{x:Type vm:RegistrationViewModel}">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <ContentControl Style="{StaticResource CardBlock}">
-                <Grid RowDefinitions="auto auto auto auto auto auto" Margin="10 20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
+                <Grid RowDefinitions="auto 15 auto 15 auto 10 auto auto auto" Margin="10 20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
                     <TextBlock Text="{DynamicResource Registration}" Style="{StaticResource HeaderText}"/>
-                    <uc:InputTextBox Holder="{DynamicResource Login}" Grid.Row="1" Text="{Binding UserInfo.User.Login}"/>
-                    <uc:InputTextBox Holder="{DynamicResource Name}" Grid.Row="2" Text="{Binding UserInfo.User.Name}"/>
-                    <uc:InputPasswordBox Holder="{DynamicResource Password}" Grid.Row="3" Text="{Binding UserInfo.Password}"/>
-                    <Button Content="{DynamicResource Register}" Command="{Binding RegistrationCommand}" Grid.Row="4" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
-                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="{DynamicResource RegistrationQuestion}" Grid.Row="5" CommandText="{DynamicResource LogIn}" Command="{Binding ChangeViewCommand}"/>
+                    <uc:InputTextBox Holder="{DynamicResource Login}" Grid.Row="2" Text="{Binding UserInfo.User.Login}"/>
+                    <uc:InputTextBox Holder="{DynamicResource Name}" Grid.Row="4" Text="{Binding UserInfo.User.Name}"/>
+                    <uc:InputPasswordBox Holder="{DynamicResource Password}" Grid.Row="6" Text="{Binding UserInfo.Password}"/>
+                    <Button Content="{DynamicResource Register}" Command="{Binding RegistrationCommand}" Grid.Row="7" Style="{DynamicResource FunctionButton}" IsDefault="True"/>
+                    <uc:QuestionTextButton HorizontalAlignment="Center" Margin="0 0 5 0" Prefix="{DynamicResource RegistrationQuestion}" Grid.Row="8" CommandText="{DynamicResource LogIn}" Command="{Binding ChangeViewCommand}"/>
                 </Grid>
             </ContentControl>
         </Grid>
