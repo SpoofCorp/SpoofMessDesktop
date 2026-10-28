@@ -1,6 +1,6 @@
 # SpoofMessDesktop
 ## What is it?
-A desktop(Windows) client for [SpoofMess]("https://github.com/Pychka/SpoofMess")
+A desktop(Windows) client of [SpoofMess]("https://github.com/Pychka/SpoofMess")
 | Login View | Main View |
 |:---:|:---:|
 | <img src="Data/LoginView.png" width="300"> | <img src="Data/MainView.png" width="300"> |
@@ -27,7 +27,8 @@ Coming soon:
         - grant/revoke roles.
 
 ## What stage of project at?
-### While on Alpha 0.0.5 Implemented first prototypes of:
+### While on Alpha 0.0.6 Implemented first prototypes of:
+- Mark: As of October 28, 2026, version Alpha 0.0.6 has been stabilized
 - Entry:
     - Registration;
     - Authorization;
