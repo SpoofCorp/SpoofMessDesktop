@@ -28,17 +28,16 @@ public partial class MusicViewModel : ObjectViewModel, IDisposable
     {
         if (file is not PlayableFileObject playableFile)
             return;
+
         if (playableFile != CurrentFile)
         {
-            if (CurrentFile != null)
-            {
-                _audioService.Stop();
-                CurrentFile.IsPlayed = false;
-            }
+            CurrentFile?.IsPlayed = false;
             if (file.Path is not null && System.IO.File.Exists(file.Path))
+            {
                 _audioService.Play(playableFile);
-
-            CurrentFile = playableFile;
+                CurrentFile = playableFile;
+                CurrentFile.IsPlayed = true;
+            }
         }
         else
         {
