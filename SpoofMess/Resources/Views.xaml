@@ -702,14 +702,16 @@
                         <Button Width="50" Height="50" Padding="5" Margin="5 0 10 0" Focusable="False" Grid.RowSpan="2" Command="{Binding DataContext.PlayResumeCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" Cursor="Hand" CommandParameter="{Binding}">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource CircleButton}" TargetType="{x:Type Button}">
-                                    <Setter Property="Content">
-                                        <Setter.Value>
-                                            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="8.5 10 8 10">
-                                                <Path Fill="{DynamicResource ActiveTextColor}" Data="M 0,0 H 7 V 20 H 0 Z M 13,0 H 20 V 20 H 13 Z" />
-                                            </Viewbox>
-                                        </Setter.Value>
-                                    </Setter>
                                     <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlayed}" Value="True">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="8.5 10 8 10">
+                                                        <Path Fill="{DynamicResource ActiveTextColor}" Data="M 0,0 H 7 V 20 H 0 Z M 13,0 H 20 V 20 H 13 Z" />
+                                                    </Viewbox>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
                                         <DataTrigger Binding="{Binding IsPlayed}" Value="False">
                                             <Setter Property="Content">
                                                 <Setter.Value>
