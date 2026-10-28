@@ -22,20 +22,17 @@ public class SearchService(
     private readonly UserInfo userInfo = userInfo;
 
     public async Task SimpleSearch(
-        ObservableCollection<Chat> searchableEntities,
-        ObservableCollection<SearchableMessageWithChat> searchableMessageWithChats,
+        ObservableCollection<ISearchableEntity> searchableEntities,
         string query,
         CancellationToken cancellationToken = default)
     {
 
-        Task<Result<List<SearchableEntity>>> taskResultChats = _searchApiService.SimpleSearchChats(query);
+        Task<Result<List<SearchableEntity>>> taskResultChats = _searchApiService.SimpleSearchChats(query, cancellationToken);
 
         Task<Result<List<SearchableMessageWithChat>>> taskResultMessages = SimpleSearchMessages(query, cancellationToken);
-        searchableMessageWithChats.Clear();
+        searchableEntities.Clear();
 
         await Task.WhenAll(taskResultChats, taskResultMessages);
-        if (taskResultMessages.Result.Success)
-            searchableMessageWithChats.ClearAndAddRange(taskResultMessages.Result.Body!);
 
         if (taskResultChats.Result.Success)
         {
@@ -51,14 +48,18 @@ public class SearchService(
                 }
                 else
                 {
-                    Chat? chat = await _chatService.Get(searchableEntity.Id, false);
+                    Chat? chat = await _chatService.Get(searchableEntity.Id, false, cancellationToken);
                     if (chat is null) return;
 
                     chats.Add(chat);
                 }
             });
-            searchableEntities.ClearAndAddRange(chats);
+            foreach (Chat chat in chats)
+                searchableEntities.Add(chat);
         }
+        if (taskResultMessages.Result.Success)
+            foreach (SearchableMessageWithChat message in taskResultMessages.Result.Body!)
+                searchableEntities.Add(message);
     }
 
     private async Task<Result<List<SearchableMessageWithChat>>> SimpleSearchMessages(
@@ -81,7 +82,10 @@ public class SearchService(
             );
             if (chat is null)
                 continue;
-            result.Add(new(searchableMessage.Id, searchableMessage.Text, searchableMessage.SentAt, chat));
+            result.Add(new(searchableMessage.Text, searchableMessage.SentAt, chat)
+            {
+                Id = searchableMessage.Id
+            });
         }
         return Result<List<SearchableMessageWithChat>>.OkResult(result);
     }

@@ -22,24 +22,32 @@ public partial class ChatsViewModel(
     private readonly ISearchService _searchService = searchService;
     private readonly INotificationApiService _notificationApiService = notificationApiService;
     private readonly INavigationService _navigationService = navigationService;
+
+    public CancellationTokenSource? _searchCts;
+
     public ConcurrentObservableCollection<Chat> Chats { get; set; } = [];
 
-    public ObservableCollection<Chat> SearchResultsChats { get; set; } = [];
-
-    public ObservableCollection<SearchableMessageWithChat> SearchResultsMessages { get; set; } = [];
+    public ObservableCollection<ISearchableEntity> SearchResults { get; set; } = [];
 
     public Visibility ChatsVisibility => string.IsNullOrEmpty(Query) ? Visibility.Visible : Visibility.Collapsed;
 
     public Visibility SearchResultsVisibility => string.IsNullOrEmpty(Query) ? Visibility.Collapsed : Visibility.Visible;
 
-    public SearchableMessageWithChat? SelectedSearchableMessage
+    public ISearchableEntity? SelectedSearchable
     {
         get;
         set
         {
             field = value;
-            OnPropertyChanged(nameof(SelectedSearchableMessage));
-            GoToMessage(value);
+            if(value is SearchableMessageWithChat searchableMessageWithChat)
+                GoToMessage(searchableMessageWithChat);
+            else if(value is Chat chat)
+            {
+                field = null;
+                SelectChat(chat);
+                OnPropertyChanged(nameof(AdditionalViewModelVisibility));
+            }
+            OnPropertyChanged(nameof(SelectedSearchable));
         }
     }
 
@@ -67,25 +75,6 @@ public partial class ChatsViewModel(
         }
     } = string.Empty;
 
-    public Chat? SelectedSearchableEntity
-    {
-        get;
-        set
-        {
-            field = value;
-            if (value is null)
-            {
-                OnPropertyChanged(nameof(SelectedSearchableEntity));
-                return;
-            }
-
-            field = null;
-            SelectChat(value);
-            OnPropertyChanged(nameof(SelectedSearchableEntity));
-            OnPropertyChanged(nameof(AdditionalViewModelVisibility));
-        }
-    }
-
     [RelayCommand]
     private void OpenInNewWindow(Chat chat)
     {
@@ -106,15 +95,29 @@ public partial class ChatsViewModel(
 
     private async void Search()
     {
-        if (string.IsNullOrEmpty(Query))
-            return;
+        if (_searchCts != null)
+        {
+            _searchCts.Cancel();
+            _searchCts.Dispose();
+        }
+        _searchCts = CancellationTokenSource.CreateLinkedTokenSource(_appLifeCycleService.AppCancellationToken);
 
-        await _searchService.SimpleSearch(
-            SearchResultsChats,
-            SearchResultsMessages,
-            Query,
-            _appLifeCycleService.AppCancellationToken
-        );
+        try
+        {
+            await Task.Delay(200, _searchCts.Token);
+            if (string.IsNullOrEmpty(Query))
+                return;
+
+            await _searchService.SimpleSearch(
+                SearchResults,
+                Query,
+                _searchCts.Token
+            );
+        }
+        catch (OperationCanceledException)
+        {
+
+        }
     }
 
     protected override async Task InitializeAsync(bool initialize)
@@ -167,6 +170,7 @@ public partial class ChatsViewModel(
         _notificationApiService.OnChatCreated -= _chatUserService.ChatCreated;
         _chatService.ChatAdded -= ChatAdded;
         _chatService.ChatMoved -= ChatMoved;
+        _searchCts?.Dispose();
         await base.DisposeAsync(disposing);
     }
 

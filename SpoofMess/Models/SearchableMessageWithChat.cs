@@ -1,7 +1,10 @@
 ﻿namespace SpoofMess.Models;
 
-public record SearchableMessageWithChat(
-    Guid Id,
+public record class SearchableMessageWithChat(
     string? Text,
     DateTime SentAt,
-    Chat Chat);
+    Chat Chat
+) : ISearchableEntity
+{
+    public Guid Id { get; set; }
+}

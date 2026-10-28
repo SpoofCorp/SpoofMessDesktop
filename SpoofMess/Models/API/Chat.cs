@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace SpoofMess.Models;
 
-public partial class Chat : ObservableObject
+public partial class Chat : ObservableObject, ISearchableEntity
 {
     public Chat()
     {
@@ -20,7 +20,7 @@ public partial class Chat : ObservableObject
 
     public MessageModel? EditedMessage
     {
-        get => field;
+        get;
         set
         {
             field = value;
