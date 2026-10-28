@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using SpoofMess.Bases;
+using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels;
 
-public abstract partial class AdditionalViewModel : BaseViewModel
+public abstract partial class AdditionalViewModel(IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
 {
     public AdditionalViewModel? Predecessor;
     protected IPlacementViewModel _placement = null!;

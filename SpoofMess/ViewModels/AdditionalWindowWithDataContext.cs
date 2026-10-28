@@ -6,7 +6,9 @@ using System.Windows;
 
 namespace SpoofMess.ViewModels;
 
-public partial class AdditionalWindowWithDataContext(string key, INavigationService navigation)
+public partial class AdditionalWindowWithDataContext(string key,
+                                                     INavigationService navigation,
+                                                     IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
 {
     private string Key { get; set; } = key;
 

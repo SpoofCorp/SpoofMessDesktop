@@ -10,20 +10,23 @@ public partial class MainMessagesViewModel(
     INotificationService notificationService,
     IAttachmentService attachmentService,
     FileAudioRecorderService fileAudioRecorderService,
-    INotificationApiService notificationApiService) : MessagesViewModel(messageService, notificationService, attachmentService, fileAudioRecorderService)
+    INotificationApiService notificationApiService,
+    IAppLifeCycleService appLifeCycleService) : MessagesViewModel(messageService, notificationService, attachmentService, fileAudioRecorderService, appLifeCycleService)
 {
     private readonly INotificationApiService _notificationApiService = notificationApiService;
 
-    public override async Task InitializeAsync()
+    protected override async Task InitializeAsync(bool initialize)
     {
-        await base.InitializeAsync();
         _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
         _notificationApiService.OnMessageEdited += _messageService.EditHandle;
         _notificationApiService.OnMessageDeleted += _messageService.OnDelete;
         ServiceRealizations.EventHandler.OnDelete += _messageService.DeleteLocal;
         ServiceRealizations.EventHandler.OnEdit += _messageService.StartEdit;
-        await _messageService.LoadSkippedMesssages(DateTime.UtcNow.AddMonths(-10));
-        IsInitialized = true;
+        await _messageService.LoadSkippedMesssages(
+            DateTime.UtcNow.AddMonths(-10),
+            _appLifeCycleService.AppCancellationToken
+        );
+        await base.InitializeAsync(initialize);
     }
 
     protected override async ValueTask DisposeAsync(bool disposing)

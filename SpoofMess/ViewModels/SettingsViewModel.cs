@@ -10,7 +10,8 @@ namespace SpoofMess.ViewModels;
 public partial class SettingsViewModel(
     UserInfo userInfo,
     IUserAvatarService userAvatarService,
-    INavigationService navigationService) : PlacementAdditionalViewModel
+    INavigationService navigationService,
+    IAppLifeCycleService appLifeCycleService) : PlacementAdditionalViewModel(appLifeCycleService)
 {
     public UserInfo UserInfo { get; set; } = userInfo;
     private readonly INavigationService _navigationService = navigationService;
@@ -57,7 +58,7 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private async Task SetAvatar()
     {
-        await _userAvatarService.Set();
+        await _userAvatarService.Set(_appLifeCycleService.AppCancellationToken);
     }
 
     public override void OnClose()

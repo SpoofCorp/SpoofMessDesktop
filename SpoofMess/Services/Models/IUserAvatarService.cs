@@ -6,5 +6,5 @@ namespace SpoofMess.Services.Models;
 public interface IUserAvatarService
 {
     public Task<Result<AvatarResponse>> GetToken(byte[] accessToken, CancellationToken cancellationToken = default);
-    public Task<Result> Set();
+    public Task<Result> Set(CancellationToken cancellationToken = default);
 }

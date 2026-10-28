@@ -106,10 +106,8 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
         return FileCategory.File;
     }
 
-    public Result<FileObject> GetFileInfo()
-    {
-        return GetFileInfo(GetOnce());
-    }
+    public Result<FileObject> GetFileInfo() =>
+        GetFileInfo(GetOnce());
 
     public Result<FileObject> GetFileInfo(string? path)
     {
@@ -150,8 +148,6 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
             return File.OpenRead(filePath);
         return null;
     }
-    public Stream? GetWriteStreamFromFile(string filePath)
-    {
-        return new FileStream(filePath, FileMode.OpenOrCreate);
-    }
+    public Stream? GetWriteStreamFromFile(string filePath) =>
+        new FileStream(filePath, FileMode.OpenOrCreate);
 }

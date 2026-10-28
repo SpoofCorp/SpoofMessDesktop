@@ -34,7 +34,7 @@ public class AuthService(
     private readonly IFileService _fileService = fileService;
     private readonly UserInfo UserInfo = userInfo;
 
-    public async Task<Result> Initialize()
+    public async Task<Result> Initialize(CancellationToken cancellationToken = default)
     {
         Stream? stream = _fileService.GetReadStreamFromFile(BackupPath);
         if (stream is null)
@@ -42,7 +42,7 @@ public class AuthService(
         UserInfo userInfo;
         try
         {
-            userInfo = await _serializer.Deserialize<UserInfo>(stream);
+            userInfo = await _serializer.Deserialize<UserInfo>(stream, cancellationToken);
         }
         catch(JsonException)
         {
@@ -59,18 +59,18 @@ public class AuthService(
         return await Update();
     }
 
-    public async Task<string?> GetAccess()
+    public async Task<string?> GetAccess(CancellationToken cancellationToken = default)
     {
         if (TokenIsNotExpired())
             return UserInfo.Authorize!.AccessToken;
         else if (UserInfo.Authorize is null)
             return null;
 
-        await semaphore.WaitAsync();
+        await semaphore.WaitAsync(cancellationToken);
         try
         {
             if (TokenIsNotExpired()) return UserInfo.Authorize.AccessToken;
-            await Update();
+            await Update(cancellationToken);
             return UserInfo.Authorize.AccessToken;
         }
         catch (Exception ex)
@@ -83,27 +83,29 @@ public class AuthService(
         }
     }
 
-    private async Task<Result> Update()
+    private async Task<Result> Update(CancellationToken cancellationToken = default)
     {
         Result<UserAuthorizeResponse> result = await PostAsync<UpdateTokenRequest, UserAuthorizeResponse>(
            "api/v1/Entrance/UpdateToken",
            new UpdateTokenRequest()
            {
                Token = UserInfo.Authorize!.RefreshToken
-           });
+           },
+           cancellationToken
+        );
         if (result)
         {
-            await SetTokens(result.Body!);
+            await SetTokens(result.Body!, cancellationToken);
             IsAuthorized = true;
         }
 
         return Result.From(result);
     }
 
-    public async Task SetTokens(UserAuthorizeResponse response)
+    public async Task SetTokens(UserAuthorizeResponse response, CancellationToken cancellationToken = default)
     {
         UserInfo.Authorize = response;
-        await Save();
+        await Save(cancellationToken);
         JwtSecurityTokenHandler jwt = new();
         JwtSecurityToken token = jwt.ReadJwtToken(UserInfo.Authorize.AccessToken);
         ValidTo = token.ValidTo;
@@ -117,15 +119,15 @@ public class AuthService(
         return ValidTo >= DateTime.UtcNow.AddSeconds(15);
     }
 
-    public async Task Update(UserInfoUpdateModel changes)
+    public async Task Update(UserInfoUpdateModel changes, CancellationToken cancellationToken = default)
     {
         UserInfo.Update(changes);
-        await Save();
+        await Save(cancellationToken);
     }
 
-    public async Task Save()
+    public async Task Save(CancellationToken cancellationToken = default)
     {
-        await fileSemaphore.WaitAsync();
+        await fileSemaphore.WaitAsync(cancellationToken);
         try
         {
             string path = Path.GetDirectoryName(BackupPath)!;
@@ -138,8 +140,12 @@ public class AuthService(
                 stream = _fileService.GetWriteStreamFromFile(tempPath);
                 if (stream is null)
                     return;
-                await _serializer.Serialize(UserInfo, stream);
-                await stream.FlushAsync();
+                await _serializer.Serialize(
+                    UserInfo,
+                    stream,
+                    cancellationToken
+                );
+                await stream.FlushAsync(cancellationToken);
                 await stream.DisposeAsync();
                 stream = null;
                 if (File.Exists(tempPath))

@@ -21,12 +21,16 @@ public class SearchService(
     private readonly IUserService _userService = userService;
     private readonly UserInfo userInfo = userInfo;
 
-    public async Task SimpleSearch(ObservableCollection<Chat> searchableEntities, ObservableCollection<SearchableMessageWithChat> searchableMessageWithChats, string query)
+    public async Task SimpleSearch(
+        ObservableCollection<Chat> searchableEntities,
+        ObservableCollection<SearchableMessageWithChat> searchableMessageWithChats,
+        string query,
+        CancellationToken cancellationToken = default)
     {
 
         Task<Result<List<SearchableEntity>>> taskResultChats = _searchApiService.SimpleSearchChats(query);
 
-        Task<Result<List<SearchableMessageWithChat>>> taskResultMessages = SimpleSearchMessages(query);
+        Task<Result<List<SearchableMessageWithChat>>> taskResultMessages = SimpleSearchMessages(query, cancellationToken);
         searchableMessageWithChats.Clear();
 
         await Task.WhenAll(taskResultChats, taskResultMessages);
@@ -36,7 +40,7 @@ public class SearchService(
         if (taskResultChats.Result.Success)
         {
             List<Chat> chats = [];
-            await Parallel.ForEachAsync(taskResultChats.Result.Body!, async (searchableEntity, cancaletionToken) =>
+            await Parallel.ForEachAsync(taskResultChats.Result.Body!, cancellationToken, async (searchableEntity, cancaletionToken) =>
             {
                 if(searchableEntity.Type == SearchType.User)
                 {
@@ -57,16 +61,24 @@ public class SearchService(
         }
     }
 
-    private async Task<Result<List<SearchableMessageWithChat>>> SimpleSearchMessages(string query)
+    private async Task<Result<List<SearchableMessageWithChat>>> SimpleSearchMessages(
+        string query,
+        CancellationToken cancellationToken = default)
     {
-        Result<List<SearchableMessage>> resultMessages = await _searchApiService.SimpleSearchMessages(query);
+        Result<List<SearchableMessage>> resultMessages = await _searchApiService.SimpleSearchMessages(
+            query,
+            cancellationToken
+        );
         if (!resultMessages.Success)
             return Result<List<SearchableMessageWithChat>>.From(resultMessages);
 
         List<SearchableMessageWithChat> result = [];
         foreach (SearchableMessage searchableMessage in resultMessages.Body!)
         {
-            Chat? chat = await _chatService.Get(searchableMessage.ChatId);
+            Chat? chat = await _chatService.Get(
+                searchableMessage.ChatId,
+                cancellationToken: cancellationToken
+            );
             if (chat is null)
                 continue;
             result.Add(new(searchableMessage.Id, searchableMessage.Text, searchableMessage.SentAt, chat));

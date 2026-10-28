@@ -1,6 +1,9 @@
-﻿namespace SpoofMess.ViewModels;
+﻿using SpoofMess.Services;
+
+namespace SpoofMess.ViewModels;
 
 internal partial class EntryViewModel(
-    ) : PlacementViewModel
+    IAppLifeCycleService appLifeCycleService
+    ) : PlacementViewModel(appLifeCycleService)
 {
 }

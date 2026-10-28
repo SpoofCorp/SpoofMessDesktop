@@ -12,8 +12,8 @@ internal class SearchApiService(
         client,
         serializer), ISearchApiService
 {
-    public async Task<Result<List<SearchableEntity>>> SimpleSearchChats(string query) =>
-        await GetAsync<List<SearchableEntity>>($"api/Search/simple-search-chats?query={query}");
-    public async Task<Result<List<SearchableMessage>>> SimpleSearchMessages(string query) =>
-        await GetAsync<List<SearchableMessage>>($"api/Search/simple-search-messages?query={query}");
+    public async Task<Result<List<SearchableEntity>>> SimpleSearchChats(string query, CancellationToken cancellationToken = default) =>
+        await GetAsync<List<SearchableEntity>>($"api/Search/simple-search-chats?query={query}", cancellationToken);
+    public async Task<Result<List<SearchableMessage>>> SimpleSearchMessages(string query, CancellationToken cancellationToken = default) =>
+        await GetAsync<List<SearchableMessage>>($"api/Search/simple-search-messages?query={query}", cancellationToken);
 }

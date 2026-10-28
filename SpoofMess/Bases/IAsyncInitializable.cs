@@ -4,5 +4,5 @@ public interface IAsyncInitializable
 {
     public bool IsInitialized { get; set; }
 
-    public Task InitializeAsync();
+    public Task InitializeAsync(CancellationToken cancellationToken = default);
 }

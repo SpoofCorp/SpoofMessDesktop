@@ -30,30 +30,30 @@ public class MessageService(
             return;
         MessageModel messageModel = message.Set();
         AddMessage(messageModel, chat);
-        await UploadAdditionalData(messageModel, message, default);
+        await UploadAdditionalData(messageModel, message);
     }
-    public async Task LoadSkippedMesssages(DateTime after)
+    public async Task LoadSkippedMesssages(DateTime after, CancellationToken cancellationToken = default)
     {
-        Result<List<MessageDTO>> chats = await _messageApiService.GetSkippedMessages(after);
+        Result<List<MessageDTO>> chats = await _messageApiService.GetSkippedMessages(after, cancellationToken: cancellationToken);
         while (chats.Success && chats.Body?.Count > 0)
         {
             if (chats.Success)
             {
-                await Parallel.ForEachAsync(chats.Body!, async (messageDTO, cancelationToken) =>
+                await Parallel.ForEachAsync(chats.Body!, cancellationToken, async (messageDTO, cancellationToken) =>
                 {
                     MessageModel message = messageDTO.Set();
-                    Chat? chat = await _chatService.Get(messageDTO.ChatId);
+                    Chat? chat = await _chatService.Get(messageDTO.ChatId, cancellationToken: cancellationToken);
                     if (chat is null)
                         return;
                     AddMessage(message, chat);
-                    await UploadAdditionalData(message, messageDTO, cancelationToken);
+                    await UploadAdditionalData(message, messageDTO, cancellationToken);
                     if (message.SentAt > after)
                         after = message.SentAt;
                 });
             }
             if (chats.Body!.Count < 50)
                 break;
-            chats = await _messageApiService.GetSkippedMessages(after);
+            chats = await _messageApiService.GetSkippedMessages(after, cancellationToken: cancellationToken);
         }
     }
 
@@ -82,7 +82,7 @@ public class MessageService(
         chat.CurrentMessage = message.GetEdit();
     }
 
-    public async Task StopEdit(Chat? chat)
+    public async Task StopEdit(Chat? chat, CancellationToken cancellationToken = default)
     {
         if (chat is null)
             return;
@@ -90,12 +90,12 @@ public class MessageService(
         chat.EditedMessage = null;
     }
 
-    public async Task SendMessage(Chat? chat, CancellationToken token = default)
+    public async Task SendMessage(Chat? chat, CancellationToken cancellationToken = default)
     {
         if (chat is null) return;
         if (chat.EditedMessage is not null)
         {
-            await Edit(chat, token);
+            await Edit(chat, cancellationToken);
             return;
         }
         MessageModel request = chat.CurrentMessage;
@@ -105,21 +105,21 @@ public class MessageService(
             ChatId = chat.Id,
             Text = string.Empty
         };
-        Result<List<Attachment>> attachments = await _attachmentService.SendAttachments(request, token);
+        Result<List<Attachment>> attachments = await _attachmentService.SendAttachments(request, cancellationToken);
         if (attachments.Success)
-            await _notificationApiService.SendMessage(request.Set(attachments.Body!));
+            await _notificationApiService.SendMessage(request.Set(attachments.Body!), cancellationToken);
     }
 
-    private async Task Edit(Chat chat, CancellationToken token = default)
+    private async Task Edit(Chat chat, CancellationToken cancellationToken = default)
     {
         if (chat.EditedMessage is null || chat.CurrentMessage is not EditMessageModel edit)
             return;
         edit.ChatId = chat.Id;
         chat.CurrentMessage = chat.EditedMessage;
         chat.EditedMessage = null;
-        Result<List<CommonObjects.Responses.EditAttachment>> attachments = await _attachmentService.SendAttachments(edit, token);
+        Result<List<CommonObjects.Responses.EditAttachment>> attachments = await _attachmentService.SendAttachments(edit, cancellationToken);
         if (attachments.Success)
-            await _notificationApiService.EditMessage(edit.SetEdit(attachments.Body!));
+            await _notificationApiService.EditMessage(edit.SetEdit(attachments.Body!), cancellationToken);
     }
 
     public async void OnDelete(Guid messageId, Guid chatId)
@@ -174,7 +174,7 @@ public class MessageService(
         EventHandler.NotifyAdd(message);
     }
 
-    private async Task UploadAdditionalData(MessageModel message, MessageDTO messageDTO, CancellationToken cancelationToken)
+    private async Task UploadAdditionalData(MessageModel message, MessageDTO messageDTO, CancellationToken cancelationToken = default)
     {
 
         Task userTask = Task.Run(async () =>
@@ -196,18 +196,18 @@ public class MessageService(
         await Task.WhenAll(userTask, uploadTask);
     }
 
-    public async Task UploadMessagesAfterDate(Chat chat)
+    public async Task UploadMessagesAfterDate(Chat chat, CancellationToken cancellationToken = default)
     {
         DateTime date = DateTime.UtcNow;
-        Result<List<MessageDTO>> chats = await _messageApiService.GetBeforeMessages(chat.Id, date);
+        Result<List<MessageDTO>> chats = await _messageApiService.GetBeforeMessages(chat.Id, date, cancellationToken: cancellationToken);
         while (chats.Success && chats.Body?.Count > 0)
         {
             if (chats.Success)
             {
-                await Parallel.ForEachAsync(chats.Body!, async (messageDTO, cancelationToken) =>
+                await Parallel.ForEachAsync(chats.Body!, cancellationToken, async (messageDTO, cancelationToken) =>
                 {
                     MessageModel message = messageDTO.Set();
-                    Chat? chat = await _chatService.Get(messageDTO.ChatId);
+                    Chat? chat = await _chatService.Get(messageDTO.ChatId, cancellationToken: cancellationToken);
                     if (chat is null)
                         return;
                     AddMessage(message, chat);
@@ -218,7 +218,7 @@ public class MessageService(
             }
             if (chats.Body!.Count < 50)
                 break;
-            chats = await _messageApiService.GetBeforeMessages(chat.Id, date);
+            chats = await _messageApiService.GetBeforeMessages(chat.Id, date, cancellationToken: cancellationToken);
         }
     }
 }

@@ -1,12 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.Models.API;
 using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels;
 
-public partial class CentralViewModel(UserInfo userInfo, INavigationService navigation) : ObservableObject
+public partial class CentralViewModel(
+    UserInfo userInfo,
+    INavigationService navigation,
+    IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
 {
     private readonly INavigationService _navigation = navigation;
     [ObservableProperty]

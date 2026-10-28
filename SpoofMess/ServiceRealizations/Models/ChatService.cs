@@ -15,7 +15,12 @@ using System.IO;
 
 namespace SpoofMess.ServiceRealizations.Models;
 
-public class ChatService(IChatApiService chatApiService, IChatAvatarService chatAvatarService, IFileService fileService, UserInfo userInfo, ISerializer serializer) : IChatService
+public class ChatService(
+    IChatApiService chatApiService,
+    IChatAvatarService chatAvatarService,
+    IFileService fileService,
+    UserInfo userInfo,
+    ISerializer serializer) : IChatService
 {
     public ObservableCollection<Chat> Chats { get; set; } = [];
     public ConcurrentDictionary<Guid, Chat> ChatsStorage { get; set; } = [];
@@ -32,14 +37,14 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
     private readonly SemaphoreSlim _chatLock = new(1, 1);
 
 
-    public async Task<Chat?> Get(Guid id, bool saveToLocal = true)
+    public async Task<Chat?> Get(Guid id, bool saveToLocal = true, CancellationToken cancellationToken = default)
     {
         if (ChatsStorage.TryGetValue(id, out Chat? chat))
         {
             return chat;
         }
 
-        await _chatLock.WaitAsync();
+        await _chatLock.WaitAsync(cancellationToken);
         try
         {
             if (ChatsStorage.TryGetValue(id, out chat))
@@ -47,7 +52,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
                 return chat;
             }
 
-            Result<ChatDTO> chatResult = await _chatApiService.GetChat(id);
+            Result<ChatDTO> chatResult = await _chatApiService.GetChat(id, cancellationToken);
             if (!chatResult || chatResult.Body is null)
                 return null;
 
@@ -61,7 +66,11 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
                 }
             }
 
-            await UploadAvatar(chat, chatResult.Body);
+            await UploadAvatar(
+                chat,
+                chatResult.Body,
+                cancellationToken
+            );
             return chat;
         }
         finally
@@ -70,7 +79,7 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
         }
     }
 
-    private async Task UploadAvatar(Chat chat, ChatDTO chatDTO)
+    private async Task UploadAvatar(Chat chat, ChatDTO chatDTO, CancellationToken cancellationToken = default)
     {
         if (chatDTO.AvatarToken is null) return;
 
@@ -82,10 +91,13 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
             Path = Path.Combine(_userInfo.SessionSettings.Directory, chatDTO.OriginalAvatarFileName ?? chatDTO.UniqueName)
         };
 
-        await _chatAvatarService.UploadAvatar(chat);
+        await _chatAvatarService.UploadAvatar(
+            chat,
+            cancellationToken
+        );
     }
 
-    public async Task AddChats(List<ChatUserDTO> chats)
+    public async Task AddChats(List<ChatUserDTO> chats, CancellationToken cancellationToken = default)
     {
         await Parallel.ForEachAsync(chats, async (chat, cancellationToken) =>
         {
@@ -139,15 +151,18 @@ public class ChatService(IChatApiService chatApiService, IChatAvatarService chat
         }
     }
 
-    public async Task CreateChat(Chat chat)
+    public async Task CreateChat(Chat chat, CancellationToken cancellationToken = default)
     {
-        Result<ChatDTO> result = await _chatApiService.Create(new()
-        {
-            ChatName = chat.Name ?? string.Empty,
-            UniqueName = chat.UniqueName,
-            ChatTypeId = chat.ChatTypeId,
-            IsPublic = chat.IsPublic
-        });
+        Result<ChatDTO> result = await _chatApiService.Create(
+            new()
+            {
+                ChatName = chat.Name ?? string.Empty,
+                UniqueName = chat.UniqueName,
+                ChatTypeId = chat.ChatTypeId,
+                IsPublic = chat.IsPublic
+            },
+            cancellationToken
+        );
         if (result.Success)
             Add(result.Body!.Set());
     }

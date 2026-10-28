@@ -4,7 +4,10 @@ using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.Settings;
 
-public partial class DesingViewModel(UserInfo userInfo, IThemesService themesService, IAuthService authService) : AdditionalViewModel
+public partial class DesingViewModel(UserInfo userInfo,
+                                     IThemesService themesService,
+                                     IAuthService authService,
+                                     IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService)
 {
     private readonly UserInfo _userInfo = userInfo;
     private readonly IThemesService _themesService = themesService;
@@ -50,13 +53,13 @@ public partial class DesingViewModel(UserInfo userInfo, IThemesService themesSer
     {
         _themesService.ChangeTheme(value);
         _userInfo.Theme = value;
-        await _authService.Save();
+        await _authService.Save(_appLifeCycleService.AppCancellationToken);
     }
 
     async partial void OnVisualChanged(Visual value)
     {
         _themesService.ChangeVisual(value);
         _userInfo.Visual = value;
-        await _authService.Save();
+        await _authService.Save(_appLifeCycleService.AppCancellationToken);
     }
 }

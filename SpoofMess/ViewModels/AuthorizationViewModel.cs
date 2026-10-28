@@ -1,7 +1,7 @@
 ﻿using CommonObjects.Responses;
 using CommonObjects.Results;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SpoofMess.Bases;
 using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
@@ -12,8 +12,8 @@ public partial class AuthorizationViewModel(
      IEntryApiService entryApiService,
      INavigationService navigationService,
      INotificationService notificationService,
-     UserInfo userInfo
-    ) : ObservableObject
+     UserInfo userInfo,
+     IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
 {
     private readonly IEntryApiService _entryApiService = entryApiService;
     private readonly INavigationService _navigationService = navigationService;
@@ -33,7 +33,8 @@ public partial class AuthorizationViewModel(
                 {
                     Login = UserInfo.User.Login,
                     Password = UserInfo.Password
-                }
+                },
+                _appLifeCycleService.AppCancellationToken
             );
         if (result)
             _navigationService.ShowMainView();

@@ -19,7 +19,8 @@ public partial class MainViewModel(
     IUserService userService,
     IAuthService authService,
     ChatsViewModel chatsViewModel,
-    UserInfo userInfo) : PlacementViewModel, IAsyncInitializable
+    UserInfo userInfo,
+    IAppLifeCycleService appLifeCycleService) : PlacementViewModel(appLifeCycleService), IAsyncInitializable
 {
     private readonly CancellationTokenSource token = new();
     private readonly UserInfo _userInfo = userInfo;
@@ -30,6 +31,7 @@ public partial class MainViewModel(
     private readonly INavigationService _navigationService = navigationService;
 
     public MainViewModel() : this(default,
+                                  default,
                                   default,
                                   default,
                                   default,
@@ -86,7 +88,7 @@ public partial class MainViewModel(
         }
         else
         {
-            await _authService.Save();
+            await _authService.Save(_appLifeCycleService.AppCancellationToken);
             _navigationService.CloseWindow();
         }
     }
@@ -95,7 +97,7 @@ public partial class MainViewModel(
     {
         try
         {
-            MessagesViewModel.SetGetChatInfo(async (chat) => await _navigationService.SetChatInfoViewModel(this, chat));
+            MessagesViewModel.SetGetChatInfo(async (chat) => await _navigationService.SetChatInfoViewModel(this, chat, _appLifeCycleService.AppCancellationToken));
             _notificationApiService.OnUserUpdated += _userService.OnUserUpdated;
             ChatsViewModel.OnSelectionChatChanged += MessagesViewModel.OnSelectionChatChanged;
             ServiceRealizations.EventHandler.OnUserAvatarUpdated += _userService.AvatarUpdateHandler;

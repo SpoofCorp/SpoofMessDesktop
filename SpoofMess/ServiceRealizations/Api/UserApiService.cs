@@ -13,13 +13,16 @@ internal class UserApiService(
         client, 
         serializer), IUserApiService
 {
-    public async Task<Result> ChangeSettings(ChangeUserSettingsRequest request)
-    {
-        return await PatchAsync("api/v2/User/ChangeSettings", request);
-    }
+    public async Task<Result> ChangeSettings(ChangeUserSettingsRequest request, CancellationToken cancellationToken = default) =>
+        await PatchAsync(
+            "api/v2/User/ChangeSettings",
+            request,
+            cancellationToken
+        );
 
-    public async Task<Result<UserDTO>> GetByLogin(string login)
-    {
-        return await GetAsync<UserDTO>($"api/v2/User/info?login={login}");
-    }
+    public async Task<Result<UserDTO>> GetByLogin(string login, CancellationToken cancellationToken = default) =>
+        await GetAsync<UserDTO>(
+            $"api/v2/User/info?login={login}",
+            cancellationToken
+        );
 }

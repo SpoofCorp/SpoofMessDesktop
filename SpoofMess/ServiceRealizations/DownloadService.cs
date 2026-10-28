@@ -53,6 +53,7 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
         file.Path = Path.Combine(directory, file.Name ?? (Path.HasExtension(file.Path) ? Path.GetFileName(file.Path) : "Undefined"));
+        string tempPath = $"{file.Path}.tmp";
         progress.Path = file.Path;
         if (File.Exists(file.Path))
         {
@@ -61,7 +62,7 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
             return;
         }
         await using (FileStream fileStream = new(
-            file.Path,
+            tempPath,
             FileMode.CreateNew))
         {
             byte[] buffer = new byte[8192];
@@ -75,7 +76,8 @@ public class DownloadService(IFileClassifier fileClassifier, IFileApiService fil
                     progress.Raise((double)totalRead / totalBytes * 100);
             }
         }
-
+        if (File.Exists(tempPath))
+            File.Move(tempPath, file.Path, true);
         progress.Raise(100);
         input.Dispose();
 

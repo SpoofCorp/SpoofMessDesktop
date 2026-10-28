@@ -19,7 +19,6 @@ using SpoofMess.Views;
 using System.IO;
 using System.Windows;
 using SpoofMess.Models.HttpClientExtensions;
-using System.Net.Http;
 
 namespace SpoofMess;
 
@@ -148,7 +147,7 @@ public partial class App : Application
         IServiceProvider tempProvider = services.BuildServiceProvider();
 
         ISerializer serializer = tempProvider.GetRequiredService<ISerializer>();
-        services.AddSingleton<IFileClassifier>(new FileClassifier(factory, await serializer.Deserialize<ExtensionRoadMap[]>(File.OpenRead("startup\\FileExtensions.json"))));
+        services.AddSingleton<IFileClassifier>(new FileClassifier(factory, await serializer.Deserialize<ExtensionRoadMap[]>(File.OpenRead("Startup\\FileExtensions.json"))));
         _serviceProvider = services.BuildServiceProvider();
 
         _appLifiCycleServiceuthService = _serviceProvider.GetRequiredService<IAppLifeCycleService>();

@@ -5,5 +5,10 @@ namespace SpoofMess.Services.Models;
 
 public interface ISearchService
 {
-    public Task SimpleSearch(ObservableCollection<Chat> searchableEntities, ObservableCollection<SearchableMessageWithChat> searchableMessageWithChats, string query);
+    public Task SimpleSearch(
+        ObservableCollection<Chat> searchableEntities,
+        ObservableCollection<SearchableMessageWithChat> searchableMessageWithChats,
+        string query,
+        CancellationToken cancellationToken = default
+    );
 }

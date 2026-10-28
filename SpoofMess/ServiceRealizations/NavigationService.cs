@@ -58,7 +58,11 @@ public class NavigationService(
         {
             var dataContext = _serviceProvider.GetRequiredService<MessagesViewModel>();
             dataContext.SelectedChat = chat;
-            AdditionalWindowWithDataContext additionalWindowWithDataContext = new(key, _serviceProvider.GetRequiredService<INavigationService>());
+            AdditionalWindowWithDataContext additionalWindowWithDataContext = new(
+                key,
+                _serviceProvider.GetRequiredService<INavigationService>(),
+                _serviceProvider.GetRequiredService<IAppLifeCycleService>()
+            );
             additionalWindowWithDataContext.SetDataContext(dataContext);
             additionalWindowWithDataContext.SetWindow(new MinimalWindow());
             return additionalWindowWithDataContext;
@@ -172,7 +176,10 @@ public class NavigationService(
         viewModel.ChatUser = chatUser;
     }
 
-    public async Task SetChatInfoViewModel(IPlacementViewModel owner, Chat chat)
+    public async Task SetChatInfoViewModel(
+        IPlacementViewModel owner,
+        Chat chat,
+        CancellationToken cancellationToken = default)
     {
         ChatInfoViewModel viewModel = _serviceProvider.GetRequiredService<ChatInfoViewModel>();
         viewModel.Chat = chat;
@@ -258,7 +265,7 @@ public class NavigationService(
     private void CurrentMainWindow_Activated(object? sender, EventArgs e) =>
         IsActive = true;
 
-    public async Task InitializeAsync()
+    public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
 
     }

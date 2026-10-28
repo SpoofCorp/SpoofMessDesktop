@@ -3,7 +3,10 @@ using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.Notifications;
 
-public partial class MusicNotification(IAudioService audioService) : AdditionalViewModel
+public partial class MusicNotification(
+        IAudioService audioService,
+        IAppLifeCycleService appLifeCycleService
+    ) : AdditionalViewModel(appLifeCycleService)
 {
     public IAudioService AudioService { get; set; } = audioService;
 

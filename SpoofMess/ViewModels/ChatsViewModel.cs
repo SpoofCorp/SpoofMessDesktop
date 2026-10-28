@@ -14,7 +14,8 @@ public partial class ChatsViewModel(
     IChatUserService chatUserService,
     ISearchService searchService,
     INotificationApiService notificationApiService,
-    INavigationService navigationService) : PlacementViewModel, IAsyncInitializable
+    INavigationService navigationService,
+    IAppLifeCycleService appLifeCycleService) : PlacementViewModel(appLifeCycleService), IAsyncInitializable
 {
     private readonly IChatService _chatService = chatService;
     private readonly IChatUserService _chatUserService = chatUserService;
@@ -108,7 +109,12 @@ public partial class ChatsViewModel(
         if (string.IsNullOrEmpty(Query))
             return;
 
-        await _searchService.SimpleSearch(SearchResultsChats, SearchResultsMessages, Query);
+        await _searchService.SimpleSearch(
+            SearchResultsChats,
+            SearchResultsMessages,
+            Query,
+            _appLifeCycleService.AppCancellationToken
+        );
     }
 
     protected override async Task InitializeAsync(bool initialize)

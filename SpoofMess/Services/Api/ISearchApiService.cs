@@ -5,6 +5,12 @@ namespace SpoofMess.Services.Api;
 
 public interface ISearchApiService
 {
-    public Task<Result<List<SearchableEntity>>> SimpleSearchChats(string query);
-    public Task<Result<List<SearchableMessage>>> SimpleSearchMessages(string query);
+    public Task<Result<List<SearchableEntity>>> SimpleSearchChats(
+        string query,
+        CancellationToken cancellationToken = default
+    );
+    public Task<Result<List<SearchableMessage>>> SimpleSearchMessages(
+        string query,
+        CancellationToken cancellationToken = default
+    );
 }

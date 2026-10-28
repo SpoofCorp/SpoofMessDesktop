@@ -13,14 +13,14 @@ public class ChatUserApiService(
     ) : ApiService(client, serializer), IChatUserApiService
 {
 
-    public Task<ChatDTO> GetChat(Guid id)
+    public Task<ChatDTO> GetChat(Guid id, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Result<List<ChatUserDTO>>> GetChats(DateTime after)
+    public async Task<Result<List<ChatUserDTO>>> GetChats(DateTime after, CancellationToken cancellationToken = default)
     {
-        Result<List<ChatUserDTO>> result = await GetAsync<List<ChatUserDTO>>($"api/ChatUser/get-chats?after={after:yyyy-MM-ddTHH:mm:ssZ}");
+        Result<List<ChatUserDTO>> result = await GetAsync<List<ChatUserDTO>>($"api/ChatUser/get-chats?after={after:yyyy-MM-ddTHH:mm:ssZ}", cancellationToken);
         if (result.Success)
             return result;
         //Need show exception

@@ -12,16 +12,9 @@ class ChatApiService(
     ISerializer serializer
     ) : ApiService(client, serializer), IChatApiService
 {
-    public async Task<Result<ChatDTO>> GetChat(Guid id)
-    {
-        Result<ChatDTO> result = await GetAsync<ChatDTO>($"api/v2/Chat/get?chatId={id}");
-        return result;
-    }
+    public async Task<Result<ChatDTO>> GetChat(Guid id, CancellationToken cancellationToken = default) =>
+        await GetAsync<ChatDTO>($"api/v2/Chat/get?chatId={id}", cancellationToken);
 
-    public async Task<Result<ChatDTO>> Create(CreateChatRequest chat, CancellationToken token)
-    {
-        Result<ChatDTO> chatResult = await PostAsync<CreateChatRequest, ChatDTO>("api/v2/Chat/CreateChat", chat, token);
-
-        return chatResult;
-    }
+    public async Task<Result<ChatDTO>> Create(CreateChatRequest chat, CancellationToken cancellationToken = default) =>
+        await PostAsync<CreateChatRequest, ChatDTO>("api/v2/Chat/CreateChat", chat, cancellationToken);
 }

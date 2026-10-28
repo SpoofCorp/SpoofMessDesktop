@@ -14,7 +14,8 @@ public partial class MessagesViewModel(
     IMessageService messageService,
     INotificationService notificationService,
     IAttachmentService attachmentService,
-    FileAudioRecorderService fileAudioRecorderService) : BaseViewModel
+    FileAudioRecorderService fileAudioRecorderService,
+    IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
 {
     protected readonly INotificationService _notificationService = notificationService;
     protected readonly IAttachmentService _attachmentService = attachmentService;
@@ -39,7 +40,10 @@ public partial class MessagesViewModel(
     {
         try
         {
-            await _messageService.SendMessage(SelectedChat);
+            await _messageService.SendMessage(
+                SelectedChat,
+                _appLifeCycleService.AppCancellationToken
+            );
         }
         catch (Exception ex)
         {
@@ -90,7 +94,10 @@ public partial class MessagesViewModel(
     [RelayCommand]
     private async Task StopEdit(MessageModel message)
     {
-        await _messageService.StopEdit(SelectedChat);
+        await _messageService.StopEdit(
+            SelectedChat,
+            _appLifeCycleService.AppCancellationToken
+        );
     }
 
     [RelayCommand]

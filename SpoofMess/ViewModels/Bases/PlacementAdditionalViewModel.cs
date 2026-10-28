@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SpoofMess.Services;
 using System.Windows;
 
 namespace SpoofMess.ViewModels;
 
-public abstract partial class PlacementAdditionalViewModel : AdditionalViewModel, IPlacementViewModel
+public abstract partial class PlacementAdditionalViewModel(IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService), IPlacementViewModel
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AdditionalViewModelVisibility))]

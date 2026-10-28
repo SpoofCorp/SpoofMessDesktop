@@ -29,14 +29,20 @@ public class UserAvatarService(
         return await _userAvatarApiService.Get(accessToken, cancellationToken);
     }
 
-    public async Task<Result> Set()
+    public async Task<Result> Set(CancellationToken cancellationToken = default)
     {
         Result<FileObject> fileResult = _fileService.GetImage();
         if (!fileResult.Success)
             return Result.From(fileResult);
 
-        FingerprintExistL3 l3 = await _fingerprintService.GetFingerPrintFull(fileResult.Body!.Path!, default);
-        Result<byte[]> tokenResult = await _fileApiService.ExistsL3(l3);
+        FingerprintExistL3 l3 = await _fingerprintService.GetFingerPrintFull(
+            fileResult.Body!.Path!,
+            cancellationToken
+        );
+        Result<byte[]> tokenResult = await _fileApiService.ExistsL3(
+            l3,
+            cancellationToken
+            );
 
         if (!tokenResult.Success)
         {
@@ -44,16 +50,25 @@ public class UserAvatarService(
             if (data is null)
                 return Result.BadRequest("Invalid file");
 
-            tokenResult = await _fileApiService.Save(data);
+            tokenResult = await _fileApiService.Save(
+                data,
+                cancellationToken
+            );
             if (!tokenResult.Success)
                 return Result.From(tokenResult);
         }
 
-        Result result = await _userAvatarApiService.Set(new(new(
-                tokenResult.Body!,
-                [],
-                fileResult.Body.Name ?? "",
-                fileResult.Body.Size)));
+        Result result = await _userAvatarApiService.Set(
+                new(
+                    new(
+                        tokenResult.Body!,
+                        [],
+                        fileResult.Body.Name ?? "",
+                        fileResult.Body.Size
+                    )
+                ),
+                cancellationToken
+            );
 
         if (result.Success)
         {
@@ -62,7 +77,14 @@ public class UserAvatarService(
                 Path = fileResult.Body.Path
             };
 
-            await _authService.Update(new(UserUpdateModel: new(Avatar: _userInfo.User.Avatar)));
+            await _authService.Update(
+                new(
+                    UserUpdateModel: new(
+                        Avatar: _userInfo.User.Avatar
+                    )
+                ),
+                cancellationToken
+            );
         }
 
         return result;

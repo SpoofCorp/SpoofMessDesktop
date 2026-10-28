@@ -23,9 +23,9 @@ public interface INotificationApiService : IAsyncInitializable
 
     public event Action<ChatUserDTO> OnChatCreated;
 
-    public Task SendMessage(CreateMessageRequest message);
+    public Task SendMessage(CreateMessageRequest message, CancellationToken cancellationToken = default);
 
-    public Task EditMessage(EditMessageRequest message);
+    public Task EditMessage(EditMessageRequest message, CancellationToken cancellationToken = default);
 
-    public Task<bool> DeleteMessage(MessageModel message);
+    public Task<bool> DeleteMessage(MessageModel message, CancellationToken cancellationToken = default);
 }

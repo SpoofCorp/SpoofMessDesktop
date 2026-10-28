@@ -7,9 +7,9 @@ namespace SpoofMess.Services.Models;
 
 public interface IChatService
 {
-    public Task<Chat?> Get(Guid id, bool saveToLocal = true);
-    public Task AddChats(List<ChatUserDTO> chats);
-    public Task CreateChat(Chat chat);
+    public Task<Chat?> Get(Guid id, bool saveToLocal = true, CancellationToken cancellationToken = default);
+    public Task AddChats(List<ChatUserDTO> chats, CancellationToken cancellationToken = default);
+    public Task CreateChat(Chat chat, CancellationToken cancellationToken = default);
     public void Update(ChangeChatSettingsRequest request);
     public void OnMessageAdded(MessageModel message); 
     public void OnChatAvatarUpdated(ChatAvatarResponse response);

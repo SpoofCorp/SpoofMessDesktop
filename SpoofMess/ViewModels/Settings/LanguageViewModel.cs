@@ -4,7 +4,10 @@ using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.Settings;
 
-public partial class LanguageViewModel(UserInfo userInfo, IAuthService authService, IThemesService themesService) : AdditionalViewModel
+public partial class LanguageViewModel(UserInfo userInfo,
+                                       IAuthService authService,
+                                       IThemesService themesService,
+                                       IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService)
 {
     private readonly UserInfo _userInfo = userInfo;
     private readonly IAuthService _authService = authService;
@@ -23,6 +26,6 @@ public partial class LanguageViewModel(UserInfo userInfo, IAuthService authServi
     {
         _themesService.ChangeLanguage(value);
         _userInfo.Language = value;
-        await _authService.Save();
+        await _authService.Save(_appLifeCycleService.AppCancellationToken);
     }
 }

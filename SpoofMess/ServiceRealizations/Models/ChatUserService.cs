@@ -16,31 +16,38 @@ public class ChatUserService(
     private readonly IChatService _chatService = chatService;
     private readonly IUserService _userService = userService;
 
-    public async Task SyncChats(DateTime after)
+    public async Task SyncChats(DateTime after, CancellationToken cancellationToken = default)
     {
-        Result<List<ChatUserDTO>> chats = await _chatUserApiService.GetChats(after);
+        Result<List<ChatUserDTO>> chats = await _chatUserApiService.GetChats(after, cancellationToken);
         if (chats.Success)
             await _chatService.AddChats(chats.Body!);
     }
 
-    public async Task<bool> Join(Chat chat)
+    public async Task<bool> Join(Chat chat, CancellationToken cancellationToken = default)
     {
-        Result result = await _chatUserApiService.Join(new(chat.Id));
+        Result result = await _chatUserApiService.Join(new(chat.Id), cancellationToken);
         return result.Success;
     }
 
-    public async void ChatCreated(ChatUserDTO chatUserDTO)
-    {
+    public async void ChatCreated(ChatUserDTO chatUserDTO) =>
         await _chatService.AddChats([chatUserDTO]);
-    }
 
     public async Task UploadManyMembers(Chat chat, CancellationToken cancellationToken = default)
     {
         ChatUser? member = chat.Users.OrderByDescending(x => x.User.WasOnline).FirstOrDefault() ?? new() { User = new() { WasOnline = null } };
-        Result<List<ChatMemberDTO>> members = await _chatUserApiService.GetMembersBefore(chat.Id, member.User.Login, member.User.WasOnline, cancellationToken);
+        Result<List<ChatMemberDTO>> members = await _chatUserApiService.GetMembersBefore(
+            chat.Id,
+            member.User.Login,
+            member.User.WasOnline,
+            cancellationToken
+        );
         if (!members)
             return;
-        await AddUsers(chat, members.Body!, cancellationToken);
+        await AddUsers(
+            chat,
+            members.Body!,
+            cancellationToken
+        );
     }
 
     protected async Task AddUsers(Chat chat, List<ChatMemberDTO> members, CancellationToken cancellationToken = default)
@@ -48,7 +55,10 @@ public class ChatUserService(
         ConcurrentBag<User> users = [];
         await Parallel.ForEachAsync(members, cancellationToken, async (member, ct) =>
         {
-            User? user = await _userService.Get(member.Login, cancellationToken: cancellationToken);
+            User? user = await _userService.Get(
+                member.Login,
+                cancellationToken: cancellationToken
+            );
             user ??= new()
             {
                 Avatar = new()

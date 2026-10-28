@@ -64,7 +64,7 @@ public interface INavigationService : IAsyncInitializable
 
     public void SetChatMemberCard(IPlacementViewModel owner, ChatUser chatUser);
 
-    public Task SetChatInfoViewModel(IPlacementViewModel owner, Chat chat);
+    public Task SetChatInfoViewModel(IPlacementViewModel owner, Chat chat, CancellationToken cancellationToken = default);
 
     public void SetChatCardViewModel(IPlacementViewModel owner, Chat chat);
 }

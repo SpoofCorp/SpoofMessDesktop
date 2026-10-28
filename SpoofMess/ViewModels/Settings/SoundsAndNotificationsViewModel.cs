@@ -1,29 +1,31 @@
 ﻿using CommonObjects.Requests.Changes;
 using SpoofMess.Models;
 using SpoofMess.Models.UpdateModels;
+using SpoofMess.ServiceRealizations;
 using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.Settings;
 
-public partial class SoundsAndNotificationsViewModel : AdditionalViewModel
+public partial class SoundsAndNotificationsViewModel(UserInfo userInfo,
+                                                     IAuthService authService,
+                                                     IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService)
 {
-    private readonly IAuthService _authService;
-    private readonly UserInfo _actualUserInfo;
-    public UserInfo Edit { get; set; }
+    private readonly IAuthService _authService = authService;
+    private readonly UserInfo _actualUserInfo = userInfo;
+    public UserInfo Edit { get; set; } = null!;
 
-    public SoundsAndNotificationsViewModel(UserInfo userInfo, IAuthService authService)
+    protected override Task InitializeAsync(bool initialize)
     {
-        _authService = authService;
-        _actualUserInfo = userInfo;
         Edit = new();
-        Edit.Init(userInfo);
+        Edit.Init(_actualUserInfo);
+        return base.InitializeAsync(initialize);
     }
 
     public override async void OnClose()
     {
         if (_actualUserInfo.Change(Edit, out ChangeUserSettingsRequest request))
         {
-            await _authService.Save();
+            await _authService.Save(_appLifeCycleService.AppCancellationToken);
             _actualUserInfo.Update(new UserInfoUpdateModel(
                     ForwardMessage: request.ForwardMessage,
                     InviteMe: request.InviteMe,

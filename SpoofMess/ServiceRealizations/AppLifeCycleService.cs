@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Models;
 
@@ -18,6 +17,7 @@ public class AppLifeCycleService(
     {
         if(_authService.IsAuthorized)
             await _authService.Save();
+        await _cts.CancelAsync();
     }
 
     public async Task OnStartupAsync()
@@ -35,6 +35,9 @@ public class AppLifeCycleService(
         else
             navigationService!.ShowCentralViewWithAuthorization();
     }
+
+    public CancellationToken AppCancellationToken =>
+        _cts.Token;
 
     public void Dispose()
     {
