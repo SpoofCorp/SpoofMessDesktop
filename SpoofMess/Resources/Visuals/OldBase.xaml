@@ -15,7 +15,8 @@
     <Thickness x:Key="Margin1">0 5</Thickness>
     <Thickness x:Key="MarginBase">5</Thickness>
     <Thickness x:Key="MarginWithoutRight">5 7.5 0 10</Thickness>
-    <Thickness x:Key="MarginWithoutLeft">0 0 5 10</Thickness>
+    <Thickness x:Key="MarginWithoutLeft">0 7.5 5 10</Thickness>
+    <Thickness x:Key="MarginRightTop">0 7.5 5 0</Thickness>
     <Thickness x:Key="MarginBottom">0 0 0 5</Thickness>
     <Thickness x:Key="MarginLeftTop">5 5 0 0</Thickness>
     <Thickness x:Key="MarginLeft">5 0 0 0</Thickness>

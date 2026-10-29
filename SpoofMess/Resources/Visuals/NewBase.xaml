@@ -14,6 +14,7 @@
     <CornerRadius x:Key="FunctionBlockBorderCorner">0</CornerRadius>
     <Thickness x:Key="Margin1">0 5</Thickness>
     <Thickness x:Key="MarginBase">0</Thickness>
+    <Thickness x:Key="MarginRightTop">0</Thickness>
     <Thickness x:Key="MarginWithoutRight">0</Thickness>
     <Thickness x:Key="MarginWithoutLeft">0</Thickness>
     <Thickness x:Key="MarginBottom">0</Thickness>

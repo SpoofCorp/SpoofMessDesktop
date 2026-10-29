@@ -306,7 +306,7 @@
         <Setter Property="Background" Value="{DynamicResource Second}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Third}"/>
         <Setter Property="BorderThickness" Value="0 0 0 1"/>
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -1201,14 +1201,13 @@
     <Style x:Key="CircleButton" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
         <Setter Property="Background" Value="{DynamicResource Second}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Third}"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-        <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Margin" Value="0"/>
         <Setter Property="FontSize" Value="20"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="MinWidth" Value="{StaticResource MinButtonWith}"/>
         <Setter Property="MinHeight" Value="{StaticResource MinButtonHeight}"/>
@@ -1222,18 +1221,12 @@
                         <Trigger Property="IsDefaulted" Value="true">
                             <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
                         </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" TargetName="border" Value="{DynamicResource Primary}"/>
-                            <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource Second}"/>
-                        </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Background" TargetName="border" Value="{DynamicResource Third}"/>
-                            <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource Four}"/>
+                            <Setter Property="Background" TargetName="border" Value="{DynamicResource Primary}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Background" TargetName="border" Value="{DynamicResource Four}"/>
-                            <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource Five}"/>
-                            <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource SecondBlack}"/>
+                            <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{DynamicResource Four}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
