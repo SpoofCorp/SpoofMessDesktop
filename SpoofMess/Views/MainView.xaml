@@ -27,7 +27,7 @@
                 <ve:FunctionButton Click="Menu_Item_Click" Text="{DynamicResource Settings}" Alignment="Stretch" Icon="⚙️" Command="{Binding ShowSettingsCommand}"/>
             </StackPanel>
         </ve:SideMenu>
-        <ContentControl Margin="{DynamicResource MarginWithoutRight}" Grid.RowSpan="2" Style="{StaticResource CardBlock}">
+        <ContentControl Focusable="False" Margin="{DynamicResource MarginWithoutRight}" Grid.RowSpan="2" Style="{StaticResource CardBlock}">
             <Grid RowDefinitions="auto *">
                 <Border Height="51" Margin="0" BorderThickness="{DynamicResource OpenBottomThickness}" Style="{StaticResource FunctionBlockBorderLeft}">
                     <DockPanel>
@@ -118,10 +118,7 @@
             </Grid>
         </ContentControl>
         <GridSplitter Grid.Row="1" Focusable="False" Grid.Column="1" BorderThickness="0" Background="Transparent" Panel.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="2"/>
-        <Grid RowDefinitions="auto *" Background="Transparent" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
-            <ContentPresenter Content="{Binding StaticNotificationViewModel}"/>
-            <ContentPresenter Grid.Row="1" Content="{Binding MessagesViewModel}"/>
-        </Grid>
+        <ContentPresenter Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2" Content="{Binding MessagesViewModel}"/>
         <Grid Visibility="{Binding ChatsViewModel.AdditionalViewModelVisibility}" Grid.RowSpan="2" Grid.ColumnSpan="3" Panel.ZIndex="10">
             <Rectangle Fill="{DynamicResource ShadowColor}" Tag="{Binding ChatsViewModel.AdditionalViewModel}" PreviewMouseLeftButtonDown="Rectangle_PreviewMouseLeftButtonDown">
                 <Rectangle.Style>

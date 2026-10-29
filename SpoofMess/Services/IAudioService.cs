@@ -1,9 +1,10 @@
 ﻿using NAudio.Wave;
+using SpoofMess.Bases;
 using SpoofMess.Models;
 
 namespace SpoofMess.Services;
 
-public interface IAudioService
+public interface IAudioService : IAsyncInitializable, IAsyncDisposable
 {
     public PlayableFileObject? PlayableFileObject { get; set; }
     public EventHandler<StoppedEventArgs> OutputDevice_PlaybackStopped { get; set; }

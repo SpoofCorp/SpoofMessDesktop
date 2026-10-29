@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using NAudio.MediaFoundation;
 using NAudio.Wave;
 using SpoofMess.Bases;
 using SpoofMess.Models;
@@ -7,16 +8,16 @@ using System.IO;
 
 namespace SpoofMess.ServiceRealizations;
 
-public partial class AudioService(IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService), IAudioService
+public partial class AudioService : ObservableObject, IAudioService
 {
     [ObservableProperty]
     public partial PlayableFileObject? PlayableFileObject { get; set; }
-
     private AudioFileReader _reader = null!;
     private WaveOut _outputDevice = null!;
     public bool IsPlayeed { get; set; }
     public bool IsEnded { get; set; }
     public EventHandler<StoppedEventArgs> OutputDevice_PlaybackStopped { get; set; } = null!;
+    public bool IsInitialized { get; set; }
 
     public void Play(PlayableFileObject fileObject)
     {
@@ -35,10 +36,17 @@ public partial class AudioService(IAppLifeCycleService appLifeCycleService) : Ba
 
         IsEnded = false;
         _reader?.Dispose();
-        _reader = new(fileObject.Path);
+        try
+        {
+            _reader = new(fileObject.Path);
+        }
+        catch(MediaFoundationException)
+        {
+            PlayableFileObject = null;
+            throw;
+        }
         _outputDevice.Init(_reader);
         _outputDevice.Play();
-
         PlayableFileObject.IsPlayed = IsPlayeed = true;
     }
 
@@ -49,12 +57,8 @@ public partial class AudioService(IAppLifeCycleService appLifeCycleService) : Ba
         _outputDevice.Stop();
         IsEnded = true;
         IsPlayeed = false;
-
-        if (PlayableFileObject is not null)
-        {
-            PlayableFileObject.IsPlayed = false;
-            PlayableFileObject = null;
-        }
+        PlayableFileObject?.IsPlayed = false;
+        PlayableFileObject = null;
     }
 
     public void PauseResume()
@@ -88,9 +92,18 @@ public partial class AudioService(IAppLifeCycleService appLifeCycleService) : Ba
     public bool ItIsPlayeed(PlayableFileObject fileObject) =>
         PlayableFileObject == fileObject;
 
-    protected override ValueTask DisposeAsync(bool disposing)
+    public Task InitializeAsync(CancellationToken cancellationToken = default)
     {
+        _outputDevice.PlaybackStopped += OnStoped;
+        return Task.CompletedTask;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _reader?.Dispose();
+        _outputDevice.Dispose();
         _outputDevice.PlaybackStopped -= OnStoped;
-        return base.DisposeAsync(disposing);
+        GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
     }
 }

@@ -1,4 +1,6 @@
-﻿using SpoofMess.Models;
+﻿using SpoofMess.Bases;
+using SpoofMess.Models;
+using SpoofMess.ViewModels.FileViewModels;
 
 namespace SpoofMess.ServiceRealizations;
 
@@ -10,6 +12,8 @@ public class EventHandler
     public delegate void AddChat(Chat chat);
     public delegate void UserAvatarUpdated(FileObject avatar, User user);
     public delegate void ChatAvatarUpdated(FileObject avatar, Chat chat);
+    public delegate void ChangeStaticNotificationViewModel(BaseViewModel? baseViewModel);
+    public delegate void ChangeMusicViewModel(MusicViewModel musicViewModel, FileObject currentFile);
 
     public static event Delete OnDelete = null!;
     public static event Edit OnEdit = null!;
@@ -17,6 +21,8 @@ public class EventHandler
     public static event AddChat OnAddChatAdded = null!;
     public static event UserAvatarUpdated OnUserAvatarUpdated = null!;
     public static event ChatAvatarUpdated OnChatAvatarUpdated = null!;
+    public static event ChangeStaticNotificationViewModel OnChangeStaticNotificationViewModel = null!;
+    public static event ChangeMusicViewModel OnChangeMusicViewModel = null!;
 
     public static void NotifyAddChat(Chat chat) =>
         OnAddChatAdded?.Invoke(chat);
@@ -30,4 +36,8 @@ public class EventHandler
         OnUserAvatarUpdated?.Invoke(avatar, user);
     public static void NotifyChatAvatarUpdated(FileObject avatar, Chat chat) =>
         OnChatAvatarUpdated?.Invoke(avatar, chat);
+    public static void NotifyChangeMusicViewModel(MusicViewModel musicViewModel, FileObject currentFile) =>
+        OnChangeMusicViewModel?.Invoke(musicViewModel, currentFile);
+    public static void NotifyChangeStaticNotificationViewModel(BaseViewModel? baseViewModel) =>
+        OnChangeStaticNotificationViewModel?.Invoke(baseViewModel);
 }
