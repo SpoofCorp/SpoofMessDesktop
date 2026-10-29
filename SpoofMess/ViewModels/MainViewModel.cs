@@ -15,7 +15,6 @@ public partial class MainViewModel(
     INotificationApiService notificationApiService,
     MainMessagesViewModel messagesViewModel,
     INavigationService navigationService,
-    StaticNotificationViewModel staticNotificationViewModel,
     IUserService userService,
     IAuthService authService,
     ChatsViewModel chatsViewModel,
@@ -38,16 +37,13 @@ public partial class MainViewModel(
                                   default,
                                   default,
                                   default,
-                                  default,
                                   default)
     {
 
     }
 
     public ChatsViewModel ChatsViewModel { get; set; } = chatsViewModel;
-
     public MessagesViewModel MessagesViewModel { get; set; } = messagesViewModel;
-    public StaticNotificationViewModel StaticNotificationViewModel { get; set; } = staticNotificationViewModel;
 
     [ObservableProperty]
     public partial Visibility SideMenuVisibility { get; set; } = Visibility.Collapsed;

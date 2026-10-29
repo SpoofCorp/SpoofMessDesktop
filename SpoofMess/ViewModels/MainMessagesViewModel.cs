@@ -2,6 +2,7 @@
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
+using SpoofMess.ViewModels.Notifications;
 
 namespace SpoofMess.ViewModels;
 
@@ -11,12 +12,15 @@ public partial class MainMessagesViewModel(
     IAttachmentService attachmentService,
     FileAudioRecorderService fileAudioRecorderService,
     INotificationApiService notificationApiService,
+    StaticNotificationViewModel staticNotificationViewModel,
     IAppLifeCycleService appLifeCycleService) : MessagesViewModel(messageService, notificationService, attachmentService, fileAudioRecorderService, appLifeCycleService)
 {
+    public StaticNotificationViewModel StaticNotificationViewModel { get; set; } = staticNotificationViewModel;
     private readonly INotificationApiService _notificationApiService = notificationApiService;
 
     protected override async Task InitializeAsync(bool initialize)
     {
+        await StaticNotificationViewModel.InitializeAsync();
         _notificationApiService.OnMessageReceived += _messageService.UploadMessage;
         _notificationApiService.OnMessageEdited += _messageService.EditHandle;
         _notificationApiService.OnMessageDeleted += _messageService.OnDelete;

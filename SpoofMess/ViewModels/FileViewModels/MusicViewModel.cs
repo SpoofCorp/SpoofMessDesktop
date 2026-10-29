@@ -1,60 +1,25 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NAudio.Wave;
 using SpoofMess.Models;
-using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.FileViewModels;
 
-public partial class MusicViewModel : ObjectViewModel, IDisposable
+public partial class MusicViewModel : ObjectViewModel
 {
-    private readonly IAudioService _audioService;
-
     [ObservableProperty]
     public partial PlayableFileObject? CurrentFile { get; set; }
 
     public override ObjectViewModel Clone() =>
-        new MusicViewModel(_audioService) { Files = [.. Files], Icon = Icon };
+        new MusicViewModel { Files = [.. Files], Icon = Icon };
     public override string Icon { get; init; } = "🎶";
-
-    public MusicViewModel(IAudioService audioService)
-    {
-        _audioService = audioService;
-        _audioService.OutputDevice_PlaybackStopped += OutputDevice_PlaybackStopped;
-    }
 
     [RelayCommand]
     private void PlayResume(FileObject file)
     {
-        if (file is not PlayableFileObject playableFile)
-            return;
-
-        if (playableFile != CurrentFile)
-        {
-            CurrentFile?.IsPlayed = false;
-            if (file.Path is not null && System.IO.File.Exists(file.Path))
-            {
-                _audioService.Play(playableFile);
-                CurrentFile = playableFile;
-                CurrentFile.IsPlayed = true;
-            }
-        }
-        else
-        {
-            _audioService.PauseResume();
-        }
+        ServiceRealizations.EventHandler.NotifyChangeMusicViewModel(this, file);
     }
 
     public override void Add(FileObject fileObject) =>
         Files.Add(new PlayableFileObject(fileObject));
 
-    public void Dispose()
-    {
-        _audioService.OutputDevice_PlaybackStopped -= OutputDevice_PlaybackStopped;
-        GC.SuppressFinalize(this);
-    }
-    public void OutputDevice_PlaybackStopped(object? sender, StoppedEventArgs e)
-    {
-        CurrentFile?.IsPlayed = false;
-    }
-}
+ }
