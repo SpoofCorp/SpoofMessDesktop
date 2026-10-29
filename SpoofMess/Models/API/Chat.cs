@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace SpoofMess.Models;
 
-public partial class Chat : ObservableObject, ISearchableEntity
+public partial class Chat : ObservableObject, ISearchableEntity, IDisposable
 {
     public Chat()
     {
@@ -71,4 +71,11 @@ public partial class Chat : ObservableObject, ISearchableEntity
     public Visibility ShowKick => Rules.Any(x => x.RuleId == (short)Permissions.Kicking) ? Visibility.Visible : Visibility.Collapsed;
 
     public Visibility ShowMute => Rules.Any(x => x.RuleId == (short)Permissions.Muting) ? Visibility.Visible : Visibility.Collapsed;
+
+    public void Dispose()
+    {
+        Messages.CollectionChanged -= (sender, e) =>
+            OnPropertyChanged(nameof(LastMessage));
+        GC.SuppressFinalize(this);
+    }
 }
