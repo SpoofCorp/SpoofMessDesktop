@@ -163,18 +163,18 @@
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="10" Visibility="{Binding ChatsViewModel.AdditionalViewModelVisibility}" Tag="{Binding ChatsViewModel.AdditionalViewModel, Mode=TwoWay}" Grid.RowSpan="2" Grid.ColumnSpan="3" MouseDown="Border_MouseDown" Background="Transparent">
                 <Border Style="{DynamicResource CardBorder}" Margin="0"/>
                 <Border MouseDown="ContentPresenter_MouseDown" Padding="5" Background="{DynamicResource Primary}" CornerRadius="10">
-                    <ContentPresenter MouseDown="ContentPresenter_MouseDown" Content="{Binding ChatsViewModel.AdditionalViewModel}">
+                    <ContentPresenter MouseDown="ContentPresenter_MouseDown" Content="{Binding ChatsViewModel.AdditionalViewModel}" MinWidth="200" MinHeight="50">
                         <ContentPresenter.Resources>
                             <DataTemplate DataType="{x:Type vm:ChatCardViewModel}">
-                                <Grid Height="200" Width="300" RowDefinitions="auto auto * auto" ColumnDefinitions="auto *">
-                                    <Ellipse Margin="5 0" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="0" Grid.RowSpan="4" Width="45" Height="45">
+                                <Grid RowDefinitions="auto auto * auto" ColumnDefinitions="auto *">
+                                    <Ellipse Margin="5 0" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="0" Grid.RowSpan="4" Width="70" Height="70">
                                         <Ellipse.Fill>
                                             <ImageBrush ImageSource="{Binding Chat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill"/>
                                         </Ellipse.Fill>
                                     </Ellipse>
                                     <TextBlock Style="{StaticResource PrimaryText}" Text="{Binding Chat.Name}" Grid.Column="1"/>
                                     <TextBlock Style="{StaticResource PrimaryText}" Text="{Binding Chat.UniqueName}" Grid.Column="1" Grid.Row="1"/>
-                                    <Button Content="Join" Command="{Binding JoinCommand}" Style="{StaticResource FunctionButton}" Grid.Column="1" Grid.Row="3"/>
+                                    <Button Visibility="{Binding JoinVisibility}" Content="Join" Command="{Binding JoinCommand}" Style="{StaticResource FunctionButton}" Grid.Column="1" Grid.Row="3"/>
                                 </Grid>
                             </DataTemplate>
                         </ContentPresenter.Resources>

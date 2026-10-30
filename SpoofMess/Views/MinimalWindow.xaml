@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:SpoofMess.ViewModels"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:uc="clr-namespace:SpoofMess.ViewElements"
-        mc:Ignorable="d" Background="{DynamicResource Third}" MinWidth="400" MinHeight="500" Width="400" Height="500">
+        mc:Ignorable="d" Background="{DynamicResource Primary}" MinWidth="400" MinHeight="500" Width="400" Height="500">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" 
                       CornerRadius="8"
@@ -16,20 +16,62 @@
                       UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
     <Grid RowDefinitions="auto *">
-        <Grid ColumnDefinitions="* auto auto auto" Height="auto" Background="{DynamicResource Primary}">
+        <Grid ColumnDefinitions="* auto auto auto" Height="auto" Background="{DynamicResource Second}">
             <Grid Grid.ColumnSpan="4" Background="Transparent" PreviewMouseDown="DockPanel_PreviewMouseDown"/>
             <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="❌" Command="{Binding CloseCommand}" Grid.Column="3"/>
             <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="⬜" Command="{Binding ResizeCommand}" Grid.Column="2"/>
             <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="➖" Command="{Binding HideCommand}" Grid.Column="1"/>
         </Grid>
-        <ContentPresenter Grid.Row="1" Content="{Binding DataContext}" x:Name="View" Width="auto" Height="auto">
+        <ContentPresenter Margin="{DynamicResource MarginHorizontal}" Grid.Row="1" Content="{Binding DataContext}" x:Name="View" Width="auto" Height="auto">
         </ContentPresenter>
-        <ContentPresenter Grid.Row="1" Content="{Binding Notification}" x:Name="Notification">
-            <ContentPresenter.Resources>
-                <DataTemplate DataType="{x:Type api:Notification}">
-                    <local:NotificationInfoView/>
-                </DataTemplate>
-            </ContentPresenter.Resources>
-        </ContentPresenter>
+
+        <Grid Visibility="{Binding AdditionalViewModelVisibility}" x:Name="AdditionalContainer" Grid.RowSpan="2" Grid.ColumnSpan="3" Panel.ZIndex="10">
+            <Rectangle Fill="{DynamicResource ShadowColor}" Tag="{Binding AdditionalViewModel}" PreviewMouseLeftButtonDown="Rectangle_PreviewMouseLeftButtonDown">
+                <Rectangle.Style>
+                    <Style TargetType="{x:Type Rectangle}">
+                        <Setter Property="Opacity" Value="0"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AdditionalViewModelVisibility}" Value="Collapsed">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation                 
+                                         To="0"
+                                         Storyboard.TargetProperty="Opacity"
+                                         Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                         To="0.7"
+                                         Storyboard.TargetProperty="Opacity"
+                                         Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseIn"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Rectangle.Style>
+            </Rectangle>
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding AdditionalViewModel, Mode=TwoWay}" MouseDown="Border_MouseDown" Background="Transparent">
+                <Border Style="{DynamicResource CardBorder}" CornerRadius="10" Margin="0"/>
+                <Border x:Name="Container" MouseDown="ContentPresenter_MouseDown" Padding="0" Background="{DynamicResource Third}" CornerRadius="{DynamicResource CardBorderRadius}">
+                    <ContentPresenter MouseDown="ContentPresenter_MouseDown" Content="{Binding AdditionalViewModel}"/>
+                </Border>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
