@@ -10,6 +10,7 @@ using SpoofMess.ViewModels.Settings;
 using SpoofMess.Views;
 using System.Collections.Concurrent;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace SpoofMess.ServiceRealizations;
 
@@ -64,6 +65,7 @@ public class NavigationService(
                 _serviceProvider.GetRequiredService<IAppLifeCycleService>()
             );
             additionalWindowWithDataContext.SetDataContext(dataContext);
+            dataContext.SetGetChatInfo(async (chat) => await SetChatInfoViewModel(additionalWindowWithDataContext, chat, _serviceProvider.GetRequiredService<IAppLifeCycleService>().AppCancellationToken));
             additionalWindowWithDataContext.SetWindow(new MinimalWindow());
             return additionalWindowWithDataContext;
         });
@@ -95,13 +97,7 @@ public class NavigationService(
         }
         else
         {
-            MessagesViewModel viewModel = _serviceProvider.GetRequiredService<MessagesViewModel>();
-            viewModel.SelectedChat = chat;
-            window = new()
-            {
-                DataContext = viewModel
-            };
-            window.Show();
+            throw new Exception();
         }
     }
 
