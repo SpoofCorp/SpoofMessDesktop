@@ -13,9 +13,14 @@ public partial class MainMessagesViewModel(
     FileAudioRecorderService fileAudioRecorderService,
     INotificationApiService notificationApiService,
     StaticNotificationViewModel staticNotificationViewModel,
-    IAppLifeCycleService appLifeCycleService) : MessagesViewModel(messageService, notificationService, attachmentService, fileAudioRecorderService, appLifeCycleService)
+    IAppLifeCycleService appLifeCycleService) : MessagesViewModel(
+        messageService,
+        notificationService,
+        attachmentService,
+        fileAudioRecorderService,
+        staticNotificationViewModel,
+        appLifeCycleService)
 {
-    public StaticNotificationViewModel StaticNotificationViewModel { get; set; } = staticNotificationViewModel;
     private readonly INotificationApiService _notificationApiService = notificationApiService;
 
     protected override async Task InitializeAsync(bool initialize)

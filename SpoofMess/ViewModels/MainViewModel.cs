@@ -5,7 +5,6 @@ using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
-using SpoofMess.ViewModels.Notifications;
 using System.Windows;
 
 namespace SpoofMess.ViewModels;

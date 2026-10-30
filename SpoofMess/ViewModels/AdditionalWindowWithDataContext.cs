@@ -8,7 +8,7 @@ namespace SpoofMess.ViewModels;
 
 public partial class AdditionalWindowWithDataContext(string key,
                                                      INavigationService navigation,
-                                                     IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
+                                                     IAppLifeCycleService appLifeCycleService) : PlacementAdditionalViewModel(appLifeCycleService)
 {
     private string Key { get; set; } = key;
 
@@ -50,10 +50,10 @@ public partial class AdditionalWindowWithDataContext(string key,
         Window.Hide();
     }
 
-    [RelayCommand]
-    public void Close()
+    public override void OnClose()
     {
         Window.Close();
         _navigation.CloseAdditionalWindow(Key);
+        base.OnClose();
     }
 }

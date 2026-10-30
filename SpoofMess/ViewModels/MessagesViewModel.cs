@@ -6,6 +6,7 @@ using SpoofMess.Models;
 using SpoofMess.ServiceRealizations;
 using SpoofMess.Services;
 using SpoofMess.Services.Models;
+using SpoofMess.ViewModels.Notifications;
 using System.Windows;
 
 namespace SpoofMess.ViewModels;
@@ -15,8 +16,10 @@ public partial class MessagesViewModel(
     INotificationService notificationService,
     IAttachmentService attachmentService,
     FileAudioRecorderService fileAudioRecorderService,
+    StaticNotificationViewModel staticNotificationViewModel,
     IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
 {
+    public StaticNotificationViewModel StaticNotificationViewModel { get; set; } = staticNotificationViewModel;
     protected readonly INotificationService _notificationService = notificationService;
     protected readonly IAttachmentService _attachmentService = attachmentService;
     protected readonly FileAudioRecorderService _fileAudioRecorderService = fileAudioRecorderService;
@@ -123,6 +126,7 @@ public partial class MessagesViewModel(
     protected override async ValueTask DisposeAsync(bool disposing)
     {
         SelectedChat?.IsOpened = true;
+        _fileAudioRecorderService.Dispose();
         await base.DisposeAsync(disposing);
     }
 }
