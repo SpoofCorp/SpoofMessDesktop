@@ -290,7 +290,7 @@
                     </Grid>
                 </StackPanel>
             </ContentControl>
-            <ItemsControl root:ScrollHelper.ScrollToItem="{Binding SelectedChat.TargetMessage, Mode=TwoWay}" Focusable="False" Grid.RowSpan="5" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" Panel.ZIndex="0" x:Name="MessagesList">
+            <ItemsControl  Focusable="False" Grid.RowSpan="5" Margin="2 0 0 0" ItemsSource="{Binding SelectedChat.Messages}" MinWidth="100" Panel.ZIndex="0" x:Name="MessagesList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="50 *" RowDefinitions="* auto auto" MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
@@ -366,7 +366,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.Template>
                     <ControlTemplate TargetType="ItemsControl">
-                        <ScrollViewer Focusable="False" x:Name="MessageScroll" CanContentScroll="False" root:ScrollHelper.VerticalOffset="{Binding SelectedChat.Position}">
+                        <ScrollViewer Focusable="False" x:Name="MessageScroll" CanContentScroll="False" >
                             <ItemsPresenter Margin="0 55" Focusable="False"/>
                         </ScrollViewer>
                     </ControlTemplate>

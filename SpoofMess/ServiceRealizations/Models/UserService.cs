@@ -34,7 +34,7 @@ public class UserService(
             return _userInfo.User;
 
         return await UploadQueue(login, update, cancellationToken);
-    }
+     }
 
     private async Task<User?> UploadQueue(string login, bool update, CancellationToken cancellationToken = default)
     {

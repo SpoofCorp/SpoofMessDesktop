@@ -4,6 +4,7 @@ using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 
 namespace SpoofMess.ServiceRealizations.Models;
@@ -36,7 +37,7 @@ public class SearchService(
 
         if (taskResultChats.Result.Success)
         {
-            List<Chat> chats = [];
+            ConcurrentBag<Chat> chats = [];
             await Parallel.ForEachAsync(taskResultChats.Result.Body!, cancellationToken, async (searchableEntity, cancaletionToken) =>
             {
                 if(searchableEntity.Type == SearchType.User)
@@ -44,7 +45,12 @@ public class SearchService(
                     User? user = await _userService.Get(searchableEntity.UniqueName, cancellationToken: cancaletionToken);
                     if (user is null)
                         return;
-                    
+                    chats.Add(new()
+                    {
+                        Avatar = user.Avatar,
+                        Name = user.Name,
+                        ChatTypeId = 0
+                    });
                 }
                 else
                 {
