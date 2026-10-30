@@ -14,7 +14,7 @@ public abstract partial class AdditionalViewModel(IAppLifeCycleService appLifeCy
     [RelayCommand]
     protected virtual void Close()
     {
-        _close();
+        _close?.Invoke();
         OnClose();
     }
 
