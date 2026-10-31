@@ -12,6 +12,7 @@
     <sys:String x:Key="PrivacySecurity">Privacy and security</sys:String>
     <sys:String x:Key="Advanced">Advanced</sys:String>
     <sys:String x:Key="Design">Design</sys:String>
+    <sys:String x:Key="InputAudioDevice">Input audio device</sys:String>
     <sys:String x:Key="Visual">Visual</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Notifications and sounds</sys:String>
     <sys:String x:Key="SearchMe">Search for you</sys:String>

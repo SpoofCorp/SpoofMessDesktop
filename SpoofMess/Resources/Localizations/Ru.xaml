@@ -12,6 +12,7 @@
     <sys:String x:Key="PrivacySecurity">Приватность и безопастность</sys:String>
     <sys:String x:Key="Advanced">Расширенные</sys:String>
     <sys:String x:Key="Design">Дизайн</sys:String>
+    <sys:String x:Key="InputAudioDevice">Устройство аудио ввода</sys:String>
     <sys:String x:Key="Visual">Отображение</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Уведомления и звуки</sys:String>
     <sys:String x:Key="SearchMe">Искать вас</sys:String>
@@ -53,7 +54,6 @@
 
     <sys:String x:Key="CountMembers">{0} участников</sys:String>
     <sys:String x:Key="CountSubs">{0} подписчиков</sys:String>
-
 
     <sys:String x:Key="Mute">Заглушить</sys:String>
     <sys:String x:Key="Kick">Выгнать</sys:String>

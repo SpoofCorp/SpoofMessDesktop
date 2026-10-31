@@ -12,6 +12,7 @@
     <sys:String x:Key="PrivacySecurity">Құпиялылық және қауіпсіздік</sys:String>
     <sys:String x:Key="Advanced">Кеңейтілген</sys:String>
     <sys:String x:Key="Design">Дизайн</sys:String>
+    <sys:String x:Key="InputAudioDevice">Дыбыс енгізу құрылғысы</sys:String>
     <sys:String x:Key="Visual">Отображение</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Хабарландырулар мен дыбыстар</sys:String>
     <sys:String x:Key="SearchMe">Сізді іздеу</sys:String>
