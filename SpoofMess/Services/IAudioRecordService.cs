@@ -1,7 +1,10 @@
-﻿namespace SpoofMess.Services;
+﻿using SpoofMess.Models;
 
-internal interface IAudioRecordService
+namespace SpoofMess.Services;
+
+public interface IAudioRecordService
 {
     public Task Record();
     public Task Stop();
+    public void ChangeDevice(AudioInDevice? audioInDevice);
 }

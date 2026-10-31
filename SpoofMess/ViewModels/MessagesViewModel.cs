@@ -82,7 +82,10 @@ public partial class MessagesViewModel(
         IsVoiceRecording = true;
         Result<FileObject> result = await _fileAudioRecorderService.RecordToFile();
         if (!result)
+        {
+            _notificationService.ShowError(result);
             return;
+        }    
 
         _attachmentService.AttachVoice(SelectedChat.CurrentMessage, result.Body!);
     }

@@ -1,14 +1,16 @@
 ﻿using NAudio.MediaFoundation;
 using NAudio.Wave;
 using SpoofMess.Bases;
+using SpoofMess.Models;
 using SpoofMess.Services;
 
 namespace SpoofMess.ServiceRealizations;
 
-public partial class AudioRecorderService : IAudioRecordService, IInitializable, IDisposable
+public partial class AudioRecorderService(UserInfo userInfo) : IAudioRecordService, IInitializable, IDisposable
 {
+    protected readonly UserInfo _userInfo = userInfo;
     protected static readonly WaveFormat waveFormat = new(44100, 16, 1);
-    protected WaveInEvent waveIn = null!;
+    protected WaveIn waveIn = null!;
 
     public bool IsInitialized { get; set; }
 
@@ -19,10 +21,10 @@ public partial class AudioRecorderService : IAudioRecordService, IInitializable,
             throw new ApplicationException("It's been initialized");
         }
         MediaFoundationApi.Startup();
-
         waveIn = new()
         {
-            WaveFormat = waveFormat
+            WaveFormat = waveFormat,
+            DeviceNumber = _userInfo.AudioInDevice?.Number ?? 0
         };
 
         waveIn.DataAvailable += WaveInDataAvailable;
@@ -59,5 +61,12 @@ public partial class AudioRecorderService : IAudioRecordService, IInitializable,
         waveIn.StopRecording();
         MediaFoundationApi.Shutdown();
         GC.SuppressFinalize(this);
+    }
+
+    public void ChangeDevice(AudioInDevice? audioInDevice)
+    {
+        if (audioInDevice is null) return;
+
+        waveIn.DeviceNumber = audioInDevice.Number;
     }
 }
