@@ -32,9 +32,27 @@
         </tb:TaskbarIcon>
         <Grid ColumnDefinitions="* auto auto auto" Height="auto" Background="{DynamicResource Second}">
             <Grid Grid.ColumnSpan="4" Background="Transparent" PreviewMouseDown="DockPanel_PreviewMouseDown"/>
-            <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="❌" Command="{Binding CloseCommand}" Grid.Column="3"/>
-            <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="⬜" Command="{Binding ResizeCommand}" Grid.Column="2"/>
-            <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Content="➖" Command="{Binding HideCommand}" Grid.Column="1"/>
+            <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Command="{Binding CloseCommand}" Grid.Column="3">
+                <Button.Content>
+                    <Viewbox Margin="7.5" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform">
+                        <Path StrokeThickness="2" Fill="{DynamicResource ActiveTextColor}" Data="F1 M 2.5 0 L 35 32.5 32.5 35 0 2.5 M 32.5 0 L 0 32.5 2.5 35 35 2.5 M 17.5 15 L 15 17.5 17.5 20 20 17.5"/>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+            <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Command="{Binding ResizeCommand}" Grid.Column="2">
+                <Button.Content>
+                    <Viewbox Margin="7.5" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform">
+                        <Path StrokeThickness="2" Stroke="{DynamicResource ActiveTextColor}" Data="F1 M 0 0 H 25 V 25 H 0 V 0"/>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+            <Button FontSize="12" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalButton}" Command="{Binding HideCommand}" Grid.Column="1">
+                <Button.Content>
+                    <Viewbox Margin="7.5" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform">
+                        <Path StrokeThickness="2" Stroke="{DynamicResource ActiveTextColor}" Data="F0 M 0 10.5 H 25"/>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
         </Grid>
         <ContentPresenter Grid.Row="1" Content="{Binding View}" x:Name="View" Width="auto" Height="auto">
             <ContentPresenter.Resources>
