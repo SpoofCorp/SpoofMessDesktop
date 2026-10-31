@@ -22,6 +22,7 @@ public record class UserInfoUpdateModel(
     Visual? Visual = null,
     bool? CloneWindows = null,
     CultureInfo? CurrentCultureInfo = null,
+    AudioInDevice? AudioInDevice = null,
     UserAuthorizeResponse? Authorize = null,
     SessionSettings? SessionSettings = null,
     UserUpdateModel? UserUpdateModel = null

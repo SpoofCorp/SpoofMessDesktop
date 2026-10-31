@@ -45,6 +45,8 @@ public partial class UserInfo : ObservableObject
 
     [ObservableProperty]
     public partial int MonthsBeforeDelete { get; set; }
+    [ObservableProperty]
+    public partial AudioInDevice? AudioInDevice { get; set; }
 
     [ObservableProperty]
     public partial string EditedName { get; set; } = string.Empty;
@@ -84,6 +86,7 @@ public partial class UserInfo : ObservableObject
         Language = userInfoUpdateModel.Language ?? Language;
         Theme = userInfoUpdateModel.Theme ?? Theme;
         Visual = userInfoUpdateModel.Visual ?? Visual;
+        AudioInDevice = userInfoUpdateModel.AudioInDevice ?? AudioInDevice;
         ShowMessagesNotifications = userInfoUpdateModel.ShowMessagesNotifications ?? ShowMessagesNotifications;
         ShowErrorNotifications = userInfoUpdateModel.ShowErrorNotifications ?? ShowErrorNotifications;
         EditedName = userInfoUpdateModel.EditedName ?? User.Name ?? string.Empty;
@@ -110,6 +113,7 @@ public partial class UserInfo : ObservableObject
         MonthsBeforeDelete = userInfo.MonthsBeforeDelete;
         Language = userInfo.Language;
         Theme = userInfo.Theme;
+        AudioInDevice = userInfo.AudioInDevice;
         Visual = userInfo.Visual;
         ShowMessagesNotifications = userInfo.ShowMessagesNotifications;
         ShowErrorNotifications = userInfo.ShowErrorNotifications;
