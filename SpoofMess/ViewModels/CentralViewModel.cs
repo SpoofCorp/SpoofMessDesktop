@@ -27,9 +27,9 @@ public partial class CentralViewModel(
     }
 
     [RelayCommand]
-    private void Close()
+    private async Task Close()
     {
-        _navigation.CloseWindow();
+        await _appLifeCycleService.OnCloseAsync();
     }
 
     [RelayCommand]

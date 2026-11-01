@@ -56,7 +56,7 @@ public class AuthService(
         if (UserInfo.Authorize is null)
             return Result.ErrorResult("Empty authorize data");
 
-        return await Update();
+        return await Update(cancellationToken);
     }
 
     public async Task<string?> GetAccess(CancellationToken cancellationToken = default)

@@ -54,7 +54,9 @@ Coming soon:
     - set avatar:
         - your profile;
         - your chats.
-    - set session data;
+    - set session data:
+        - audio input device;
+        - windows settings;
     - set localization:
         - en;
         - kz;

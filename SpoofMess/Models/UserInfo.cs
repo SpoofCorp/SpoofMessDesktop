@@ -23,6 +23,9 @@ public partial class UserInfo : ObservableObject
     public partial bool HideToTray { get; set; }
 
     [ObservableProperty]
+    public partial float Volume { get; set; }
+
+    [ObservableProperty]
     public partial bool UnselectChat { get; set; }
 
     [ObservableProperty]
@@ -100,6 +103,7 @@ public partial class UserInfo : ObservableObject
         EditedName = userInfo.User.Name ?? string.Empty;
         User.Init(userInfo.User);
         Authorize = userInfo.Authorize;
+        Volume = userInfo.Volume;
         SessionSettings = userInfo.SessionSettings;
         CloneWindows = userInfo.CloneWindows;
         Height = userInfo.Height;

@@ -5,6 +5,7 @@ using NAudio.MediaFoundation;
 using NAudio.Wave;
 using SpoofMess.Bases;
 using SpoofMess.Models;
+using SpoofMess.ServiceRealizations;
 using SpoofMess.Services;
 using SpoofMess.ViewModels.FileViewModels;
 
@@ -82,12 +83,13 @@ public partial class MusicNotification(
             AudioService.PauseResume();
         }
     }
-    protected override Task InitializeAsync(bool initialize)
+    protected override async Task InitializeAsync(bool initialize)
     {
+        await AudioService.InitializeAsync();
         AudioService.OutputDevice_PlaybackStopped += OutputDevice_PlaybackStopped;
         ServiceRealizations.EventHandler.OnChangeStaticNotificationViewModel += OnChange;
         ServiceRealizations.EventHandler.OnChangeMusicViewModel += PlayResume;
-        return base.InitializeAsync(initialize);
+        await base.InitializeAsync(initialize);
     }
 
     protected override async ValueTask DisposeAsync(bool disposing)
