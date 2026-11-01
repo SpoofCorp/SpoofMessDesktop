@@ -78,8 +78,10 @@ public class NavigationService(
         CurrentMainWindow.Activate();
     }
 
-    public void CloseWindow()
+    public async Task CloseWindow()
     {
+        if (_currentViewModel is IClosable closable)
+            await closable.OnClose();
         CurrentMainWindow.Close();
     }
 

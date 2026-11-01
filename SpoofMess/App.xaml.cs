@@ -159,10 +159,8 @@ public partial class App : Application
         base.OnStartup(e);
     }
 
-    protected override async void OnExit(ExitEventArgs e)
+    protected override void OnExit(ExitEventArgs e)
     {
-        await _appLifiCycleServiceuthService.OnExitAsync();
         base.OnExit(e);
-        Current.Shutdown(0);
     }
 }
