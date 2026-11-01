@@ -8,10 +8,23 @@ using System.IO;
 
 namespace SpoofMess.ServiceRealizations;
 
-public partial class AudioService : ObservableObject, IAudioService
+public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioService, IAsyncInitializable
 {
+    protected readonly UserInfo _userInfo = userInfo;
     [ObservableProperty]
     public partial PlayableFileObject? PlayableFileObject { get; set; }
+    public float Volume
+    {
+        get;
+        set
+        {
+            field = value < 0.0f ? 0.0f : value > 1.0f ? 1.0f : value;
+            _outputDevice?.Volume = value;
+            _userInfo.Volume = value;
+            OnPropertyChanged();
+        }
+    }
+
     private AudioFileReader _reader = null!;
     private WaveOut _outputDevice = null!;
     public bool IsPlayeed { get; set; }
@@ -21,18 +34,12 @@ public partial class AudioService : ObservableObject, IAudioService
 
     public void Play(PlayableFileObject fileObject)
     {
-        _outputDevice?.Stop();
+        _outputDevice.Stop();
 
         PlayableFileObject?.IsPlayed = false;
         PlayableFileObject = fileObject;
         if (!File.Exists(fileObject.Path))
             return;
-
-        if (_outputDevice is null)
-        {
-            _outputDevice = new();
-            _outputDevice.PlaybackStopped += OnStoped;
-        }
 
         IsEnded = false;
         _reader?.Dispose();
@@ -40,7 +47,7 @@ public partial class AudioService : ObservableObject, IAudioService
         {
             _reader = new(fileObject.Path);
         }
-        catch(MediaFoundationException)
+        catch (MediaFoundationException)
         {
             PlayableFileObject = null;
             throw;
@@ -94,15 +101,23 @@ public partial class AudioService : ObservableObject, IAudioService
 
     public Task InitializeAsync(CancellationToken cancellationToken = default)
     {
+        if (IsInitialized)
+            return Task.CompletedTask;
+        Volume = _userInfo.Volume;
+        _outputDevice = new()
+        { 
+            Volume = Volume
+        };
         _outputDevice.PlaybackStopped += OnStoped;
+        IsInitialized = true;
         return Task.CompletedTask;
     }
 
     public ValueTask DisposeAsync()
     {
         _reader?.Dispose();
-        _outputDevice.Dispose();
         _outputDevice.PlaybackStopped -= OnStoped;
+        _outputDevice.Dispose();
         GC.SuppressFinalize(this);
         return ValueTask.CompletedTask;
     }

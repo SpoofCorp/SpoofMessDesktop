@@ -6,6 +6,7 @@ namespace SpoofMess.Services;
 
 public interface IAudioService : IAsyncInitializable, IAsyncDisposable
 {
+    public float Volume { get; set; }
     public PlayableFileObject? PlayableFileObject { get; set; }
     public EventHandler<StoppedEventArgs> OutputDevice_PlaybackStopped { get; set; }
     public bool IsPlayeed { get; set; }
