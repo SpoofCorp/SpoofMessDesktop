@@ -18,7 +18,7 @@ public partial class MainViewModel(
     IAuthService authService,
     ChatsViewModel chatsViewModel,
     UserInfo userInfo,
-    IAppLifeCycleService appLifeCycleService) : PlacementViewModel(appLifeCycleService), IAsyncInitializable
+    IAppLifeCycleService appLifeCycleService) : PlacementViewModel(appLifeCycleService), IAsyncInitializable, IClosable
 {
     private readonly CancellationTokenSource token = new();
     private readonly UserInfo _userInfo = userInfo;
@@ -83,9 +83,18 @@ public partial class MainViewModel(
         }
         else
         {
-            await _authService.Save(_appLifeCycleService.AppCancellationToken);
+            await _appLifeCycleService.OnExitAsync();
             _navigationService.CloseWindow();
         }
+    }
+
+    public Task OnClose()
+    {
+        if (_userInfo.UnselectChat)
+            ChatsViewModel.SelectedChat = null;
+        BehindCloseAdditionalViewModel();
+        SideMenuVisibility = Visibility.Collapsed;
+        return Task.CompletedTask;
     }
 
     protected override async Task InitializeAsync(bool initialize)
