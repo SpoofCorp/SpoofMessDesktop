@@ -8,7 +8,8 @@
                     xmlns:filevm="clr-namespace:SpoofMess.ViewModels.FileViewModels"
                     xmlns:root="clr-namespace:SpoofMess"
                     xmlns:uc="clr-namespace:SpoofMess.ViewElements">
-
+    <ve:VolumeToGeomConverter x:Key="VolumeToGeomConverter"/>
+    
     <DataTemplate DataType="{x:Type notificationViewModel:MusicNotification}">
         <Grid Background="Transparent" ColumnDefinitions="auto 15 * auto">
             <StackPanel Orientation="Horizontal">
@@ -19,9 +20,6 @@
                                   Data="M 20 5 10 15 20 25 M 10 5 0 15 10 25"/>
                         </Viewbox>
                     </Button.Content>
-                    <Button.Background>
-                        <ImageBrush Opacity="0.6"/>
-                    </Button.Background>
                 </Button>
                 <Button Margin="{DynamicResource MarginHorizontal}" Width="25" Height="25" Focusable="False" Command="{Binding PlayResumeCommand}" Cursor="Hand">
                     <Button.Style>
@@ -48,9 +46,6 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Button.Background>
-                        <ImageBrush Opacity="0.6"/>
-                    </Button.Background>
                 </Button>
                 <Button Margin="{DynamicResource MarginHorizontal}" Width="25" Style="{StaticResource CircleButton}" Height="25" Focusable="False" Command="{Binding NextSongCommand}" Cursor="Hand">
                     <Button.Content>
@@ -59,12 +54,45 @@
                                   Data="M 0 5 10 15 0 25 M 10 5 20 15 10 25"/>
                         </Viewbox>
                     </Button.Content>
-                    <Button.Background>
-                        <ImageBrush Opacity="0.6"/>
-                    </Button.Background>
                 </Button>
             </StackPanel>
             <TextBlock VerticalAlignment="Center" Text="{Binding AudioService.PlayableFileObject.Name}" Grid.Column="2" Style="{StaticResource BaseText}"/>
+            <ContentControl Focusable="False" Grid.Column="3">
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Grid>
+                                        <ToggleButton x:Name="VolumeChecker" Width="25" Focusable="False" Height="25" Style="{StaticResource MinimalToggleButton}">
+                                            <ToggleButton.Content>
+                                                <Viewbox Margin="0 2 0 2" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform">
+                                                    <Path StrokeThickness="2" Stroke="{DynamicResource ActiveTextColor}" Data="{Binding AudioService.Volume, Converter={StaticResource VolumeToGeomConverter}}"/>
+                                                </Viewbox>
+                                            </ToggleButton.Content>
+                                        </ToggleButton>
+                                        <Popup IsOpen="{Binding IsChecked, ElementName=VolumeChecker, Mode=TwoWay}" 
+                                            PlacementTarget="{Binding ElementName=VolumeChecker}" 
+                                            Placement="Left"
+                                            PlacementRectangle="35 15 0 0"
+                                            StaysOpen="False"
+                                            AllowsTransparency="True">
+                                            <Border Padding="10">
+                                                <Border Padding="2 5" Style="{StaticResource ShadowBorder}" Background="{DynamicResource Second}">
+                                                    <StackPanel>
+                                                        <Slider IsSelectionRangeEnabled="True" Orientation="Vertical" AutoToolTipPrecision="2"  TickFrequency="0.1" Width="20" Height="100" Maximum="1.0" SelectionStart="{Binding RelativeSource={RelativeSource Self}, Path=Minimum}" SelectionEnd="{Binding RelativeSource={RelativeSource Self}, Path=Value}" Minimum="0.0" Value="{Binding AudioService.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                        </Slider>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Border>
+                                        </Popup>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
         </Grid>
     </DataTemplate>
 
