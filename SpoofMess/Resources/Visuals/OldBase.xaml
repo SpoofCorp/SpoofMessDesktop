@@ -21,7 +21,7 @@
     <Thickness x:Key="MarginLeftTop">5 5 0 0</Thickness>
     <Thickness x:Key="MarginLeft">5 0 0 0</Thickness>
     <Thickness x:Key="MarginHorizontal">5 0</Thickness>
-    <Thickness x:Key="BorderThickness">1</Thickness>
+    <Thickness x:Key="BorderThickness">0</Thickness>
     <Thickness x:Key="FunctionBlockBorderThickness">0</Thickness>
     <Thickness x:Key="OpenTopThickness">0</Thickness>
     <Thickness x:Key="OpenBottomThickness">0</Thickness>
