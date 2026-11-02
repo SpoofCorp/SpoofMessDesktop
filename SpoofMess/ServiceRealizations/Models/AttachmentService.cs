@@ -208,7 +208,9 @@ internal class AttachmentService(
     }
     private async Task<Result<byte[]>> Save(FileObject file, CancellationToken token = default)
     {
-        using MultipartFormDataContent form = _fileService.GetStream(file.Path!);
+        using MultipartFormDataContent? form = _fileService.GetStream(file.Path!);
+        if (form is null)
+            return Result<byte[]>.ErrorResult("");
         return await _fileApiService.Save(form, token);
     }
 

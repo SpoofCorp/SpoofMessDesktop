@@ -18,9 +18,9 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
         get;
         set
         {
-            field = value < 0.0f ? 0.0f : value > 1.0f ? 1.0f : value;
-            _outputDevice?.Volume = value;
-            _userInfo.Volume = value;
+            field = Math.Clamp(value, 0.0f, 1.0f);
+            _outputDevice?.Volume = field;
+            _userInfo.Volume = field;
             OnPropertyChanged();
         }
     }
@@ -32,16 +32,16 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
     public EventHandler<StoppedEventArgs> OutputDevice_PlaybackStopped { get; set; } = null!;
     public bool IsInitialized { get; set; }
 
+    private bool isUserStoped = false;
+
     public void Play(PlayableFileObject fileObject)
     {
-        _outputDevice.Stop();
-
-        PlayableFileObject?.IsPlayed = false;
-        PlayableFileObject = fileObject;
+        Stop();
         if (!File.Exists(fileObject.Path))
             return;
 
         IsEnded = false;
+        
         _reader?.Dispose();
         try
         {
@@ -54,14 +54,16 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
         }
         _outputDevice.Init(_reader);
         _outputDevice.Play();
+        PlayableFileObject = fileObject;
         PlayableFileObject.IsPlayed = IsPlayeed = true;
     }
 
     public void Stop()
     {
-        if (_outputDevice is null) return;
+        if (_outputDevice is null || !IsPlayeed) return;
 
         _outputDevice.Stop();
+        isUserStoped = true;
         IsEnded = true;
         IsPlayeed = false;
         PlayableFileObject?.IsPlayed = false;
@@ -88,12 +90,14 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
 
     protected void OnStoped(object? sender, StoppedEventArgs args)
     {
-        if (!IsPlayeed)
+        if (!isUserStoped && IsPlayeed)
         {
             IsEnded = true;
+            IsPlayeed = false;
             PlayableFileObject?.IsPlayed = false;
-            PlayableFileObject = null;
+            OutputDevice_PlaybackStopped?.Invoke(sender, args);
         }
+        isUserStoped = false;
     }
 
     public bool ItIsPlayeed(PlayableFileObject fileObject) =>
@@ -105,7 +109,7 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
             return Task.CompletedTask;
         Volume = _userInfo.Volume;
         _outputDevice = new()
-        { 
+        {
             Volume = Volume
         };
         _outputDevice.PlaybackStopped += OnStoped;
