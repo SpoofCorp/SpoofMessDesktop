@@ -20,7 +20,7 @@ public interface INavigationService : IAsyncInitializable
 
     public StaticNotificationViewModel GetAudioService();
 
-    public async Task CloseWindow();
+    public Task CloseWindow();
 
     public void ResizeWindow();
 

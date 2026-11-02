@@ -111,6 +111,7 @@ public partial class App : Application
         services.AddSingleton<IUserService, UserService>();
         services.AddSingleton<ISearchService, SearchService>();
         services.AddSingleton<MusicNotification>();
+        services.AddSingleton<MultiFileViewModel>();
 
         services.AddSingleton<INotificationApiService, NotificationApiService>();
 

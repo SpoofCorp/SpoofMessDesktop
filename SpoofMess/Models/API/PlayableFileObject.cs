@@ -5,7 +5,7 @@ namespace SpoofMess.Models;
 public partial class PlayableFileObject : FileObject
 {
     [ObservableProperty]
-    private bool _isPlayed;
+    public partial bool IsPlayed { get; set; }
 
     public PlayableFileObject(FileObject fileObject)
     {
