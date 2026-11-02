@@ -5,9 +5,9 @@ using NAudio.MediaFoundation;
 using NAudio.Wave;
 using SpoofMess.Bases;
 using SpoofMess.Models;
-using SpoofMess.ServiceRealizations;
 using SpoofMess.Services;
 using SpoofMess.ViewModels.FileViewModels;
+using System.Collections.ObjectModel;
 
 namespace SpoofMess.ViewModels.Notifications;
 
@@ -19,46 +19,47 @@ public partial class MusicNotification(
 {
     public IAudioService AudioService { get; set; } = audioService;
     private readonly INotificationService _notificationService = notificationService;
+    public ObservableCollection<PlayableFileObject> SongsList { get; private set; } = [];
+
+    [ObservableProperty]
+    public partial PlayableFileObject? CurrentFile { get; set; }
+
     [ObservableProperty]
     public partial MusicViewModel? CurrentMusicViewModel { get; set; }
     private bool _isActiveViewModel = false;
+    private int currentIndex = 0;
 
     [RelayCommand]
     public void PlayResume()
     {
-        if (CurrentMusicViewModel is not null && CurrentMusicViewModel.CurrentFile is not null)
-            PlayResume(CurrentMusicViewModel, CurrentMusicViewModel.CurrentFile);
+        if (CurrentFile is not null)
+            PlayResume(CurrentFile);
     }
 
     [RelayCommand(CanExecute = nameof(CanScrollRight))]
     public void NextSong()
     {
-        if (CurrentMusicViewModel is not null)
-        {
-            CurrentMusicViewModel.CurrentIndex++;
-            PlayResume(CurrentMusicViewModel, CurrentMusicViewModel.Files[CurrentMusicViewModel.CurrentIndex]);
-        }
+        if (CurrentFile is null) return;
+
+        currentIndex++;
+        PlayResume(SongsList[currentIndex]);
     }
 
     [RelayCommand(CanExecute = nameof(CanScrollLeft))]
     public void PreviewSong()
     {
-        if (CurrentMusicViewModel is not null)
-        {
-            CurrentMusicViewModel.CurrentIndex--;
-            PlayResume(CurrentMusicViewModel, CurrentMusicViewModel.Files[CurrentMusicViewModel.CurrentIndex]);
-        }
+        if (CurrentFile is null) return;
+
+        currentIndex--;
+        PlayResume(SongsList[currentIndex]);
     }
 
-    private void PlayResume(MusicViewModel musicViewModel, FileObject file)
+    public void PlayResume(PlayableFileObject playableFile)
     {
-        if (file is not PlayableFileObject playableFile)
-            return;
-
-        if (playableFile != CurrentMusicViewModel?.CurrentFile)
+        if (playableFile != CurrentFile)
         {
-            musicViewModel.CurrentFile?.IsPlayed = false;
-            if (file.Path is not null && System.IO.File.Exists(file.Path))
+            CurrentFile?.IsPlayed = false;
+            if (playableFile.Path is not null && System.IO.File.Exists(playableFile.Path))
             {
                 try
                 {
@@ -69,10 +70,8 @@ public partial class MusicNotification(
                     _notificationService.ShowError(Result.ErrorResult("Unsupported audio format", 204));
                     return;
                 }
-                musicViewModel.CurrentFile = playableFile;
-                musicViewModel.CurrentFile.IsPlayed = true;
-                CurrentMusicViewModel = musicViewModel;
-                _isActiveViewModel = true; 
+                CurrentFile = playableFile;
+                _isActiveViewModel = true;
                 PreviewSongCommand.NotifyCanExecuteChanged();
                 NextSongCommand.NotifyCanExecuteChanged();
                 ServiceRealizations.EventHandler.NotifyChangeStaticNotificationViewModel(this);
@@ -88,7 +87,6 @@ public partial class MusicNotification(
         await AudioService.InitializeAsync();
         AudioService.OutputDevice_PlaybackStopped += OutputDevice_PlaybackStopped;
         ServiceRealizations.EventHandler.OnChangeStaticNotificationViewModel += OnChange;
-        ServiceRealizations.EventHandler.OnChangeMusicViewModel += PlayResume;
         await base.InitializeAsync(initialize);
     }
 
@@ -97,7 +95,6 @@ public partial class MusicNotification(
         ServiceRealizations.EventHandler.OnChangeStaticNotificationViewModel -= OnChange;
         AudioService.OutputDevice_PlaybackStopped -= OutputDevice_PlaybackStopped;
         await AudioService.DisposeAsync();
-        ServiceRealizations.EventHandler.OnChangeMusicViewModel -= PlayResume;
         await base.DisposeAsync(disposing);
     }
     private void OnChange(BaseViewModel? baseViewModel)
@@ -105,17 +102,36 @@ public partial class MusicNotification(
         if (baseViewModel == this)
             return;
         CurrentMusicViewModel = null;
+        CurrentFile = null;
         _isActiveViewModel = false;
         AudioService.Stop();
     }
     public void OutputDevice_PlaybackStopped(object? sender, StoppedEventArgs e)
     {
         CurrentMusicViewModel?.CurrentFile?.IsPlayed = false;
+        CurrentFile?.IsPlayed = false;
+        if (CanScrollRight())
+            NextSong();
     }
-
     public bool CanScrollLeft() =>
-        CurrentMusicViewModel is not null && CurrentMusicViewModel.CanScroll(CurrentMusicViewModel.CurrentIndex - 1);
+        CurrentFile is not null && CanScroll(currentIndex - 1);
 
     public bool CanScrollRight() =>
-        CurrentMusicViewModel is not null && CurrentMusicViewModel.CanScroll(CurrentMusicViewModel.CurrentIndex + 1);
+        CurrentFile is not null && CanScroll(currentIndex + 1);
+
+    public bool CanScroll(int value) =>
+        SongsList.Count > 0 && SongsList.Count > value && value >= 0;
+
+    public void AddSong(PlayableFileObject playableFileObject)
+    {
+        SongsList.Add(playableFileObject);
+        PreviewSongCommand.NotifyCanExecuteChanged();
+        NextSongCommand.NotifyCanExecuteChanged();
+    }
+
+    public void AddSongWithIndex(PlayableFileObject playableFileObject)
+    {
+        currentIndex = SongsList.Count;
+        AddSong(playableFileObject);
+    }
 }

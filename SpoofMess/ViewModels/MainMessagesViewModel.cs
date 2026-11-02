@@ -2,6 +2,7 @@
 using SpoofMess.Services;
 using SpoofMess.Services.Api;
 using SpoofMess.Services.Models;
+using SpoofMess.ViewModels.FileViewModels;
 using SpoofMess.ViewModels.Notifications;
 
 namespace SpoofMess.ViewModels;
@@ -12,6 +13,7 @@ public partial class MainMessagesViewModel(
     IAttachmentService attachmentService,
     FileAudioRecorderService fileAudioRecorderService,
     INotificationApiService notificationApiService,
+    MultiFileViewModel multiFileViewModel,
     StaticNotificationViewModel staticNotificationViewModel,
     IAppLifeCycleService appLifeCycleService) : MessagesViewModel(
         messageService,
@@ -19,6 +21,7 @@ public partial class MainMessagesViewModel(
         attachmentService,
         fileAudioRecorderService,
         staticNotificationViewModel,
+        multiFileViewModel,
         appLifeCycleService)
 {
     private readonly INotificationApiService _notificationApiService = notificationApiService;

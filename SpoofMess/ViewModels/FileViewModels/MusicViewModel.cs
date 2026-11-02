@@ -10,7 +10,7 @@ public partial class MusicViewModel : ObjectViewModel
     public partial PlayableFileObject? CurrentFile { get; set; }
 
     public override ObjectViewModel Clone() =>
-        new MusicViewModel { Files = [.. Files], Icon = Icon };
+        new MusicViewModel { Files = [.. Files], Icon = Icon, CurrentFile = CurrentFile };
     public override string Icon { get; init; } = "🎶";
 
     [RelayCommand]

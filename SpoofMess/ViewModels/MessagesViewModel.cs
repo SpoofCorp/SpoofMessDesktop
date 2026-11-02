@@ -6,6 +6,7 @@ using SpoofMess.Models;
 using SpoofMess.ServiceRealizations;
 using SpoofMess.Services;
 using SpoofMess.Services.Models;
+using SpoofMess.ViewModels.FileViewModels;
 using SpoofMess.ViewModels.Notifications;
 using System.Windows;
 
@@ -17,9 +18,11 @@ public partial class MessagesViewModel(
     IAttachmentService attachmentService,
     FileAudioRecorderService fileAudioRecorderService,
     StaticNotificationViewModel staticNotificationViewModel,
+    MultiFileViewModel multiFileViewModel,
     IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
 {
     public StaticNotificationViewModel StaticNotificationViewModel { get; set; } = staticNotificationViewModel;
+    protected readonly MultiFileViewModel _multiFileViewModel = multiFileViewModel;
     protected readonly INotificationService _notificationService = notificationService;
     protected readonly IAttachmentService _attachmentService = attachmentService;
     protected readonly FileAudioRecorderService _fileAudioRecorderService = fileAudioRecorderService;
@@ -73,6 +76,12 @@ public partial class MessagesViewModel(
     {
         await _fileAudioRecorderService.Stop();
         IsVoiceRecording = false;
+    }
+
+    [RelayCommand]
+    private void FileInteract(FileObject file)
+    {
+        _multiFileViewModel.OnFileInteract(file, SelectedChat);
     }
 
     [RelayCommand]
