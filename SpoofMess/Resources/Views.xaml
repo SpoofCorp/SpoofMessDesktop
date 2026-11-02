@@ -25,7 +25,7 @@
                     <Button.Style>
                         <Style BasedOn="{StaticResource CircleButton}" TargetType="{x:Type Button}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding CurrentMusicViewModel.CurrentFile.IsPlayed}" Value="True">
+                                <DataTrigger Binding="{Binding CurrentFile.IsPlayed}" Value="True">
                                     <Setter Property="Content">
                                         <Setter.Value>
                                             <Viewbox Margin="7.5 5 7.5 7.5" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform">
@@ -34,7 +34,7 @@
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding CurrentMusicViewModel.CurrentFile.IsPlayed}" Value="False">
+                                <DataTrigger Binding="{Binding CurrentFile.IsPlayed}" Value="False">
                                     <Setter Property="Content">
                                         <Setter.Value>
                                             <Viewbox Margin="7.5 5 7.5 7.5" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform">
@@ -56,7 +56,7 @@
                     </Button.Content>
                 </Button>
             </StackPanel>
-            <TextBlock VerticalAlignment="Center" Text="{Binding AudioService.PlayableFileObject.Name}" Grid.Column="2" Style="{StaticResource BaseText}"/>
+            <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding AudioService.PlayableFileObject.Name}" Grid.Column="2" Style="{StaticResource BaseText}"/>
             <ContentControl Focusable="False" Grid.Column="3">
                 <ContentControl.Style>
                     <Style TargetType="{x:Type ContentControl}">
@@ -80,7 +80,7 @@
                                             <Border Padding="10">
                                                 <Border Padding="2 5" Style="{StaticResource ShadowBorder}" Background="{DynamicResource Second}">
                                                     <StackPanel>
-                                                        <Slider IsSelectionRangeEnabled="True" Orientation="Vertical" AutoToolTipPrecision="2"  TickFrequency="0.1" Width="20" Height="100" Maximum="1.0" SelectionStart="{Binding RelativeSource={RelativeSource Self}, Path=Minimum}" SelectionEnd="{Binding RelativeSource={RelativeSource Self}, Path=Value}" Minimum="0.0" Value="{Binding AudioService.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                        <Slider IsMoveToPointEnabled="True" IsSelectionRangeEnabled="True" Orientation="Vertical" AutoToolTipPrecision="2"  TickFrequency="0.1" Width="20" Height="100" Maximum="1.0" SelectionStart="{Binding RelativeSource={RelativeSource Self}, Path=Minimum}" SelectionEnd="{Binding RelativeSource={RelativeSource Self}, Path=Value}" Minimum="0.0" Value="{Binding AudioService.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                         </Slider>
                                                     </StackPanel>
                                                 </Border>
@@ -784,7 +784,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="auto *" RowDefinitions="auto auto" >
-                        <Button Width="50" Height="50" Padding="5" BorderThickness="0" Margin="5 0 10 0" Focusable="False" Grid.RowSpan="2" Command="{Binding DataContext.PlayResumeCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" Cursor="Hand" CommandParameter="{Binding}">
+                        <Button Width="50" Height="50" Padding="5" BorderThickness="0" Margin="5 0 10 0" Focusable="False" Grid.RowSpan="2" Command="{Binding DataContext.FileInteractCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=3}}" Cursor="Hand" CommandParameter="{Binding}">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource CircleButton}" TargetType="{x:Type Button}">
                                     <Style.Triggers>

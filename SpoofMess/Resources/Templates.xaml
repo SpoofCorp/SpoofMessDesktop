@@ -1458,7 +1458,7 @@
                         <Rectangle RadiusX="2" RadiusY="2" x:Name="PART_SelectionRange" Fill="{DynamicResource PrimaryAccent}" Visibility="Hidden" Width="4.0"/>
                     </Canvas>
                 </Border>
-                <Track x:Name="PART_Track">
+                <Track Cursor="Hand" x:Name="PART_Track">
                     <Track.DecreaseRepeatButton>
                         <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource RepeatButtonTransparent}"/>
                     </Track.DecreaseRepeatButton>
