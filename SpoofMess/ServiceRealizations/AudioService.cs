@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NAudio.MediaFoundation;
+using NAudio.Utils;
 using NAudio.Wave;
 using SpoofMess.Bases;
 using SpoofMess.Models;
@@ -34,9 +35,12 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
 
     private bool isUserStoped = false;
 
+    [ObservableProperty]
+    public partial float TrackLenght { get; set; }
+
     public void Play(PlayableFileObject fileObject)
     {
-        Stop();
+        Stop(PlayableFileObject == fileObject);
         if (!File.Exists(fileObject.Path))
             return;
 
@@ -53,17 +57,17 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
             throw;
         }
         _outputDevice.Init(_reader);
-        _outputDevice.Play();
         PlayableFileObject = fileObject;
         PlayableFileObject.IsPlayed = IsPlayeed = true;
+        _outputDevice.Play();
     }
 
-    public void Stop()
+    public void Stop(bool isOldestFile = true, bool isUserStoped = true)
     {
-        if (_outputDevice is null || !IsPlayeed) return;
+        if (isOldestFile && (_outputDevice is null || !IsPlayeed)) return;
 
         _outputDevice.Stop();
-        isUserStoped = true;
+        this.isUserStoped = isUserStoped;
         IsEnded = true;
         IsPlayeed = false;
         PlayableFileObject?.IsPlayed = false;
@@ -100,8 +104,21 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
         isUserStoped = false;
     }
 
+    public void SeekTo(TimeSpan position)
+    {
+        if (_reader == null || PlayableFileObject == null) return;
+
+        position = TimeSpan.FromMilliseconds(Math.Clamp(position.TotalMilliseconds, 0, GetTotalTime().TotalMilliseconds));
+        _reader.CurrentTime = position;
+
+        PlayableFileObject.CurrentPosition = position;
+    }
+
     public bool ItIsPlayeed(PlayableFileObject fileObject) =>
         PlayableFileObject == fileObject;
+
+    public TimeSpan GetAccuratePosition() => _reader?.CurrentTime ?? TimeSpan.Zero;
+    public TimeSpan GetTotalTime() => _reader?.TotalTime ?? TimeSpan.Zero;
 
     public Task InitializeAsync(CancellationToken cancellationToken = default)
     {

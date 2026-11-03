@@ -13,5 +13,8 @@ public interface IAudioService : IAsyncInitializable, IAsyncDisposable
     public bool ItIsPlayeed(PlayableFileObject fileObject);
     public void Play(PlayableFileObject fileObject);
     public void PauseResume();
-    public void Stop();
+    public void Stop(bool isOldestFile = true, bool isUserStoped = true);
+    public TimeSpan GetAccuratePosition();
+    public TimeSpan GetTotalTime();
+    public void SeekTo(TimeSpan position);
 }
