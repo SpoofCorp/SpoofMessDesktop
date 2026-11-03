@@ -8,6 +8,9 @@ using SpoofMess.Models;
 using SpoofMess.Services;
 using SpoofMess.ViewModels.FileViewModels;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Reflection.PortableExecutable;
+using System.Windows.Threading;
 
 namespace SpoofMess.ViewModels.Notifications;
 
@@ -70,11 +73,13 @@ public partial class MusicNotification(
                     _notificationService.ShowError(Result.ErrorResult("Unsupported audio format", 204));
                     return;
                 }
-                CurrentFile = playableFile;
                 _isActiveViewModel = true;
                 PreviewSongCommand.NotifyCanExecuteChanged();
                 NextSongCommand.NotifyCanExecuteChanged();
                 ServiceRealizations.EventHandler.NotifyChangeStaticNotificationViewModel(this);
+                CurrentFile = playableFile;
+                CurrentFile.Duration = AudioService.GetTotalTime();
+                Debug.WriteLine(CurrentFile.IsPlayed);
             }
         }
         else
@@ -82,11 +87,58 @@ public partial class MusicNotification(
             AudioService.PauseResume();
         }
     }
+    private void OnTimerTick(object? sender, EventArgs e)
+    {
+        if (CurrentFile == null || !CurrentFile.IsPlayed) return;
+
+        if (CurrentFile.IsSeeking)
+        {
+            AudioService.SeekTo(CurrentFile.CurrentPosition);
+            CurrentFile.IsSeeking = false;
+            return;
+        }
+
+        CurrentFile.CurrentPosition = AudioService.GetAccuratePosition();
+    }
+
+    private async Task ChangePostion(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(8));
+        try
+        {
+            while (await timer.WaitForNextTickAsync(cancellationToken))
+            {
+                try
+                {
+                    if (CurrentFile is not { IsPlayed: true }) continue;
+
+                    if (CurrentFile.IsSeeking)
+                    {
+                        AudioService.SeekTo(CurrentFile.CurrentPosition);
+                        CurrentFile.IsSeeking = false;
+                        continue;
+                    }
+
+                    CurrentFile.CurrentPosition = AudioService.GetAccuratePosition();
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+
+        }
+    }
+
     protected override async Task InitializeAsync(bool initialize)
     {
         await AudioService.InitializeAsync();
         AudioService.OutputDevice_PlaybackStopped += OutputDevice_PlaybackStopped;
         ServiceRealizations.EventHandler.OnChangeStaticNotificationViewModel += OnChange;
+        _ = ChangePostion(_appLifeCycleService.AppCancellationToken);
         await base.InitializeAsync(initialize);
     }
 
