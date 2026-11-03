@@ -11,7 +11,7 @@
     <ve:VolumeToGeomConverter x:Key="VolumeToGeomConverter"/>
     
     <DataTemplate DataType="{x:Type notificationViewModel:MusicNotification}">
-        <Grid Background="Transparent" ColumnDefinitions="auto 15 * auto">
+        <Grid Background="Transparent" RowDefinitions="* auto" ColumnDefinitions="auto 15 * auto">
             <StackPanel Orientation="Horizontal">
                 <Button Margin="{DynamicResource MarginHorizontal}" Width="25" Style="{StaticResource CircleButton}" Height="25" Focusable="False" Command="{Binding PreviewSongCommand}" Cursor="Hand">
                     <Button.Content>
@@ -56,7 +56,10 @@
                     </Button.Content>
                 </Button>
             </StackPanel>
-            <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding AudioService.PlayableFileObject.Name}" Grid.Column="2" Style="{StaticResource BaseText}"/>
+            <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding CurrentFile.Name}" Grid.Column="2" Style="{StaticResource BaseText}"/>
+            <Slider Focusable="False" IsMoveToPointEnabled="True" IsSelectionRangeEnabled="True" SelectionStart="{Binding RelativeSource={RelativeSource Self}, Path=Minimum}" SelectionEnd="{Binding RelativeSource={RelativeSource Self}, Path=Value}" Grid.ColumnSpan="4" Grid.Row="1" Value="{Binding CurrentFile.CurrentPositionValue, Mode=TwoWay}" Minimum="0" Maximum="{Binding CurrentFile.DurationValue}">
+                
+            </Slider>
             <ContentControl Focusable="False" Grid.Column="3">
                 <ContentControl.Style>
                     <Style TargetType="{x:Type ContentControl}">
@@ -80,7 +83,7 @@
                                             <Border Padding="10">
                                                 <Border Padding="2 5" Style="{StaticResource ShadowBorder}" Background="{DynamicResource Second}">
                                                     <StackPanel>
-                                                        <Slider IsMoveToPointEnabled="True" IsSelectionRangeEnabled="True" Orientation="Vertical" AutoToolTipPrecision="2"  TickFrequency="0.1" Width="20" Height="100" Maximum="1.0" SelectionStart="{Binding RelativeSource={RelativeSource Self}, Path=Minimum}" SelectionEnd="{Binding RelativeSource={RelativeSource Self}, Path=Value}" Minimum="0.0" Value="{Binding AudioService.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                        <Slider IsMoveToPointEnabled="True" IsSelectionRangeEnabled="True" Orientation="Vertical" AutoToolTipPrecision="2"  TickFrequency="0.1" Width="20" Height="100" Maximum="1.0" Minimum="0.0" Value="{Binding AudioService.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                                         </Slider>
                                                     </StackPanel>
                                                 </Border>
@@ -281,7 +284,6 @@
             <ContentControl Focusable="False" Padding="5" Margin="{DynamicResource MarginRightTop}" Visibility="{Binding ChatMessagesVisibility, TargetNullValue=Collapsed, FallbackValue=Collapsed}" Grid.Row="1" Panel.ZIndex="1" Style="{StaticResource GlassedCardBlock}">
                 <StackPanel>
                     <ContentPresenter Visibility="{Binding DataContext.StaticNotificationViewModel.Visibility, RelativeSource={RelativeSource AncestorType={x:Type StackPanel}}}" Content="{Binding StaticNotificationViewModel}"/>
-                    <Separator Visibility="{Binding StaticNotificationViewModel.Visibility}" Margin="{DynamicResource MarginHorizontal}"/>
                     <Grid Margin="7 0 0 0" RowDefinitions="auto auto" ColumnDefinitions="* auto">
                         <ContentControl Focusable="False" Grid.Column="1" Grid.RowSpan="2">
                             <ContentControl.Style>
