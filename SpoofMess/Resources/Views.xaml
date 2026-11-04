@@ -303,7 +303,7 @@
                                                             <Border Style="{StaticResource ShadowBorder}" Background="{DynamicResource Second}">
                                                                 <StackPanel>
                                                                     <ve:FunctionButton Text="{DynamicResource Info}" Icon="ℹ️" Command="{Binding ShowChatInfoCommand}"/>
-                                                                    <ve:FunctionButton Text="{DynamicResource Settings}" Icon="⚙️"/>
+                                                                    <ve:FunctionButton Text="{DynamicResource Settings}" Icon="⚙️" Command="{Binding ShowChatSettingsCommand}"/>
                                                                 </StackPanel>
                                                             </Border>
                                                         </Border>
@@ -510,9 +510,69 @@
                     <TextBlock Text="{DynamicResource SelectChatHolder}" Padding="10 3" Style="{DynamicResource PrimaryText}"/>
                 </Grid>
             </Grid>
+            <ve:ModalView Grid.RowSpan="5" AdditionalViewModel="{Binding AdditionalViewModel, Mode=TwoWay}"/>
         </Grid>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type st:ChatSettingsViewModel}">
+        <Grid RowDefinitions="auto 10 *">
+            <ContentControl Style="{StaticResource HeaderCardBlock}">
+                <DockPanel>
+                    <Button Width="30" Height="30" FontSize="18" Style="{DynamicResource MinimalButton}" Content="X" DockPanel.Dock="Right" Command="{Binding CloseCommand}"/>
+                    <TextBlock Text="{DynamicResource ChatSettings}" Style="{DynamicResource PrimaryText}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </ContentControl>
+            <Grid RowDefinitions="auto 10 auto 10 auto" Grid.Row="2" MinWidth="200">
+                <ContentControl Grid.Row="0" Style="{StaticResource CardBlock}">
+                    <Grid Margin="5" ColumnDefinitions="auto 5 *">
+                        <ContentControl Grid.Column="0" Width="70" Height="70">
+                            <ContentControl.Style>
+                                <Style TargetType="{x:Type ContentControl}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ContentControl}">
+                                                <Grid>
+                                                    <Ellipse>
+                                                        <Ellipse.Fill>
+                                                            <ImageBrush ImageSource="{Binding SelectedChat.Avatar.Path, TargetNullValue='pack://application:,,,/Assets/No_Cover.jpg', FallbackValue='pack://application:,,,/Assets/No_Cover.jpg'}" Stretch="Fill"/>
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                    <Button Margin="-1 0 0 -1" Cursor="Hand" x:Name="SetAvatarButton" Visibility="Collapsed" Background="{DynamicResource Four}" Opacity="0.4" Content="📷" Padding="0 0 0 7" Style="{DynamicResource MinimalCircleButton}"/>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="SetAvatarButton" Property="Visibility" Value="Visible"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
+                        <StackPanel Grid.Column="2">
+                            <ve:InputTextBox Margin="{DynamicResource MarginVertical}" Holder="{DynamicResource Name}" Text="{Binding ChatSettings.ChatName}"/>
+                            <ve:InputTextBox Margin="{DynamicResource MarginVertical}" Holder="{DynamicResource UniqueName}" Text="{Binding ChatSettings.UniqueName}"/>
+                        </StackPanel> 
+                    </Grid>
+                </ContentControl>
+                <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
+                    <StackPanel Margin="5">
+                        <TextBlock Style="{StaticResource PrimaryText}" Text="{DynamicResource Owner}"/>
+                        <ComboBox Margin="{DynamicResource MarginVertical}"/>
+                        <ve:Switch Margin="{DynamicResource MarginVertical}" Text="{DynamicResource Public}"  IsChecked="{Binding ChatSettings.IsPublic}"/>
+                    </StackPanel>
+                </ContentControl>
+                <ContentControl Grid.Row="4" Style="{StaticResource CardBlock}">
+                    <StackPanel Margin="5" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button Content="{DynamicResource Cancel}" Command="{Binding CloseCommand}" Margin="{DynamicResource MarginHorizontal}" Style="{StaticResource BaseFunctionButton}"/>
+                        <Button Content="{DynamicResource Save}" Command="{Binding SaveCommand}" Style="{StaticResource FunctionButton}"/>
+                    </StackPanel>
+                </ContentControl>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+    
     <DataTemplate DataType="{x:Type vm:ChatInfoViewModel}">
         <Grid RowDefinitions="auto auto">
             <Grid Visibility="{Binding MainVisibility}">

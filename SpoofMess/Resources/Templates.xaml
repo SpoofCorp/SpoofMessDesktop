@@ -520,12 +520,13 @@
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
         <Setter Property="Background" Value="{DynamicResource Third}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Second}"/>
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ActiveTextColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Margin" Value="{StaticResource Margin1}"/>
+        <Setter Property="Padding" Value="10 0"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Padding" Value="1"/>
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="MinWidth" Value="{StaticResource MinButtonWith}"/>
@@ -1000,11 +1001,7 @@
         <Setter Property="FontFamily" Value="Inter"/>
     </Style>
     <Style x:Key="FunctionButton" BasedOn="{StaticResource BaseButtonStyle}" TargetType="{x:Type Button}">
-        <Setter Property="Margin" Value="{StaticResource Margin1}"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Padding" Value="10 0"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Height" Value="37"/>
         <Setter Property="MinWidth" Value="50"/>
@@ -1190,10 +1187,9 @@
     </Style>
 
     <Style x:Key="BaseFunctionButton" BasedOn="{StaticResource BaseButtonStyle}" TargetType="{x:Type Button}">
-        <Setter Property="Margin" Value="{StaticResource Margin1}"/>
-        <Setter Property="VerticalContentAlignment" Value="Top"/>
-        <Setter Property="Padding" Value="0"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Height" Value="37"/>
+        <Setter Property="MinWidth" Value="50"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="FontFamily" Value="Inter"/>
     </Style>
