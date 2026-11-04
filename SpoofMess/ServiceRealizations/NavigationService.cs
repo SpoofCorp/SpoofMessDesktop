@@ -168,6 +168,12 @@ public class NavigationService(
     public void SetDesignViewModel(IPlacementViewModel owner) =>
         SetAdditionalViewModel<DesingViewModel>(owner);
 
+    public void SetChatSettingsViewModel(IPlacementViewModel owner, Chat selectedChat)
+    {
+        ChatSettingsViewModel viewModel = GetAdditionalViewModel<ChatSettingsViewModel>(owner);
+        viewModel.SelectedChat = selectedChat;
+    }
+
     public void SetChatMemberCard(IPlacementViewModel owner, ChatUser chatUser)
     {
         ChatMemberCardViewModel viewModel = GetAdditionalViewModel<ChatMemberCardViewModel>(owner);

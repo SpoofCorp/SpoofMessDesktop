@@ -214,4 +214,9 @@ public class ChatService(
         chat.Avatars.Add(avatar);
         await _chatAvatarService.OnChatAvatarUpdated(avatar);
     }
+
+    public async Task<Result> ChangeSettings(ChangeChatSettingsRequest request, CancellationToken cancellationToken = default)
+    {
+        return await _chatApiService.ChangeSettings(request, cancellationToken);
+    }
 }

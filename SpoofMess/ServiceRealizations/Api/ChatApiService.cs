@@ -1,6 +1,7 @@
 ﻿using AdditionalHelpers.Services;
 using CommonObjects.DTO;
 using CommonObjects.Requests;
+using CommonObjects.Requests.Changes;
 using CommonObjects.Results;
 using SpoofMess.Services.Api;
 using System.Net.Http;
@@ -12,6 +13,9 @@ class ChatApiService(
     ISerializer serializer
     ) : ApiService(client, serializer), IChatApiService
 {
+    public async Task<Result> ChangeSettings(ChangeChatSettingsRequest request, CancellationToken cancellationToken = default) =>
+        await PatchAsync($"api/v2/Chat/ChangeSettings", request, cancellationToken);
+
     public async Task<Result<ChatDTO>> GetChat(Guid id, CancellationToken cancellationToken = default) =>
         await GetAsync<ChatDTO>($"api/v2/Chat/get?chatId={id}", cancellationToken);
 
