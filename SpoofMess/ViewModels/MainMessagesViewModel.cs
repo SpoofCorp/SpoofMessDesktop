@@ -15,6 +15,7 @@ public partial class MainMessagesViewModel(
     INotificationApiService notificationApiService,
     MultiFileViewModel multiFileViewModel,
     StaticNotificationViewModel staticNotificationViewModel,
+    INavigationService navigationService,
     IAppLifeCycleService appLifeCycleService) : MessagesViewModel(
         messageService,
         notificationService,
@@ -22,6 +23,7 @@ public partial class MainMessagesViewModel(
         fileAudioRecorderService,
         staticNotificationViewModel,
         multiFileViewModel,
+        navigationService,
         appLifeCycleService)
 {
     private readonly INotificationApiService _notificationApiService = notificationApiService;

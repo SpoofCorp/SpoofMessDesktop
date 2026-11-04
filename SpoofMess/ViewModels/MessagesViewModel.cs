@@ -19,12 +19,14 @@ public partial class MessagesViewModel(
     FileAudioRecorderService fileAudioRecorderService,
     StaticNotificationViewModel staticNotificationViewModel,
     MultiFileViewModel multiFileViewModel,
-    IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
+    INavigationService navigationService,
+    IAppLifeCycleService appLifeCycleService) : PlacementAdditionalViewModel(appLifeCycleService)
 {
     public StaticNotificationViewModel StaticNotificationViewModel { get; set; } = staticNotificationViewModel;
     protected readonly MultiFileViewModel _multiFileViewModel = multiFileViewModel;
     protected readonly INotificationService _notificationService = notificationService;
     protected readonly IAttachmentService _attachmentService = attachmentService;
+    protected readonly INavigationService _navigationService = navigationService;
     protected readonly FileAudioRecorderService _fileAudioRecorderService = fileAudioRecorderService;
     protected readonly IMessageService _messageService = messageService;
     [ObservableProperty]
@@ -121,6 +123,14 @@ public partial class MessagesViewModel(
         IsOpen = false;
         if (SelectedChat is not null)
             getChatInfo(SelectedChat);
+    }
+
+    [RelayCommand]
+    private void ShowChatSettings()
+    {
+        if (SelectedChat is null) return;
+        _navigationService.SetChatSettingsViewModel(this, SelectedChat);
+        IsOpen = false;
     }
 
     protected override async Task InitializeAsync(bool initialize)
