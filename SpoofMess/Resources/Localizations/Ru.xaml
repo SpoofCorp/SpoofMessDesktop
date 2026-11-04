@@ -12,6 +12,7 @@
     <sys:String x:Key="PrivacySecurity">Приватность и безопастность</sys:String>
     <sys:String x:Key="Advanced">Расширенные</sys:String>
     <sys:String x:Key="Design">Дизайн</sys:String>
+    <sys:String x:Key="ChatSettings">Настройки чата</sys:String>
     <sys:String x:Key="InputAudioDevice">Устройство аудио ввода</sys:String>
     <sys:String x:Key="Visual">Отображение</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Уведомления и звуки</sys:String>
@@ -29,6 +30,9 @@
     <sys:String x:Key="Registration">Регистрация</sys:String>
     <sys:String x:Key="Register">Зарегистрироваться</sys:String>
     <sys:String x:Key="Login">Логин</sys:String>
+    <sys:String x:Key="Save">Сохранить</sys:String>
+    <sys:String x:Key="Cancel">Отменить</sys:String>
+    <sys:String x:Key="Owner">Владелец</sys:String>
     <sys:String x:Key="Name">Имя</sys:String>
     <sys:String x:Key="Password">Пароль</sys:String>
     <sys:String x:Key="LogInQuestion">Впервые в СпуфМесс?</sys:String>

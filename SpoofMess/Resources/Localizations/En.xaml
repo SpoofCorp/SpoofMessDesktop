@@ -12,6 +12,7 @@
     <sys:String x:Key="PrivacySecurity">Privacy and security</sys:String>
     <sys:String x:Key="Advanced">Advanced</sys:String>
     <sys:String x:Key="Design">Design</sys:String>
+    <sys:String x:Key="ChatSettings">Chat settings</sys:String>
     <sys:String x:Key="InputAudioDevice">Input audio device</sys:String>
     <sys:String x:Key="Visual">Visual</sys:String>
     <sys:String x:Key="NotificationsAndSounds">Notifications and sounds</sys:String>
@@ -29,6 +30,9 @@
     <sys:String x:Key="Registration">Registration</sys:String>
     <sys:String x:Key="Register">Register</sys:String>
     <sys:String x:Key="Login">Login</sys:String>
+    <sys:String x:Key="Owner">Owner</sys:String>
+    <sys:String x:Key="Save">Save</sys:String>
+    <sys:String x:Key="Cancel">Cancel</sys:String>
     <sys:String x:Key="Name">Name</sys:String>
     <sys:String x:Key="Password">Password</sys:String>
     <sys:String x:Key="LogInQuestion">First time at SpoofMess?</sys:String>
