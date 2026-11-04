@@ -182,53 +182,6 @@
                 </Border>
             </Grid>
         </Grid>
-        <Grid Visibility="{Binding AdditionalViewModelVisibility}" x:Name="AdditionalContainer" Grid.RowSpan="2" Grid.ColumnSpan="3" Panel.ZIndex="10">
-            <Rectangle Fill="{DynamicResource ShadowColor}" Tag="{Binding AdditionalViewModel}" PreviewMouseLeftButtonDown="Rectangle_PreviewMouseLeftButtonDown">
-                <Rectangle.Style>
-                    <Style TargetType="{x:Type Rectangle}">
-                        <Setter Property="Opacity" Value="0"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding AdditionalViewModelVisibility}" Value="Collapsed">
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation                 
-                                                 To="0"
-                                                 Storyboard.TargetProperty="Opacity"
-                                                 Duration="0:0:0.2">
-                                                <DoubleAnimation.EasingFunction>
-                                                    <CubicEase EasingMode="EaseOut"/>
-                                                </DoubleAnimation.EasingFunction>
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                                <DataTrigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                                                 To="0.7"
-                                                 Storyboard.TargetProperty="Opacity"
-                                                 Duration="0:0:0.2">
-                                                <DoubleAnimation.EasingFunction>
-                                                    <CubicEase EasingMode="EaseIn"/>
-                                                </DoubleAnimation.EasingFunction>
-                                            </DoubleAnimation>
-
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.ExitActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Rectangle.Style>
-            </Rectangle>
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Tag="{Binding AdditionalViewModel, Mode=TwoWay}" MouseDown="Border_MouseDown" Background="Transparent">
-                <Border Style="{DynamicResource CardBorder}" CornerRadius="10" Margin="0"/>
-                <Border x:Name="Container" MouseDown="ContentPresenter_MouseDown" Padding="0" Background="{DynamicResource Third}" CornerRadius="{DynamicResource CardBorderRadius}">
-                    <ContentPresenter MouseDown="ContentPresenter_MouseDown" Content="{Binding AdditionalViewModel}"/>
-                </Border>
-            </Grid>
-        </Grid>
+        <ve:ModalView AdditionalViewModel="{Binding AdditionalViewModel}" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
     </Grid>
 </UserControl>

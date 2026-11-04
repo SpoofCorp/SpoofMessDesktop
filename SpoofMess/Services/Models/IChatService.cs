@@ -1,12 +1,14 @@
 ﻿using CommonObjects.DTO;
 using CommonObjects.Requests.Changes;
 using CommonObjects.Responses;
+using CommonObjects.Results;
 using SpoofMess.Models;
 
 namespace SpoofMess.Services.Models;
 
 public interface IChatService
 {
+    public Task<Result> ChangeSettings(ChangeChatSettingsRequest request, CancellationToken cancellationToken = default);
     public Task<Chat?> Get(Guid id, bool saveToLocal = true, CancellationToken cancellationToken = default);
     public Task AddChats(List<ChatUserDTO> chats, CancellationToken cancellationToken = default);
     public Task CreateChat(Chat chat, CancellationToken cancellationToken = default);

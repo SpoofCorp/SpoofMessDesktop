@@ -16,6 +16,9 @@
     <Compile Update="ViewElements\InputTextBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="ViewElements\ModalView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="ViewElements\QuestionTextButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

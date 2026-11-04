@@ -20,6 +20,8 @@ public interface INavigationService : IAsyncInitializable
 
     public StaticNotificationViewModel GetAudioService();
 
+    public void SetChatSettingsViewModel(IPlacementViewModel owner, Chat selectedChat);
+
     public Task CloseWindow();
 
     public void ResizeWindow();

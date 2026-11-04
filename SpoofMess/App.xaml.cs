@@ -140,6 +140,7 @@ public partial class App : Application
         services.AddSingleton<CentralViewModel>();
         services.AddSingleton<ChatsViewModel>();
         services.AddTransient<MessagesViewModel>();
+        services.AddTransient<ChatSettingsViewModel>();
         services.AddSingleton<MainMessagesViewModel>();
         services.AddSingleton<NotificationInfoViewModel>();
 

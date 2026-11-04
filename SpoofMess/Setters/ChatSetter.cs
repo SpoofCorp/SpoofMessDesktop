@@ -10,7 +10,7 @@ public static class ChatSetter
         {
             Id = chat.Id,
             Name = chat.Name,
-            UniqueName = chat.UniqueName
+            UniqueName = chat.UniqueName,
         };
     public static Chat Set(this ChatUserDTO chat) =>
         new()
@@ -20,6 +20,6 @@ public static class ChatSetter
             Name = chat.Name,
             UniqueName = chat.UniqueName,
             CreatedAt = chat.CreatedAt,
-            RulesNumbers = chat.Rules
+            RulesNumbers = chat.Rules,
         };
 }

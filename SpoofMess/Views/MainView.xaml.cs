@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using System.Windows.Input;
 
 namespace SpoofMess.Views;
 
@@ -17,7 +18,7 @@ public partial class MainView : UserControl
         SideMenu.ChangeMenuVisibility();
     }
 
-    private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void Border_MouseDown(object sender, MouseButtonEventArgs e)
     {
         if (sender is Grid { Tag: AdditionalViewModel additionalViewModel})
             additionalViewModel.CloseCommand.Execute(null);
@@ -30,12 +31,12 @@ public partial class MainView : UserControl
         e.Handled = true;
     }
 
-    private void ContentPresenter_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void ContentPresenter_MouseDown(object sender, MouseButtonEventArgs e)
     {
         e.Handled = true;
     }
 
-    private void Rectangle_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void Rectangle_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (sender is Rectangle { Tag: AdditionalViewModel additionalViewModel })
             additionalViewModel.CloseCommand.Execute(null);
