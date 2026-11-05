@@ -29,7 +29,14 @@ public partial class CentralViewModel(
     [RelayCommand]
     private async Task Close()
     {
+        if (View is MainViewModel mainViewModel)
+            await mainViewModel.OnClose();
         await _appLifeCycleService.OnCloseAsync();
+    }
+
+    public async Task CloseApp()
+    {
+        await _appLifeCycleService.OnCloseAsync(true);
     }
 
     [RelayCommand]

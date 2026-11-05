@@ -20,21 +20,17 @@ public class AppLifeCycleService(
     public async Task OnExitAsync()
     {
         if(_authService.IsAuthorized)
-            await _authService.Save();
+            await _authService.Save(_cts.Token);
         await _cts.CancelAsync();
         await _navigationService.CloseWindow();
     }
 
-    public async Task OnCloseAsync()
+    public async Task OnCloseAsync(bool isTerminate = false)
     {
-        if (_userInfo.HideToTray)
-        {
+        if (!isTerminate && _userInfo.HideToTray)
             _navigationService.HideToTrayWindow();
-        }
         else
-        {
             await OnExitAsync();
-        }
     }
 
     public async Task OnStartupAsync()
