@@ -6,10 +6,11 @@ using SpoofMess.Services.Api;
 
 namespace SpoofMess.ViewModels.Settings;
 
-public partial class ProfileViewModel(UserInfo userInfo,
-                                      IUserApiService userApiService,
-                                      IAuthService authService,
-                                      IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService)
+public partial class ProfileViewModel(
+    UserInfo userInfo,
+    IUserApiService userApiService,
+    IAuthService authService,
+    IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService)
 {
     private readonly IUserApiService _userApiService = userApiService;
     private readonly IAuthService _authService = authService;
@@ -34,7 +35,10 @@ public partial class ProfileViewModel(UserInfo userInfo,
                     ForwardMessage: request.ForwardMessage,
                     InviteMe: request.InviteMe,
                     MonthsBeforeDelete: request.MonthsBeforeDelete,
-                    UserUpdateModel: new(Name: request.Name),
+                    UserUpdateModel: 
+                        new(
+                            Name: request.Name
+                        ),
                     SearchMe: request.SearchMe,
                     ShowMe: request.ShowMe
                 ));

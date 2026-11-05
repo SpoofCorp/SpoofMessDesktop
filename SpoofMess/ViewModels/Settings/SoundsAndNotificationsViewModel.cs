@@ -46,15 +46,19 @@ public partial class SoundsAndNotificationsViewModel(
     {
         if (_actualUserInfo.Change(Edit, out ChangeUserSettingsRequest request))
         {
-            await _authService.Save(_appLifeCycleService.AppCancellationToken);
-            _actualUserInfo.Update(new UserInfoUpdateModel(
+            _actualUserInfo.Update(
+                new UserInfoUpdateModel(
                     ForwardMessage: request.ForwardMessage,
                     InviteMe: request.InviteMe,
                     MonthsBeforeDelete: request.MonthsBeforeDelete,
                     UserUpdateModel: new(Name: request.Name),
                     SearchMe: request.SearchMe,
-                    ShowMe: request.ShowMe
-            ));
+                    ShowMe: request.ShowMe,
+                    ShowErrorNotifications: Edit.ShowErrorNotifications,
+                    ShowMessagesNotifications: Edit.ShowMessagesNotifications
+                )
+            );
+            await _authService.Save(_appLifeCycleService.AppCancellationToken);
         }
         base.OnClose();
     }
