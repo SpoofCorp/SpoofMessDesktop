@@ -5,19 +5,19 @@ using System.Windows;
 
 namespace SpoofMess.ServiceRealizations;
 
-public class ThemesService(UserInfo userInfo) : IThemesService
+public class ThemesService(AppSessionSettings appSessionSettings) : IThemesService
 {
-    private readonly UserInfo _userInfo = userInfo;
+    private readonly AppSessionSettings _appSessionSettings = appSessionSettings;
 
     public void ChangeLanguage(Language language)
     {
-        if (language.Key == _userInfo.Language.Key)
+        if (language.Key == _appSessionSettings.Language.Key)
             return;
         ChangeLanguageLocal(language);
     }
     public void ChangeTheme(Theme theme)
     {
-        if (theme.Key == _userInfo.Theme.Key)
+        if (theme.Key == _appSessionSettings.Theme.Key)
             return;
         ChangeThemeLocal(theme);
     }
@@ -31,21 +31,21 @@ public class ThemesService(UserInfo userInfo) : IThemesService
 
     public void Initialize()
     {
-        ChangeLanguageLocal(_userInfo.Language);
-        ChangeThemeLocal(_userInfo.Theme);
-        ChangeVisualLocal(_userInfo.Visual);
+        ChangeLanguageLocal(_appSessionSettings.Language);
+        ChangeThemeLocal(_appSessionSettings.Theme);
+        ChangeVisualLocal(_appSessionSettings.Visual);
     }
 
     private void ChangeLanguageLocal(Language language)
     {
         Change(GetLanguagePath(language), 0);
-        _userInfo.CurrentCultureInfo = new(language.CultureKey);
-        CultureInfo.CurrentCulture = _userInfo.CurrentCultureInfo;
-        CultureInfo.CurrentUICulture = _userInfo.CurrentCultureInfo; 
-        Thread.CurrentThread.CurrentCulture = _userInfo.CurrentCultureInfo;
-        Thread.CurrentThread.CurrentUICulture = _userInfo.CurrentCultureInfo;
+        _appSessionSettings.CurrentCultureInfo = new(language.CultureKey);
+        CultureInfo.CurrentCulture = _appSessionSettings.CurrentCultureInfo;
+        CultureInfo.CurrentUICulture = _appSessionSettings.CurrentCultureInfo; 
+        Thread.CurrentThread.CurrentCulture = _appSessionSettings.CurrentCultureInfo;
+        Thread.CurrentThread.CurrentUICulture = _appSessionSettings.CurrentCultureInfo;
 
-        Application.Current.MainWindow.Language = System.Windows.Markup.XmlLanguage.GetLanguage(_userInfo.CurrentCultureInfo.IetfLanguageTag);
+        Application.Current.MainWindow.Language = System.Windows.Markup.XmlLanguage.GetLanguage(_appSessionSettings.CurrentCultureInfo.IetfLanguageTag);
     }
 
     private static void ChangeThemeLocal(Theme theme) =>
@@ -67,7 +67,7 @@ public class ThemesService(UserInfo userInfo) : IThemesService
 
     public void ChangeVisual(Visual visual)
     {
-        if (visual.Key == _userInfo.Visual.Key)
+        if (visual.Key == _appSessionSettings.Visual.Key)
             return;
         ChangeVisualLocal(visual);
     }

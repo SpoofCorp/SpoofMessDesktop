@@ -24,12 +24,13 @@ internal class AttachmentService(
     IFileApiService fileApiService,
     INavigationService navigationService,
     ISerializer serializer,
-    IAttachmentApiService attachmentApiService,
-    UserInfo userInfo) : IAttachmentService
+    AppConfig appConfig,
+    IAttachmentApiService attachmentApiService) : IAttachmentService
 {
+
     private readonly INavigationService _navigationService = navigationService;
     private readonly IAttachmentApiService _attachmentApiService = attachmentApiService;
-    private readonly UserInfo _userInfo = userInfo;
+    private readonly AppConfig _appConfig = appConfig;
     private readonly ISerializer _serializer = serializer;
     private readonly IFileService _fileService = fileService;
     private readonly IFileApiService _fileApiService = fileApiService;
@@ -55,7 +56,7 @@ internal class AttachmentService(
                 Token = result.Body!.Token,
                 Category = Enum.Parse<FileCategory>(attachment.Category, true),
                 Name = attachment.OriginalFileName,
-                Path = Path.Combine(_userInfo.SessionSettings.Directory, attachment.OriginalFileName),
+                Path = Path.Combine(_appConfig.Directory, attachment.OriginalFileName),
                 Metadata = _serializer.Deserialize<IFileMetadata>(attachment.Metadata ?? "")
             };
             file.Size = file.Metadata.Size;
@@ -234,7 +235,7 @@ internal class AttachmentService(
                     Token = result.Body!.Token,
                     Category = Enum.Parse<FileCategory>(attachment.Category, true),
                     Name = attachment.OriginalFileName,
-                    Path = Path.Combine(_userInfo.SessionSettings.Directory, attachment.OriginalFileName),
+                    Path = Path.Combine(_appConfig.Directory, attachment.OriginalFileName),
                     Metadata = _serializer.Deserialize<IFileMetadata>(attachment.Metadata ?? "")
                 };
                 file.Size = file.Metadata.Size;

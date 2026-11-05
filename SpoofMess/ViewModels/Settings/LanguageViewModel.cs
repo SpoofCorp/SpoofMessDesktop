@@ -4,28 +4,29 @@ using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.Settings;
 
-public partial class LanguageViewModel(UserInfo userInfo,
-                                       IAuthService authService,
-                                       IThemesService themesService,
-                                       IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService)
+public partial class LanguageViewModel(
+    IAuthService authService,
+    AppSessionSettings appSessionSettings,
+    IThemesService themesService,
+    IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService)
 {
-    private readonly UserInfo _userInfo = userInfo;
+    private readonly AppSessionSettings _appSessionSettings = appSessionSettings;
     private readonly IAuthService _authService = authService;
     private readonly IThemesService _themesService = themesService;
     public static List<Language> Languages { get; set; } = [new("Русский", "Ru", "ru-RU"), new("English", "En", "en-US"), new("Қазақша", "Kz", "kk-KZ")];
     [ObservableProperty]
-    public partial Language Language { get; set; } = userInfo.Language;
+    public partial Language Language { get; set; } = appSessionSettings.Language;
 
     public override void Initialize(IPlacementViewModel ownerView, Action close)
     {
-        Language = Languages.FirstOrDefault(x => x.Key == _userInfo.Language.Key) ?? Languages.First();
+        Language = Languages.FirstOrDefault(x => x.Key == _appSessionSettings.Language.Key) ?? Languages.First();
         base.Initialize(ownerView, close);
     }
 
     async partial void OnLanguageChanged(Language value)
     {
         _themesService.ChangeLanguage(value);
-        _userInfo.Language = value;
+        _appSessionSettings.Language = value;
         await _authService.Save(_appLifeCycleService.AppCancellationToken);
     }
 }

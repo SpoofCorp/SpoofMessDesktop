@@ -24,6 +24,7 @@ namespace SpoofMess;
 
 public partial class App : Application
 {
+    private const string BASE_URL = "https://localhost:443";
     private IAppLifeCycleService _appLifiCycleServiceuthService = null!;
     private IServiceProvider _serviceProvider = null!;
     internal static UserInfo UserInfo = null!;
@@ -39,7 +40,7 @@ public partial class App : Application
         services.AddTransient<AuthHandler>();
         services.AddHttpClient<IEntryApiService, EntryApiService>(client =>
         {
-            client.BaseAddress = new("https://localhost:443/ses/");
+            client.BaseAddress = new($"{BASE_URL}/ ses/");
         });
         services.AddSSSCustomApi<IChatAvatarApiService, ChatAvatarApiService>();
         services.AddSSSCustomApi<IChatApiService, ChatApiService>();
@@ -47,6 +48,11 @@ public partial class App : Application
         services.AddSSSCustomApi<IUserApiService, UserApiService>();
         services.AddSMSCustomApi<IAttachmentApiService, AttachmentApiService>();
         services.AddSMSCustomApi<IMessageApiService, MessageApiService>();
+
+        services.AddHttpClient<IAuthService, AuthService>(client =>
+        {
+            client.BaseAddress = new($"{BASE_URL}/ses/");
+        }).AddAsKeyed(ServiceLifetime.Singleton);
 
         services.AddSFSCustomApi<IFileApiService, FileApiService>();
         services.AddSSSCustomApi<IUserAvatarApiService, UserAvatarApiService>();
@@ -56,22 +62,6 @@ public partial class App : Application
         services.AddSingleton<ISerializer, JsonSerializerService>();
         services.AddSingleton<IDownloadService, DownloadService>();
         services.AddSingleton<FileAudioRecorderService>();
-
-        /*services.AddSingleton(new UrlSettings()
-        {
-            BaseUrlSES = "https://localhost:5000",
-            BaseUrlSFS = "https://localhost:5003",
-            BaseUrlSMS = "https://localhost:5002",
-            BaseUrlSSS = "https://localhost:5001",
-        });*/
-
-        /*services.AddSingleton(new UrlSettings()
-        {
-            BaseUrlSES = "https://192.168.0.54:5000",
-            BaseUrlSFS = "https://192.168.0.54:5003",
-            BaseUrlSMS = "https://192.168.0.54:5002",
-            BaseUrlSSS = "https://192.168.0.54:5001",
-        });*/
 
         services.AddTransient<EntryViewModel>();
         services.AddTransient<ChatCardViewModel>();
@@ -118,11 +108,6 @@ public partial class App : Application
         services.AddSingleton<IAudioService, AudioService>();
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddTransient<IThemesService, ThemesService>();
-
-        services.AddHttpClient<IAuthService, AuthService>(client =>
-        {
-            client.BaseAddress = new("https://localhost:443/ses/");
-        }).AddAsKeyed(ServiceLifetime.Singleton);
         services.AddSingleton<IAppLifeCycleService, AppLifeCycleService>();
 
         services.AddSingleton<UserInfo>();
@@ -143,6 +128,8 @@ public partial class App : Application
         services.AddTransient<ChatSettingsViewModel>();
         services.AddSingleton<MainMessagesViewModel>();
         services.AddSingleton<NotificationInfoViewModel>();
+        services.AddSingleton<AppConfig>();
+        services.AddSingleton<AppSessionSettings>();
 
         services.AddTransient<MainViewTest>();
         services.AddTransient<MinimalWindow>();

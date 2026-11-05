@@ -9,9 +9,9 @@ using System.IO;
 
 namespace SpoofMess.ServiceRealizations;
 
-public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioService, IAsyncInitializable
+public partial class AudioService(AppSessionSettings appSessionSettings) : ObservableObject, IAudioService, IAsyncInitializable
 {
-    protected readonly UserInfo _userInfo = userInfo;
+    protected AppSessionSettings _appSessionSettings = appSessionSettings;
     [ObservableProperty]
     public partial PlayableFileObject? PlayableFileObject { get; set; }
     public float Volume
@@ -21,7 +21,7 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
         {
             field = Math.Clamp(value, 0.0f, 1.0f);
             _outputDevice?.Volume = field;
-            _userInfo.Volume = field;
+            _appSessionSettings.Volume = field;
             OnPropertyChanged();
         }
     }
@@ -124,7 +124,7 @@ public partial class AudioService(UserInfo userInfo) : ObservableObject, IAudioS
     {
         if (IsInitialized)
             return Task.CompletedTask;
-        Volume = _userInfo.Volume;
+        Volume = _appSessionSettings.Volume;
         _outputDevice = new()
         {
             Volume = Volume

@@ -6,9 +6,10 @@ using SpoofMess.Services;
 
 namespace SpoofMess.ServiceRealizations;
 
-public partial class AudioRecorderService(UserInfo userInfo) : IAudioRecordService, IInitializable, IDisposable
+public partial class AudioRecorderService(
+    AppSessionSettings appSessionSettings) : IAudioRecordService, IInitializable, IDisposable
 {
-    protected readonly UserInfo _userInfo = userInfo;
+    protected AppSessionSettings _appSessionSettings = appSessionSettings;
     protected static readonly WaveFormat waveFormat = new(44100, 16, 1);
     protected WaveIn waveIn = null!;
 
@@ -24,7 +25,7 @@ public partial class AudioRecorderService(UserInfo userInfo) : IAudioRecordServi
         waveIn = new()
         {
             WaveFormat = waveFormat,
-            DeviceNumber = _userInfo.AudioInDevice?.Number ?? 0
+            DeviceNumber = _appSessionSettings.AudioInDevice?.Number ?? 0
         };
 
         waveIn.DataAvailable += WaveInDataAvailable;

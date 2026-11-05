@@ -34,28 +34,34 @@ public class AuthService(
     private readonly IFileService _fileService = fileService;
     private readonly UserInfo UserInfo = userInfo;
 
-    public async Task<Result> Initialize(CancellationToken cancellationToken = default)
+    public async Task InitializeUserInfo(CancellationToken cancellationToken = default)
     {
         Stream? stream = _fileService.GetReadStreamFromFile(BackupPath);
         if (stream is null)
-            return Result.ErrorResult("Stream is null");
+        {
+            await Save(cancellationToken);
+            return;
+        }
         UserInfo userInfo;
         try
         {
             userInfo = await _serializer.Deserialize<UserInfo>(stream, cancellationToken);
         }
-        catch(JsonException)
+        catch (JsonException)
         {
-            return Result.ErrorResult("Session data has broken");
+            return;
         }
         finally
         {
             await stream.DisposeAsync();
         }
         UserInfo.Init(userInfo);
+    }
+
+    public async Task<Result> Initialize(CancellationToken cancellationToken = default)
+    {
         if (UserInfo.Authorize is null)
             return Result.ErrorResult("Empty authorize data");
-
         return await Update(cancellationToken);
     }
 
@@ -73,7 +79,7 @@ public class AuthService(
             await Update(cancellationToken);
             return UserInfo.Authorize.AccessToken;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null;
         }

@@ -8,10 +8,12 @@ namespace SpoofMess.ServiceRealizations;
 public class AppLifeCycleService(
     IAuthService authService,
     UserInfo userInfo,
+    AppSessionSettings appSessionSettings,
     IServiceProvider serviceProvider
 ) : IAppLifeCycleService, IDisposable
 {
     protected UserInfo _userInfo = userInfo;
+    protected AppSessionSettings _appSessionSettings = appSessionSettings;
     protected CancellationTokenSource _cts = new();
     private readonly IAuthService _authService = authService;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
@@ -27,7 +29,7 @@ public class AppLifeCycleService(
 
     public async Task OnCloseAsync(bool isTerminate = false)
     {
-        if (!isTerminate && _userInfo.HideToTray)
+        if (!isTerminate && _appSessionSettings.HideToTray)
             _navigationService.HideToTrayWindow();
         else
             await OnExitAsync();

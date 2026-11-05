@@ -10,15 +10,13 @@ using SpoofMess.ViewModels.Settings;
 using SpoofMess.Views;
 using System.Collections.Concurrent;
 using System.Windows;
-using System.Windows.Navigation;
 
 namespace SpoofMess.ServiceRealizations;
 
 public class NavigationService(
         IServiceProvider serviceProvider,
         NotificationInfoViewModel notificationInfoViewModel,
-        UserInfo userInfo,
-        IAppLifeCycleService appLifeCycleService
+        AppSessionSettings appSessionSettings
     ) : INavigationService
 {
     public bool IsActive { get; set; }
@@ -47,7 +45,7 @@ public class NavigationService(
     protected NotificationView? NotificationWindow;
     protected Lock NotificationWindowLock = new();
     protected NotificationInfoViewModel _notificationInfoViewModel = notificationInfoViewModel;
-    private readonly UserInfo _userInfo = userInfo;
+    private readonly AppSessionSettings _appSessionSettings = appSessionSettings;
     private readonly ConcurrentDictionary<string, AdditionalWindowWithDataContext> _windows = [];
 
     public StaticNotificationViewModel GetAudioService() =>
@@ -93,7 +91,7 @@ public class NavigationService(
     public void OpenChatWindow(Chat chat)
     {
         Window window;
-        if (_userInfo.CloneWindows)
+        if (_appSessionSettings.CloneWindows)
         {
 
         }

@@ -16,12 +16,12 @@ public class ChatAvatarService(
     IFingerprintService fingerprintService,
     INotificationService notificationService,
     IChatAvatarApiService chatAvatarApiService,
-    UserInfo userInfo) : IChatAvatarService
+    AppConfig appConfig) : IChatAvatarService
 {
     private readonly IFileService _fileService = fileService;
     private readonly IFileApiService _fileApiService = fileApiService;
     private readonly IChatAvatarApiService _chatAvatarApiService = chatAvatarApiService;
-    private readonly UserInfo _userInfo = userInfo;
+    private readonly AppConfig _appConfig = appConfig;
     private readonly IFingerprintService _fingerprintService = fingerprintService;
     private readonly INotificationService _notificationService = notificationService;
 
@@ -73,7 +73,7 @@ public class ChatAvatarService(
         Result<AvatarResponse> result = await _chatAvatarApiService.Get(avatar.AttachmentToken!, cancellationToken);
         if (!result.Success)
             return;
-        avatar.Path = Path.Combine(_userInfo.SessionSettings.Directory, result.Body!.FileMetadata.OriginalName ?? "");
+        avatar.Path = Path.Combine(_appConfig.Directory, result.Body!.FileMetadata.OriginalName ?? "");
         avatar.Token = result.Body.FileMetadata.Token;
         avatar.Id = result.Body.FileMetadata.Id;
         await _fileService.Save(avatar, cancellationToken);

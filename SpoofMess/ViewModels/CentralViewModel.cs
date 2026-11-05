@@ -9,6 +9,7 @@ namespace SpoofMess.ViewModels;
 
 public partial class CentralViewModel(
     UserInfo userInfo,
+    AppSessionSettings appSessionSettings,
     INavigationService navigation,
     IAppLifeCycleService appLifeCycleService) : BaseViewModel(appLifeCycleService)
 {
@@ -18,6 +19,7 @@ public partial class CentralViewModel(
     [ObservableProperty]
     public partial Notification? Notification { get; set; }
     public UserInfo UserInfo { get; set; } = userInfo;
+    public AppSessionSettings AppSessionSettings { get; set; } = appSessionSettings;
 
 
     [RelayCommand]

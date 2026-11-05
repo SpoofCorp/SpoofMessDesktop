@@ -19,13 +19,13 @@ public class ChatService(
     IChatApiService chatApiService,
     IChatAvatarService chatAvatarService,
     IFileService fileService,
-    UserInfo userInfo,
+    AppConfig appConfig,
     ISerializer serializer) : IChatService
 {
     public ObservableCollection<Chat> Chats { get; set; } = [];
     public ConcurrentDictionary<Guid, Chat> ChatsStorage { get; set; } = [];
 
-    private readonly UserInfo _userInfo = userInfo;
+    private readonly AppConfig _appConfig = appConfig;
     private readonly IChatApiService _chatApiService = chatApiService;
     private readonly IChatAvatarService _chatAvatarService = chatAvatarService;
     private readonly ISerializer _serializer = serializer;
@@ -88,7 +88,7 @@ public class ChatService(
             Token = chatDTO.AvatarToken,
             Id = chatDTO.AvatarId,
             Name = chatDTO.OriginalAvatarFileName,
-            Path = Path.Combine(_userInfo.SessionSettings.Directory, chatDTO.OriginalAvatarFileName ?? chatDTO.UniqueName)
+            Path = Path.Combine(_appConfig.Directory, chatDTO.OriginalAvatarFileName ?? chatDTO.UniqueName)
         };
 
         await _chatAvatarService.UploadAvatar(
@@ -112,7 +112,7 @@ public class ChatService(
                 AttachmentToken = chat.AvatarAccessToken,
                 Category = Enums.FileCategory.Image,
                 Name = chat.OriginalFileName,
-                Path = Path.Combine(_userInfo.SessionSettings.Directory, chat.OriginalFileName ?? ""),
+                Path = Path.Combine(_appConfig.Directory, chat.OriginalFileName ?? ""),
                 Metadata = chat.Metadata is null ? new ImageMetadata() : _serializer.Deserialize<IFileMetadata>(chat.Metadata)
             };
             file.Size = file.Metadata.Size;

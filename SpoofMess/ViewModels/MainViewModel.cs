@@ -18,8 +18,10 @@ public partial class MainViewModel(
     IAuthService authService,
     ChatsViewModel chatsViewModel,
     UserInfo userInfo,
+    AppSessionSettings appSessionSettings,
     IAppLifeCycleService appLifeCycleService) : PlacementViewModel(appLifeCycleService), IAsyncInitializable, IClosable
 {
+    private readonly AppSessionSettings _appSessionSettings = appSessionSettings;
     private readonly CancellationTokenSource token = new();
     private readonly UserInfo _userInfo = userInfo;
     private readonly INotificationApiService _notificationApiService = notificationApiService;
@@ -29,6 +31,7 @@ public partial class MainViewModel(
     private readonly INavigationService _navigationService = navigationService;
 
     public MainViewModel() : this(default,
+                                  default,
                                   default,
                                   default,
                                   default,
@@ -73,10 +76,10 @@ public partial class MainViewModel(
 
     public async Task CloseWindow()
     {
-        if (_userInfo.HideToTray)
+        if (_appSessionSettings.HideToTray)
         {
             _navigationService.HideToTrayWindow();
-            if (_userInfo.UnselectChat)
+            if (_appSessionSettings.UnselectChat)
                 ChatsViewModel.SelectedChat = null;
             BehindCloseAdditionalViewModel();
             SideMenuVisibility = Visibility.Collapsed;
@@ -84,13 +87,13 @@ public partial class MainViewModel(
         else
         {
             await _appLifeCycleService.OnExitAsync();
-            _navigationService.CloseWindow();
+            await _navigationService.CloseWindow();
         }
     }
 
     public Task OnClose()
     {
-        if (_userInfo.UnselectChat)
+        if (_appSessionSettings.UnselectChat)
             ChatsViewModel.SelectedChat = null;
         BehindCloseAdditionalViewModel();
         SideMenuVisibility = Visibility.Collapsed;

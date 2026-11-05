@@ -4,12 +4,12 @@ using SpoofMess.Services;
 
 namespace SpoofMess.ViewModels.Settings;
 
-public partial class DesingViewModel(UserInfo userInfo,
+public partial class DesingViewModel(AppSessionSettings appSessionSettings,
                                      IThemesService themesService,
                                      IAuthService authService,
                                      IAppLifeCycleService appLifeCycleService) : AdditionalViewModel(appLifeCycleService)
 {
-    private readonly UserInfo _userInfo = userInfo;
+    private readonly AppSessionSettings _appSessionSettings = appSessionSettings;
     private readonly IThemesService _themesService = themesService;
     private readonly IAuthService _authService = authService;
 
@@ -33,17 +33,17 @@ public partial class DesingViewModel(UserInfo userInfo,
     ];
 
     [ObservableProperty]
-    public partial Theme Theme { get; set; } = userInfo.Theme;
+    public partial Theme Theme { get; set; } = appSessionSettings.Theme;
 
     [ObservableProperty]
-    public partial Visual Visual { get; set; } = userInfo.Visual;
+    public partial Visual Visual { get; set; } = appSessionSettings.Visual;
 
     public override void Initialize(IPlacementViewModel ownerView, Action close)
     {
-        Theme = Themes.FirstOrDefault(x => x.Key == _userInfo.Theme.Key) ?? Themes.First();
+        Theme = Themes.FirstOrDefault(x => x.Key == _appSessionSettings.Theme.Key) ?? Themes.First();
         foreach (Theme theme in Themes)
             theme.Name = _themesService.GetLocaly(theme.Key);
-        Visual = Visuals.FirstOrDefault(x => x.Key == _userInfo.Visual.Key) ?? Visuals.First();
+        Visual = Visuals.FirstOrDefault(x => x.Key == _appSessionSettings.Visual.Key) ?? Visuals.First();
         foreach (Visual visual in Visuals)
             visual.Name = _themesService.GetLocaly(visual.Key);
         base.Initialize(ownerView, close);
@@ -52,14 +52,14 @@ public partial class DesingViewModel(UserInfo userInfo,
     async partial void OnThemeChanged(Theme value)
     {
         _themesService.ChangeTheme(value);
-        _userInfo.Theme = value;
+        _appSessionSettings.Theme = value;
         await _authService.Save(_appLifeCycleService.AppCancellationToken);
     }
 
     async partial void OnVisualChanged(Visual value)
     {
         _themesService.ChangeVisual(value);
-        _userInfo.Visual = value;
+        _appSessionSettings.Visual = value;
         await _authService.Save(_appLifeCycleService.AppCancellationToken);
     }
 }

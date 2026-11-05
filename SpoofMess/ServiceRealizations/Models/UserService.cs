@@ -13,7 +13,8 @@ using System.IO;
 namespace SpoofMess.ServiceRealizations.Models;
 
 public class UserService(
-    UserInfo userInfo, 
+    UserInfo userInfo,
+    AppConfig appConfig,
     IUserApiService userApiService, 
     IFileService fileService,
     IUserAvatarApiService userAvatarApiService,
@@ -23,6 +24,7 @@ public class UserService(
     private readonly IFileService _fileService = fileService;
     private readonly IUserAvatarApiService _userAvatarApiService = userAvatarApiService;
     private readonly IAuthService _authService = authService;
+    private readonly AppConfig _appConfig = appConfig;
     private readonly UserInfo _userInfo = userInfo;
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
 
@@ -75,7 +77,7 @@ public class UserService(
                 {
                     Id = userDTO.AvatarId,
                     Token = userDTO.AvatarToken,
-                    Path = Path.Combine(_userInfo.SessionSettings.Directory, userDTO.AvatarOriginalFileName!)
+                    Path = Path.Combine(_appConfig.Directory, userDTO.AvatarOriginalFileName!)
                 };
                 user.Avatars.Add(avatar);
                 user.Avatar = avatar;
@@ -99,7 +101,7 @@ public class UserService(
         Result<AvatarResponse> result = await _userAvatarApiService.Get(avatar.AttachmentToken!);
         if (!result.Success)
             return;
-        avatar.Path = Path.Combine(_userInfo.SessionSettings.Directory, avatar.Path ?? "");
+        avatar.Path = Path.Combine(_appConfig.Directory, avatar.Path ?? "");
         avatar.Token = result.Body!.FileMetadata.Token;
         avatar.Id = result.Body.FileMetadata.Id;
         user.Avatar = avatar;

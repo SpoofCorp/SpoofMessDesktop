@@ -6,7 +6,7 @@ using System.IO;
 
 namespace SpoofMess.ServiceRealizations;
 
-public partial class FileAudioRecorderService(IFileService file, UserInfo userInfo) : AudioRecorderService(userInfo)
+public partial class FileAudioRecorderService(IFileService file, AppSessionSettings appSessionSettings) : AudioRecorderService(appSessionSettings)
 {
     private WaveFileWriter? tempWavWriter;
     private string? _currentFile;

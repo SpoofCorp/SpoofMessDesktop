@@ -9,7 +9,7 @@ using SpoofMess.Services;
 namespace SpoofMess.ViewModels.Settings;
 
 public partial class SoundsAndNotificationsViewModel(
-    UserInfo userInfo,
+    AppSessionSettings appSessionSettings,
     IAuthService authService,
     IAppLifeCycleService appLifeCycleService,
     FileAudioRecorderService audioRecordService)
@@ -17,8 +17,8 @@ public partial class SoundsAndNotificationsViewModel(
 {
     private readonly FileAudioRecorderService _audioRecordService = audioRecordService;
     private readonly IAuthService _authService = authService;
-    private readonly UserInfo _actualUserInfo = userInfo;
-    public UserInfo Edit { get; set; } = null!;
+    private readonly AppSessionSettings _appSessionSettings = appSessionSettings;
+    public AppSessionSettings Edit { get; set; } = null!;
     public List<AudioInDevice> AudioInDevices { get; set; } = [];
     [ObservableProperty]
     public partial AudioInDevice? AudioInDevice { get; set; }
@@ -26,7 +26,7 @@ public partial class SoundsAndNotificationsViewModel(
     protected override Task InitializeAsync(bool initialize)
     {
         Edit = new();
-        Edit.Init(_actualUserInfo);
+        Edit.Init(_appSessionSettings);
         using var enumerator = new MMDeviceEnumerator();
         var captureDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
         for (int i = 0; i < captureDevices.Count; i++)
@@ -37,36 +37,26 @@ public partial class SoundsAndNotificationsViewModel(
                     Number = i
                 }
             );
-        AudioInDevice = _actualUserInfo.AudioInDevice is null ? AudioInDevices.FirstOrDefault() : AudioInDevices.FirstOrDefault(x => x.Name == _actualUserInfo.AudioInDevice.Name && x.Number == _actualUserInfo.AudioInDevice.Number);
+        AudioInDevice = _appSessionSettings.AudioInDevice is null ? AudioInDevices.FirstOrDefault() : AudioInDevices.FirstOrDefault(x => x.Name == _appSessionSettings.AudioInDevice.Name && x.Number == _appSessionSettings.AudioInDevice.Number);
 
         return base.InitializeAsync(initialize);
     }
 
     public override async void OnClose()
     {
-        if (_actualUserInfo.Change(Edit, out ChangeUserSettingsRequest request))
-        {
-            _actualUserInfo.Update(
-                new UserInfoUpdateModel(
-                    ForwardMessage: request.ForwardMessage,
-                    InviteMe: request.InviteMe,
-                    MonthsBeforeDelete: request.MonthsBeforeDelete,
-                    UserUpdateModel: new(Name: request.Name),
-                    SearchMe: request.SearchMe,
-                    ShowMe: request.ShowMe,
-                    ShowErrorNotifications: Edit.ShowErrorNotifications,
-                    ShowMessagesNotifications: Edit.ShowMessagesNotifications
-                )
-            );
-            await _authService.Save(_appLifeCycleService.AppCancellationToken);
-        }
+        _appSessionSettings.Update(
+            new UserInfoUpdateModel(
+                ShowErrorNotifications: Edit.ShowErrorNotifications,
+                ShowMessagesNotifications: Edit.ShowMessagesNotifications
+            )
+        );
         base.OnClose();
     }
 
     async partial void OnAudioInDeviceChanged(AudioInDevice? value)
     {
         _audioRecordService.ChangeDevice(value);
-        _actualUserInfo.Update(new(AudioInDevice: value));
+        _appSessionSettings.Update(new(AudioInDevice: value));
         await _authService.Save(_appLifeCycleService.AppCancellationToken);
     }
 }

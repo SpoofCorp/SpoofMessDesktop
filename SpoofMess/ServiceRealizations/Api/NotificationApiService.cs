@@ -23,18 +23,21 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
     public event Action<ChatAvatarResponse> OnChatAvatarUpdated = null!;
     public event Action<ChatUserDTO> OnChatCreated = null!;
     private readonly SemaphoreSlim _initializeSemaphore = new(1, 1);
+    private readonly AppConfig _appConfig;
 
     private readonly CancellationTokenSource _cts = new();
 
     public bool IsInitialized { get; set; }
 
     public NotificationApiService(
-            IAuthService authService
+            IAuthService authService,
+            AppConfig appConfig
         )
     {
+        _appConfig = appConfig;
         _authService = authService;
         _connection = new HubConnectionBuilder()
-            .WithUrl($"https://localhost:443/sms/chat", options =>
+            .WithUrl($"{_appConfig.BaseUrl}/sms/chat", options =>
             {
                 options.AccessTokenProvider = () => _authService.GetAccess();
 
