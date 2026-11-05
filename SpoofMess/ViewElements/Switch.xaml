@@ -8,18 +8,18 @@
     <UserControl.Template>
         <ControlTemplate TargetType="UserControl">
             <Button Padding="5 0" HorizontalContentAlignment="Left" Focusable="False" Click="Button_Click" Style="{StaticResource MinimalButton}" Cursor="Hand">
-                <Grid Focusable="False" ColumnDefinitions="auto auto" Background="Transparent">
+                <Grid Focusable="False" ColumnDefinitions="auto 15 *" Background="Transparent">
 
-                    <Border Focusable="False" Width="50" Height="20" x:Name="BackBorder" Style="{StaticResource CardBorder}" CornerRadius="{DynamicResource Corner2}" Background="{StaticResource Third}"/>
+                    <Border Focusable="False" Width="40" Height="15" x:Name="BackBorder" Style="{StaticResource CardBorder}" CornerRadius="{DynamicResource Corner2}" Background="{StaticResource Third}"/>
 
-                    <Border Focusable="False" x:Name="Boulder" Width="30" Height="30" CornerRadius="15" 
+                    <Border Focusable="False" x:Name="Boulder" Width="25" Height="25" CornerRadius="12.5" 
                             Background="{DynamicResource Second}" BorderBrush="{DynamicResource Third}" 
                             HorizontalAlignment="Left" IsHitTestVisible="False">
                         <Border.RenderTransform>
                             <TranslateTransform x:Name="BallTransform" X="-1.1"/>
                         </Border.RenderTransform>
                     </Border>
-                    <TextBlock Focusable="False" IsHitTestVisible="False" Grid.Column="1" Text="{Binding Path=Text, ElementName=Root}" VerticalAlignment="Center" Style="{StaticResource BaseText}" Margin="5 0 0 0"/>
+                    <TextBlock Focusable="False" IsHitTestVisible="False" Grid.Column="2" Text="{Binding Path=Text, ElementName=Root}" VerticalAlignment="Center" Style="{StaticResource BaseText}"/>
                 </Grid>
             </Button>
             <ControlTemplate.Triggers>

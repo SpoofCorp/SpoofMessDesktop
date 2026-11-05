@@ -10,7 +10,7 @@
         Focusable="False"
         Style="{StaticResource MinimalButton}" 
         HorizontalContentAlignment="{Binding ElementName=FunctionalButtonView, Path=Alignment}"
-        Padding="10 0"
+        Padding="10 5"
         Click="InternalButton_Click" 
         Command="{Binding ElementName=FunctionalButtonView, Path=Command}">
         <Button.Content>

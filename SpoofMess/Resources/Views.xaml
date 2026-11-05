@@ -220,12 +220,12 @@
                 </ContentControl>
                 <ContentControl Style="{StaticResource CardBlock}" Grid.Row="4">
                     <StackPanel>
-                        <ve:FunctionButton Margin="0 5 0 0" Text="{DynamicResource Profile}" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
+                        <ve:FunctionButton Text="{DynamicResource Profile}" Icon="👤" Alignment="Stretch" Command="{Binding ProfileCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource NotificationsAndSounds}" Icon="🔔" Alignment="Stretch" Command="{Binding NotificationsCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource PrivacySecurity}" Icon="🔒" Alignment="Stretch" Command="{Binding PrivacyCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource Advanced}" Icon="🌡️" Alignment="Stretch" Command="{Binding AdvancedCommand}"/>
                         <ve:FunctionButton Text="{DynamicResource Language}" Icon="🈵" Alignment="Stretch" Command="{Binding LanguageCommand}"/>
-                        <ve:FunctionButton Margin="0 0 0 5" Text="{DynamicResource Design}" Icon="🖼️" Alignment="Stretch" Command="{Binding DesignCommand}"/>
+                        <ve:FunctionButton Text="{DynamicResource Design}" Icon="🖼️" Alignment="Stretch" Command="{Binding DesignCommand}"/>
                     </StackPanel>
                 </ContentControl>
             </Grid>
