@@ -1,21 +1,26 @@
-﻿using CommonObjects.Requests.Attachments;
+﻿using AdditionalHelpers.Services;
+using CommonObjects.Requests.Attachments;
 using CommonObjects.Results;
 using Microsoft.Win32;
 using SpoofFileParser;
 using SpoofMess.Enums;
 using SpoofMess.Models;
 using SpoofMess.Services;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace SpoofMess.ServiceRealizations;
 
-public class FileService(IFileClassifier fileClassifier, IDownloadService downloadService) : IFileService
+public class FileService(IFileClassifier fileClassifier, IDownloadService downloadService, ISerializer serializer) : IFileService
 {
     private static readonly string[] Units = ["B", "KB", "MB", "GB", "TB", "PB"];
     private readonly IFileClassifier _fileClassifier = fileClassifier;
     private readonly IDownloadService _downloadService = downloadService;
+    private readonly ISerializer _serializer = serializer;
+    private ConcurrentDictionary<string, SemaphoreSlim> fileSemaphores = [];
 
     private readonly static string _imageFilter = "Все изображения|*.jpg;*.jpeg;*.png;*.webp;*.heic;*.heif;*.bmp;*.gif;*.tiff;*.tif|JPEG файлы (*.jpg, *.jpeg)|*.jpg;*.jpeg|PNG файлы (*.png)|*.png|WebP файлы (*.webp)|*.webp|HEIC/HEIF файлы (*.heic, *.heif)|*.heic;*.heif|GIF файлы (*.gif)|*.gif";
 
@@ -40,12 +45,7 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
 
     private static string[]? GetMany(string? filter = null)
     {
-        OpenFileDialog fileDialog = new()
-        {
-            Multiselect = true,
-        };
-        if (filter is not null)
-            fileDialog.Filter = filter;
+        OpenFileDialog fileDialog = GetFileDialog(true, filter);
         if (fileDialog.ShowDialog() is true)
             return fileDialog.FileNames;
 
@@ -53,16 +53,23 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
     }
     private static string? GetOnce(string? filter = null)
     {
-        OpenFileDialog fileDialog = new()
-        {
-            Multiselect = false,
-        };
-        if (filter is not null)
-            fileDialog.Filter = filter;
+        OpenFileDialog fileDialog = GetFileDialog(false, filter);
         if (fileDialog.ShowDialog() is true)
             return fileDialog.FileName;
 
         return null;
+    }
+
+    private static OpenFileDialog GetFileDialog(bool multiSelect, string? filter = null)
+    {
+        OpenFileDialog fileDialog = new()
+        {
+            Multiselect = multiSelect,
+        };
+        if (filter is not null)
+            fileDialog.Filter = filter;
+
+        return fileDialog;
     }
 
     public MultipartFormDataContent? GetStream(string? path)
@@ -140,6 +147,75 @@ public class FileService(IFileClassifier fileClassifier, IDownloadService downlo
             unitIndex++;
         }
         return $"{size:0.##} {Units[unitIndex]}";
+    }
+
+    public async Task SaveToFile<T>(string path, T content, CancellationToken cancellationToken = default)
+    {
+        SemaphoreSlim semaphore = fileSemaphores.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+        await semaphore.WaitAsync(cancellationToken);
+
+        try
+        {
+            string directoryPath = Path.GetDirectoryName(path)!;
+            string tempPath = $"{path}.tmp";
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+            Stream? stream = null;
+            try
+            {
+                stream = GetWriteStreamFromFile(tempPath);
+                if (stream is null)
+                    return;
+                await _serializer.Serialize(
+                    content,
+                    stream,
+                    cancellationToken
+                );
+                await stream.FlushAsync(cancellationToken);
+                await stream.DisposeAsync();
+                stream = null;
+                if (File.Exists(tempPath))
+                    File.Move(tempPath, path, true);
+            }
+            finally
+            {
+                if (stream is not null)
+                    await stream.DisposeAsync();
+            }
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    public async Task<Result<T>> GetFromFile<T>(string path, CancellationToken cancellationToken = default)
+    {
+        SemaphoreSlim semaphore = fileSemaphores.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+        await semaphore.WaitAsync(cancellationToken);
+        T data;
+        try
+        {
+            Stream? stream = GetReadStreamFromFile(path);
+            if (stream is null) return Result<T>.ErrorResult("File is null");
+            try
+            {
+                data = await _serializer.Deserialize<T>(stream, cancellationToken);
+            }
+            catch (JsonException)
+            {
+                return Result<T>.ErrorResult("Invalid json");
+            }
+            finally
+            {
+                await stream.DisposeAsync();
+            }
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+        return Result<T>.OkResult(data);
     }
 
     public Stream? GetReadStreamFromFile(string filePath)

@@ -42,7 +42,7 @@ public partial class ProfileViewModel(
                     SearchMe: request.SearchMe,
                     ShowMe: request.ShowMe
                 ));
-                await _authService.Save(_appLifeCycleService.AppCancellationToken);
+                await _authService.SaveUserInfo(_appLifeCycleService.AppCancellationToken);
             }
         }
         base.OnClose();

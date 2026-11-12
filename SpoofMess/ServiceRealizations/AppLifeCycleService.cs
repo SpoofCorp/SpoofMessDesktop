@@ -22,7 +22,7 @@ public class AppLifeCycleService(
     public async Task OnExitAsync()
     {
         if(_authService.IsAuthorized)
-            await _authService.Save(_cts.Token);
+            await _authService.SaveAppSessionSettings(_cts.Token);
         await _cts.CancelAsync();
         await _navigationService.CloseWindow();
     }

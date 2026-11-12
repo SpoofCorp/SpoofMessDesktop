@@ -27,6 +27,6 @@ public partial class LanguageViewModel(
     {
         _themesService.ChangeLanguage(value);
         _appSessionSettings.Language = value;
-        await _authService.Save(_appLifeCycleService.AppCancellationToken);
+        await _authService.SaveAppSessionSettings(_appLifeCycleService.AppCancellationToken);
     }
 }

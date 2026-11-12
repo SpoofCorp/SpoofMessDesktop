@@ -9,12 +9,12 @@ using SpoofMess.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net.Http;
-using System.Text.Json;
 
 namespace SpoofMess.ServiceRealizations;
 
 public class AuthService(
     UserInfo userInfo,
+    AppSessionSettings appSessionSettings,
     HttpClient client,
     IFileService fileService,
     ISerializer serializer
@@ -25,41 +25,22 @@ public class AuthService(
 {
     private DateTime ValidTo;
     private static readonly SemaphoreSlim semaphore = new(1, 1);
-    private static readonly SemaphoreSlim fileSemaphore = new(1, 1);
-    private static string BackupPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SpoofMess", "SessionData.json");
+    public static string BackupPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SpoofMess");
+    public static string BackupSessionDataPath => Path.Combine(BackupPath, "SessionData.json");
+    public static string BackupAppSessionSettingsPath => Path.Combine(BackupPath, "AppSessionSettings.json");
 
     public bool IsAuthorized { get; set; }
     public bool IsInitialized { get; set; }
 
     private readonly IFileService _fileService = fileService;
     private readonly UserInfo UserInfo = userInfo;
-
-    public async Task InitializeUserInfo(CancellationToken cancellationToken = default)
-    {
-        Stream? stream = _fileService.GetReadStreamFromFile(BackupPath);
-        if (stream is null)
-        {
-            await Save(cancellationToken);
-            return;
-        }
-        UserInfo userInfo;
-        try
-        {
-            userInfo = await _serializer.Deserialize<UserInfo>(stream, cancellationToken);
-        }
-        catch (JsonException)
-        {
-            return;
-        }
-        finally
-        {
-            await stream.DisposeAsync();
-        }
-        UserInfo.Init(userInfo);
-    }
+    private readonly AppSessionSettings _appSessionSettings = appSessionSettings;
 
     public async Task<Result> Initialize(CancellationToken cancellationToken = default)
     {
+        Result<UserInfo> userInfo = await _fileService.GetFromFile<UserInfo>(BackupSessionDataPath, cancellationToken);
+        if (userInfo)
+            UserInfo.Init(userInfo.Body!);
         if (UserInfo.Authorize is null)
             return Result.ErrorResult("Empty authorize data");
         return await Update(cancellationToken);
@@ -111,7 +92,7 @@ public class AuthService(
     public async Task SetTokens(UserAuthorizeResponse response, CancellationToken cancellationToken = default)
     {
         UserInfo.Authorize = response;
-        await Save(cancellationToken);
+        await SaveUserInfo(cancellationToken);
         JwtSecurityTokenHandler jwt = new();
         JwtSecurityToken token = jwt.ReadJwtToken(UserInfo.Authorize.AccessToken);
         ValidTo = token.ValidTo;
@@ -128,44 +109,16 @@ public class AuthService(
     public async Task Update(UserInfoUpdateModel changes, CancellationToken cancellationToken = default)
     {
         UserInfo.Update(changes);
-        await Save(cancellationToken);
+        await SaveUserInfo(cancellationToken);
     }
 
-    public async Task Save(CancellationToken cancellationToken = default)
+    public async Task SaveUserInfo(CancellationToken cancellationToken = default)
     {
-        await fileSemaphore.WaitAsync(cancellationToken);
-        try
-        {
-            string path = Path.GetDirectoryName(BackupPath)!;
-            string tempPath = $"{BackupPath}.tmp";
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            Stream? stream = null;
-            try
-            {
-                stream = _fileService.GetWriteStreamFromFile(tempPath);
-                if (stream is null)
-                    return;
-                await _serializer.Serialize(
-                    UserInfo,
-                    stream,
-                    cancellationToken
-                );
-                await stream.FlushAsync(cancellationToken);
-                await stream.DisposeAsync();
-                stream = null;
-                if (File.Exists(tempPath))
-                    File.Move(tempPath, BackupPath, true);
-            }
-            finally
-            {
-                if (stream is not null)
-                    await stream.DisposeAsync();
-            }
-        }
-        finally
-        {
-            fileSemaphore.Release();
-        }
+        await _fileService.SaveToFile(BackupSessionDataPath, UserInfo, cancellationToken);
+    }
+
+    public async Task SaveAppSessionSettings(CancellationToken cancellationToken = default)
+    {
+        await _fileService.SaveToFile(BackupAppSessionSettingsPath, _appSessionSettings, cancellationToken);
     }
 }

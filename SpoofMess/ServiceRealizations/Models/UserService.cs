@@ -108,7 +108,7 @@ public class UserService(
         user.Avatars.Add(avatar);
         await _fileService.Save(avatar);
         if(_userInfo.User.Login == user.Login)
-            await _authService.Save();
+            await _authService.SaveUserInfo();
     }
 
     public void OnUserUpdated(UpdateUserInfo updateUser)

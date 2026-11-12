@@ -53,13 +53,13 @@ public partial class DesingViewModel(AppSessionSettings appSessionSettings,
     {
         _themesService.ChangeTheme(value);
         _appSessionSettings.Theme = value;
-        await _authService.Save(_appLifeCycleService.AppCancellationToken);
+        await _authService.SaveAppSessionSettings(_appLifeCycleService.AppCancellationToken);
     }
 
     async partial void OnVisualChanged(Visual value)
     {
         _themesService.ChangeVisual(value);
         _appSessionSettings.Visual = value;
-        await _authService.Save(_appLifeCycleService.AppCancellationToken);
+        await _authService.SaveAppSessionSettings(_appLifeCycleService.AppCancellationToken);
     }
 }

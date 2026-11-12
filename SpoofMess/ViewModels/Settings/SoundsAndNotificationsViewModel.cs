@@ -57,6 +57,6 @@ public partial class SoundsAndNotificationsViewModel(
     {
         _audioRecordService.ChangeDevice(value);
         _appSessionSettings.Update(new(AudioInDevice: value));
-        await _authService.Save(_appLifeCycleService.AppCancellationToken);
+        await _authService.SaveAppSessionSettings(_appLifeCycleService.AppCancellationToken);
     }
 }

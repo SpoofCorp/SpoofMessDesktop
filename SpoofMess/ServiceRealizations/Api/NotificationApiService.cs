@@ -37,7 +37,7 @@ class NotificationApiService : INotificationApiService, IAsyncDisposable
         _appConfig = appConfig;
         _authService = authService;
         _connection = new HubConnectionBuilder()
-            .WithUrl($"{_appConfig.BaseUrl}/sms/chat", options =>
+            .WithUrl($"{_appConfig.BaseUrl}sms/chat", options =>
             {
                 options.AccessTokenProvider = () => _authService.GetAccess();
 

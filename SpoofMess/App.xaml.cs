@@ -19,12 +19,12 @@ using SpoofMess.Views;
 using System.IO;
 using System.Windows;
 using SpoofMess.Models.HttpClientExtensions;
+using CommonObjects.Results;
 
 namespace SpoofMess;
 
 public partial class App : Application
 {
-    private const string BASE_URL = "https://localhost:443";
     private IAppLifeCycleService _appLifiCycleServiceuthService = null!;
     private IServiceProvider _serviceProvider = null!;
     internal static UserInfo UserInfo = null!;
@@ -34,13 +34,27 @@ public partial class App : Application
             typeof(FrameworkElement),
             new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag))
         );
-
+        FileService fileService = new(default!, default!, new JsonSerializerService());
+        string configPath = Path.Combine(AuthService.BackupPath, "AppConfig.json");
+        Result<AppConfig> result = await fileService.GetFromFile<AppConfig>(configPath);
+        AppConfig appConfig;
+        if (result)
+            appConfig = result.Body!;
+        else
+        {
+            appConfig = new();
+            await fileService.SaveToFile(configPath, appConfig);
+        }
         ServiceCollection services = new();
 
         services.AddTransient<AuthHandler>();
+        SESHttpClientExtensions.SetBaseUrl(appConfig.BaseUrl);
+        SFSHttpClientExtensions.SetBaseUrl(appConfig.BaseUrl);
+        SMSHttpClientExtensions.SetBaseUrl(appConfig.BaseUrl);
+        SSSHttpClientExtensions.SetBaseUrl(appConfig.BaseUrl);
         services.AddHttpClient<IEntryApiService, EntryApiService>(client =>
         {
-            client.BaseAddress = new($"{BASE_URL}/ ses/");
+            client.BaseAddress = new($"{appConfig.BaseUrl}ses/");
         });
         services.AddSSSCustomApi<IChatAvatarApiService, ChatAvatarApiService>();
         services.AddSSSCustomApi<IChatApiService, ChatApiService>();
@@ -51,7 +65,7 @@ public partial class App : Application
 
         services.AddHttpClient<IAuthService, AuthService>(client =>
         {
-            client.BaseAddress = new($"{BASE_URL}/ses/");
+            client.BaseAddress = new($"{appConfig.BaseUrl}ses/");
         }).AddAsKeyed(ServiceLifetime.Singleton);
 
         services.AddSFSCustomApi<IFileApiService, FileApiService>();

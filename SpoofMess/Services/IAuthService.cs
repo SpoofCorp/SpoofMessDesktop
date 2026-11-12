@@ -10,6 +10,7 @@ public interface IAuthService
     public Task<Result> Initialize(CancellationToken cancellationToken = default);
     public Task<string?> GetAccess(CancellationToken cancellationToken = default);
     public Task SetTokens(UserAuthorizeResponse response, CancellationToken cancellationToken = default);
-    public Task Save(CancellationToken cancellationToken = default);
+    public Task SaveUserInfo(CancellationToken cancellationToken = default);
+    public Task SaveAppSessionSettings(CancellationToken cancellationToken = default);
     public Task Update(UserInfoUpdateModel changes, CancellationToken cancellationToken = default);
 }

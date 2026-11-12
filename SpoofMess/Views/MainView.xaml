@@ -15,7 +15,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.45* " MinWidth="230" MaxWidth="500"/>
             <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MinWidth="360"/>
         </Grid.ColumnDefinitions>
         <Grid Visibility="Collapsed" Grid.ColumnSpan="3" Grid.RowSpan="2" Panel.ZIndex="0" ClipToBounds="True">
             <Border Opacity="0.3" Background="{DynamicResource PrimaryBlack}"/>

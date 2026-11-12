@@ -1,4 +1,5 @@
-﻿using CommonObjects.Requests.Attachments;
+﻿using AdditionalHelpers.Services;
+using CommonObjects.Requests.Attachments;
 using CommonObjects.Results;
 using SpoofMess.Enums;
 using SpoofMess.Models;
@@ -35,4 +36,8 @@ public interface IFileService
 
     public Stream? GetWriteStreamFromFile(string filePath);
     public Stream? GetReadStreamFromFile(string filePath);
+
+    public Task SaveToFile<T>(string path, T content, CancellationToken cancellationToken = default);
+
+    public Task<Result<T>> GetFromFile<T>(string path, CancellationToken cancellationToken = default);
 }

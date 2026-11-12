@@ -348,7 +348,7 @@
                                 </Image>
                             </Grid>
                             <Border Padding="10 0" Grid.Column="1" CornerRadius="10" Background="{DynamicResource Second}" Margin="0 2">
-                                <Grid ColumnDefinitions="* auto" RowDefinitions="auto * auto auto" MinWidth="150" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
+                                <Grid ColumnDefinitions="* auto" RowDefinitions="auto * auto auto" MinWidth="0" Margin="{StaticResource Margin1}" MaxWidth="400" HorizontalAlignment="Left">
                                     <TextBlock HorizontalAlignment="Left" Text="{Binding User.Name}">
                                         <TextBlock.InputBindings>
                                             <MouseBinding MouseAction="LeftClick"/>
@@ -377,7 +377,7 @@
                                             </Style>
                                         </ItemsControl.ItemContainerStyle>
                                     </ItemsControl>
-                                    <TextBox HorizontalAlignment="Left" Focusable="True" IsReadOnly="True" BorderThickness="0" Background="Transparent" Height="auto" FontSize="16" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Text="{Binding Text}" TextWrapping="WrapWithOverflow" Foreground="{DynamicResource ActiveTextColor}"/>
+                                    <TextBox HorizontalAlignment="Left" Focusable="True" IsReadOnly="True" BorderThickness="0" Background="Transparent" Height="auto" FontSize="16" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Text="{Binding Text}" TextWrapping="Wrap" Foreground="{DynamicResource ActiveTextColor}"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Padding="10 15 0 0" VerticalAlignment="Bottom" Style="{DynamicResource AdditionalText}" Text="{Binding SentAt, StringFormat={}{0:HH:mm}}">
                                         <TextBlock.ToolTip>
                                             <ToolTip Content="{Binding SentAt, StringFormat={}{0:g}}">
@@ -875,7 +875,7 @@
                                 <ImageBrush Opacity="0.6"/>
                             </Button.Background>
                         </Button>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="{DynamicResource MarginRightTop}" Style="{DynamicResource BaseText}" Text="{Binding Name}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" TextTrimming="CharacterEllipsis" Margin="{DynamicResource MarginRightTop}" Style="{DynamicResource BaseText}" Text="{Binding Name}"/>
                         <TextBlock Grid.Row="1" Grid.Column="1" Margin="0" Style="{DynamicResource AdditionalText}" Text="{Binding PrettySize}"/>
                     </Grid>
                 </DataTemplate>
@@ -906,8 +906,8 @@
             </ContentControl>
             <ContentControl Grid.Row="2" Style="{StaticResource CardBlock}">
                 <StackPanel Margin="7">
-                    <ve:Switch IsChecked="{Binding UserInfo.HideToTray}" Text="{DynamicResource HideToTray}" Margin="0 5"/>
-                    <ve:Switch IsChecked="{Binding UserInfo.UnselectChat}" Text="{DynamicResource UnselectChat}" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding AppSessionSettings.HideToTray}" Text="{DynamicResource HideToTray}" Margin="0 5"/>
+                    <ve:Switch IsChecked="{Binding AppSessionSettings.UnselectChat}" Text="{DynamicResource UnselectChat}" Margin="0 5"/>
                 </StackPanel>
             </ContentControl>
         </Grid>

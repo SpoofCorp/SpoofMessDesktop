@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="DeviceInfoLibrary/DeviceInfoLibrary.csproj" Id="1255c70d-da17-4211-9437-d935dc450195" />
   <Project Path="SpoofMess/SpoofMess.csproj" />
 </Solution>
